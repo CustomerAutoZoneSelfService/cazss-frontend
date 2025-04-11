@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 @import "tailwindcss";
 
 @theme {
@@ -12,3 +13,6 @@
     --color-near-black: #1E1E1E;
     --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
 }
+=======
+@import 'tailwindcss';
+>>>>>>> 506b492 (feat: initial commit (TD-000))
