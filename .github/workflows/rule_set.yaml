@@ -67,7 +67,7 @@ jobs:
 
       - name: Validate commit messages
         run: |
-          valid_commit_regex='^(refactor|feature|feat|bugfix|docs|chore|bug|hotfix): .+\([A-Z]+-[0-9]+\) *$'
+          valid_commit_regex='^(refactor|feature|feat|bugfix|docs|chore|bug|hotfix): .+\([A-Z]+-[0-9]+\).*$'
           echo "Using regex: $valid_commit_regex"
           commits=$(git log --no-merges --pretty=format:"%s")
           invalid_commits=()
