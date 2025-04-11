@@ -1,4 +1,10 @@
+# NPM
 node_modules
+package-lock.json
+
+# Editors
+.vscode
+.idea
 
 # Output
 .output
