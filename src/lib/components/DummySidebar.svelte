@@ -1,20 +1,20 @@
 <script>
 	import UserAccountDropdown from '$lib/components/UserAccountDropdown.svelte';
 
-	let username = "John Doe";
-	let email = "some@domain.com";
+	let username = 'John Doe';
+	let email = 'some@domain.com';
 	let isUserDisplayOn = $state(false);
 
 	function handleMenuOpen() {
-		isUserDisplayOn = true
-		console.log('open')
-		document.body.addEventListener('click', handleMenuClose)
+		isUserDisplayOn = true;
+		console.log('open');
+		document.body.addEventListener('click', handleMenuClose);
 	}
 
 	function handleMenuClose() {
-		isUserDisplayOn = false
-		console.log('close')
-		document.body.removeEventListener('click', handleMenuClose)
+		isUserDisplayOn = false;
+		console.log('close');
+		document.body.removeEventListener('click', handleMenuClose);
 	}
 </script>
 <div class="dummy-flex">
@@ -26,7 +26,7 @@
 	</div>
 	<div class="user-menu-wrapper">
 		<button on:click|stopPropagation={handleMenuOpen}>{username} (Click me)</button>
-		<UserAccountDropdown username = {username} email = {email} isUserDisplayOn = {isUserDisplayOn}/>
+		<UserAccountDropdown username={username} email={email} isUserDisplayOn={isUserDisplayOn} />
 	</div>
 </div>
 
