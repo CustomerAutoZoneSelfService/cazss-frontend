@@ -32,7 +32,6 @@ test('exits the user dropdown when clicking outside', async ({ page }) => {
 	await expect(dropdown.getByText('John Doe')).toBeVisible();
 	await expect(dropdown.getByText('some@domain.com')).toBeVisible();
 
-	// Click Sign Out
 	await page.getByRole('button', { name: 'Sign out' }).click();
 
 	// "Signing out" overlay should appear
