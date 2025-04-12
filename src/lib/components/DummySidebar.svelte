@@ -7,8 +7,13 @@
 
 	function handleMenuOpen(event: Event) {
 		event.stopPropagation();
-		isUserDisplayOn = true;
-		document.body.addEventListener('click', handleMenuClose);
+		if (isUserDisplayOn) {
+			isUserDisplayOn = false;
+			document.body.removeEventListener('click', handleMenuClose);
+		} else {
+			isUserDisplayOn = true;
+			document.body.addEventListener('click', handleMenuClose);
+		}
 	}
 
 	function handleMenuClose(event: Event) {
@@ -17,21 +22,32 @@
 		document.body.removeEventListener('click', handleMenuClose);
 	}
 </script>
-<div class="dummy-flex">
-	<div>
-		qwerty
+
+<div class="app-container">
+	<div class="dummy-flex">
+		<div>
+			qwerty
+		</div>
+		<div>
+			asdf
+		</div>
+		<div class="user-menu-wrapper">
+			<button id="user-button" onclick={handleMenuOpen}>{username} (Click me)</button>
+			<UserAccountDropdown username={username} email={email} isUserDisplayOn={isUserDisplayOn} />
+		</div>
 	</div>
-	<div>
-		asdf
-	</div>
-	<div class="user-menu-wrapper">
-		<button id="user-button" onclick={handleMenuOpen}>{username} (Click me)</button>
-		<UserAccountDropdown username={username} email={email} isUserDisplayOn={isUserDisplayOn} />
-	</div>
+	<span class="outside-component">
+		Click me too!
+	</span>
 </div>
 
 <style>
+		.app-container {
+				display: flex;
+		}
+
     .dummy-flex {
+				width: 200px;
         height: 100vh;
         display: flex;
         padding-left: 10px;
