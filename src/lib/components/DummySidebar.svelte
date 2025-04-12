@@ -8,14 +8,12 @@
 	function handleMenuOpen(event: Event) {
 		event.stopPropagation();
 		isUserDisplayOn = true;
-		console.log('open');
 		document.body.addEventListener('click', handleMenuClose);
 	}
 
 	function handleMenuClose(event: Event) {
 		event.stopPropagation();
 		isUserDisplayOn = false;
-		console.log('close');
 		document.body.removeEventListener('click', handleMenuClose);
 	}
 </script>
