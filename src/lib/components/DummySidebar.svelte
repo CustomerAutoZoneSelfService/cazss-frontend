@@ -1,25 +1,18 @@
 <script lang="ts">
-	import UserAccountDropdown from '$lib/components/UserAccountDropdown.svelte';
+	import AccountDropdownMenu from '$lib/components/AccountDropdownMenu.svelte';
 
 	let username = 'John Doe';
 	let email = 'some@domain.com';
 	let isUserDisplayOn = $state(false);
 
-	function handleMenuOpen(event: Event) {
+	function handleAccountDropdownMenuToggle(event: Event) {
 		event.stopPropagation();
+		isUserDisplayOn = !isUserDisplayOn;
 		if (isUserDisplayOn) {
-			isUserDisplayOn = false;
-			document.body.removeEventListener('click', handleMenuClose);
+			document.body.addEventListener('click', handleAccountDropdownMenuToggle);
 		} else {
-			isUserDisplayOn = true;
-			document.body.addEventListener('click', handleMenuClose);
+			document.body.removeEventListener('click', handleAccountDropdownMenuToggle);
 		}
-	}
-
-	function handleMenuClose(event: Event) {
-		event.stopPropagation();
-		isUserDisplayOn = false;
-		document.body.removeEventListener('click', handleMenuClose);
 	}
 </script>
 
@@ -32,8 +25,8 @@
 			asdf
 		</div>
 		<div class="user-menu-wrapper">
-			<button id="user-button" onclick={handleMenuOpen}>{username} (Click me)</button>
-			<UserAccountDropdown username={username} email={email} isUserDisplayOn={isUserDisplayOn} />
+			<button id="user-button" onclick={handleAccountDropdownMenuToggle}>{username} (Click me)</button>
+			<AccountDropdownMenu username={username} email={email} isUserDisplayOn={isUserDisplayOn} />
 		</div>
 	</div>
 	<span class="outside-component">
