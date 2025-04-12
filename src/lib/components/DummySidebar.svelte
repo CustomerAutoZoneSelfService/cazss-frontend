@@ -3,12 +3,12 @@
 
 	let username = 'John Doe';
 	let email = 'some@domain.com';
-	let isUserDisplayOn = $state(false);
+	let isAccountDropdownMenuOn = $state(false);
 
 	function handleAccountDropdownMenuToggle(event: Event) {
 		event.stopPropagation();
-		isUserDisplayOn = !isUserDisplayOn;
-		if (isUserDisplayOn) {
+		isAccountDropdownMenuOn = !isAccountDropdownMenuOn;
+		if (isAccountDropdownMenuOn) {
 			document.body.addEventListener('click', handleAccountDropdownMenuToggle);
 		} else {
 			document.body.removeEventListener('click', handleAccountDropdownMenuToggle);
@@ -24,9 +24,9 @@
 		<div>
 			asdf
 		</div>
-		<div class="user-menu-wrapper">
-			<button id="user-button" onclick={handleAccountDropdownMenuToggle}>{username} (Click me)</button>
-			<AccountDropdownMenu username={username} email={email} isUserDisplayOn={isUserDisplayOn} />
+		<div class="account-menu-wrapper">
+			<button id="username-button" onclick={handleAccountDropdownMenuToggle}>{username} (Click me)</button>
+			<AccountDropdownMenu username={username} email={email} isAccountDropdownMenuOn={isAccountDropdownMenuOn} />
 		</div>
 	</div>
 	<span class="outside-component">
@@ -35,12 +35,12 @@
 </div>
 
 <style>
-		.app-container {
-				display: flex;
-		}
+    .app-container {
+        display: flex;
+    }
 
     .dummy-flex {
-				width: 200px;
+        width: 200px;
         height: 100vh;
         display: flex;
         padding-left: 10px;
@@ -52,7 +52,7 @@
         text-align: left;
     }
 
-    .user-menu-wrapper {
+    .account-menu-wrapper {
         position: relative;
     }
 </style>
