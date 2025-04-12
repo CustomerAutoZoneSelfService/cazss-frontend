@@ -1,6 +1,5 @@
 <script lang="ts">
   export let className: string = '';
-  export let listStyle: 'list-decimal' | 'list-disc' = 'list-decimal';
   export let direction: 'vertical' | 'horizontal' = 'vertical';
   export let type: 'ul' | 'ol' = 'ul';
 
@@ -12,11 +11,11 @@
 </script>
 
 {#if type === 'ul'}
-  <ul class={`${baseStyles} ${listStyle} ${className}`}>
+  <ul class={`${baseStyles} ${'list-disc'} ${className}`}>
     <slot />
   </ul>
 {:else}
-  <ol class={`${baseStyles} ${listStyle} ${className}`}>
+  <ol class={`${baseStyles} ${'list-decimal'} ${className}`}>
     <slot />
   </ol>
 {/if}
