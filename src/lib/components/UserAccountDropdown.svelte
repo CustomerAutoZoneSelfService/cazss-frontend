@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import LoadingSVG from './LoadingSVG.svelte';
 
 	let props = $props();
@@ -15,6 +15,8 @@ IMPORTANT NOTE ON HOW TO USE
 This component should be inside a div wrapper that includes only the username button.
 The wrapper needs to have position: relative. This allows the menu to always be on top of the
 username button, regardless of font size/zoom.
+On top of that, make sure to include the Event Handlers in the DummySidebar.svelte in order
+to close and open the menu.
 -->
 
 <!-- Only shows the dropdown when the user button is triggered -->
