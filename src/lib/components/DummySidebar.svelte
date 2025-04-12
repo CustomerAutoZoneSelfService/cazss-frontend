@@ -25,7 +25,7 @@
 		asdf
 	</div>
 	<div class="user-menu-wrapper">
-		<button on:click|stopPropagation={handleMenuOpen}>{username} (Click me)</button>
+		<button id="user-button" on:click|stopPropagation={handleMenuOpen}>{username} (Click me)</button>
 		<UserAccountDropdown username={username} email={email} isUserDisplayOn={isUserDisplayOn} />
 	</div>
 </div>
