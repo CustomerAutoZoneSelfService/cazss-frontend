@@ -20,8 +20,8 @@ to close and open the menu.
 -->
 
 <!-- Only shows the dropdown when the user button is triggered -->
-{#if props.isUserDisplayOn}
-	<div class="user-menu bg-[var(--color-gray-light)] border-[var(--color-gray-medium)]">
+{#if props.isAccountDropdownMenuOn}
+	<div class="account-dropdown-menu bg-[var(--color-gray-light)] border-[var(--color-gray-medium)]">
 		<div class="user-info">
 			<span>{props.username}</span>
 			<span>{props.email}</span>
@@ -41,7 +41,7 @@ to close and open the menu.
 {/if}
 
 <style>
-    .user-menu {
+    .account-dropdown-menu {
         position: absolute;
         width: 200px;
         margin-left: 10px;
