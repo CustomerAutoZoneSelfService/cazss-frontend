@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="out.css">
+  <title>Textarea Tailwind CSS</title>
+</head>
+<body>
+  <!-- Componente textarea para modificar la forma y tamaño -->
+  <textarea 
+    placeholder="Escribe aquí..."
+    disabled
+    class="rounded-[30px] border-none p-4 text-base resize-none w-full min-h-[100px] max-h-[300px] focus:outline-none focus:ring-2 focus:ring-gray-300 bg-gray-200 text-gray-800 disabled:opacity-50 disabled:cursor-not-allowed"
+  ></textarea>
+
+  <script>
+    // Get textarea element
+    const textarea = document.querySelector('textarea');
+
+    // false = permite escribir, true = previene escribir
+    let isDisabled = true;
+    textarea.disabled = isDisabled;
+    
+    // texto inicial
+    textarea.value = "Hello World";
+
+    // Función para establecer el valor del textarea
+    function setValue(value) {
+      textarea.value = value;
+    }
+
+    // Función para obtener el valor actual del textarea
+    function getValue() {
+      return textarea.value;
+    }
+  </script>
+</body>
+</html>
