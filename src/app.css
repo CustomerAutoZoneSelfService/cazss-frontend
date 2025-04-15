@@ -12,3 +12,53 @@
     --color-near-black: #1E1E1E;
     --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
 }
+
+  .form-box {
+    background-color: #EEEEEE;
+    padding: 30px;
+    border-radius: 30px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    width: 300px;
+  }
+  
+  .form-box h2 {
+    text-align: left;
+    margin-bottom: 20px;
+    color: #000000;
+  }
+  
+  .form-box input {
+    width: 90%;
+    padding: 10px 0;
+    margin: 20px 0;
+    border: none;
+    border-bottom: 2px solid #ccc;
+    background: transparent;
+    font-size: 16px;
+    color: #000000;
+    outline: none;
+    transition: border-color 0.3s ease;
+  }
+  
+  .form-box input:focus {
+    border-bottom-color: #AF1624;
+  }
+  .line-with-text {
+    display: flex;
+    align-items: center;
+    text-align: center;
+    margin: 20px 0;
+  }
+  
+  .form-box button {
+    width: 100%;
+    padding: 12px;
+    background-color: #AF1624;
+    color: #EEEEEE;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+  }
+  
+ 
