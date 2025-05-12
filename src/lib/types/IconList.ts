@@ -1,0 +1,15 @@
+export type IconList =
+	| 'Home'
+	| 'Clock'
+	| 'Plus'
+	| 'User'
+	| 'Sun'
+	| 'Moon'
+	| 'PanelRight'
+	| 'Search'
+	| 'ChevronRight'
+	| 'ChevronLeft'
+	| 'ArrowLeft'
+	| 'ArrowRight'
+	| 'Trash2'
+	| 'CircleHelp';

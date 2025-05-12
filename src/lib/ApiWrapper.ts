@@ -1,0 +1,57 @@
+import type { Service, DetailedService } from './types/ApiWrapper';
+import type { RequestService } from './types/RequestService';
+import type { ServiceResponse } from './types/ServiceResponse';
+
+const BASE_URL = 'http://localhost:8080';
+
+export default class ApiWrapper {
+	constructor(
+		private baseUrl: string = BASE_URL,
+		private headers: Record<string, string> = {}
+	) {}
+
+	// Primitives
+	private async request<T>(path: string, options: RequestInit = {}) {
+		const url = this.baseUrl + path;
+		const response = await fetch(url, {
+			...options,
+			headers: {
+				...this.headers,
+				...options.headers
+			}
+		});
+
+		if (!response.ok)
+			throw new Error(
+				`[API Wrapper] The request to ${url} (${options.method}) failed. Status: ${response.status} ${response.statusText}, body: ${await response.text()}`
+			);
+		else return (await response.json()) as T;
+	}
+
+	private get<T>(path: string) {
+		return this.request<T>(path, { method: 'GET' });
+	}
+
+	private post<T>(path: string, body: object) {
+		return this.request<T>(path, {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify(body)
+		});
+	}
+
+	// Endpoints
+	public getAllServices() {
+		return this.get<Service[]>('/services/getAllServices');
+	}
+
+	public getServiceById(id: number) {
+		return this.get<DetailedService>(`/services/getServiceById/${id}`);
+	}
+
+	public executeService(id: number, body: RequestService) {
+		return this.post<ServiceResponse>(`/services/executeService/${id}`, body);
+	}
+}

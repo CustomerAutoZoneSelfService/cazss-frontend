@@ -1,0 +1,209 @@
+<script lang="ts">
+	//Imports
+	import type { RequestVariable } from '../types/RequestVariable';
+	import type { ResponsePattern } from '../types/ResponsePattern';
+	import type { InputTablePrompt } from '../types/InputTablePrompt';
+	import Icon from './Icon.svelte';
+
+	//There is a discriminated union type that determines the kind of input the table receives
+	let { prompt }: { prompt: InputTablePrompt } = $props();
+
+	//RequestVariable Array, stores the values of the variables or response patterns
+	//its length determines the length of the table
+	let variables: RequestVariable[] | ResponsePattern[] = $state(
+		'endpointId' in prompt ? (prompt.requestVariables ?? []) : (prompt.responsePatterns ?? [])
+	);
+
+	//Getter for the RequestVariable array so that the parent can access it
+	export function getVariables() {
+		if ('endpointId' in prompt) {
+			// For RequestVariable type
+			return (variables as RequestVariable[]).filter((variable) => variable.key !== '');
+		} else {
+			// For ResponsePattern type
+			return (variables as ResponsePattern[]).filter((variable) => variable.name !== '');
+		}
+	}
+
+	//When you write a new key, a new row is added to the table
+	$effect(() => {
+		if (variables.length > 0) {
+			const lastItem = variables[variables.length - 1];
+			if ('key' in lastItem) {
+				// It's a RequestVariable
+				if (lastItem.key.length > 0) addNewRow();
+			} else {
+				// It's a ResponsePattern
+				if (lastItem.name.length > 0) addNewRow();
+			}
+		}
+	});
+
+	//The table must start with at least one row
+	addNewRow();
+
+	function addNewRow() {
+		if ('endpointId' in prompt) {
+			(variables as RequestVariable[]).push({
+				requestVariableId: 0,
+				endpointId: prompt.endpointId,
+				type: prompt.variableType,
+				key: '',
+				defaultValue: '',
+				customizable: false,
+				description: ''
+			});
+		} else {
+			(variables as ResponsePattern[]).push({
+				responsePatternId: 0,
+				responseId: prompt.responseId,
+				parentId: null,
+				pattern: '',
+				name: '',
+				description: '',
+				isLeaf: false
+			});
+		}
+	}
+
+	function deleteRow(index: number) {
+		if (variables.length > 1) variables.splice(index, 1);
+	}
+
+	//This function is for moving through the input table with the arrow keys
+	function onKeyDown(e: KeyboardEvent) {
+		let currentInput = document.activeElement;
+		let currentTd = currentInput?.parentElement;
+		let currentTr = currentTd?.parentElement;
+		let index = currentTd && currentTr ? Array.from(currentTr.children).indexOf(currentTd) : null;
+
+		let keyCombinationPressed = e.key + '|' + e.shiftKey + '|' + e.ctrlKey + '|' + e.altKey;
+		if (e.altKey) {
+			e.preventDefault();
+		}
+		switch (keyCombinationPressed) {
+			case 'ArrowRight|false|false|true':
+				currentTd?.nextElementSibling?.getElementsByTagName('input')[0].focus();
+				break;
+			case 'Enter|true|false|false':
+			case 'ArrowUp|false|false|true':
+			case 'ArrowUp|false|false|false':
+				if (currentTr?.previousElementSibling && index !== null) {
+					const prevRowCells = Array.from(currentTr.previousElementSibling.children);
+					if (index < prevRowCells.length) {
+						const inputElements = prevRowCells[index].getElementsByTagName('input');
+						if (inputElements.length > 0) {
+							inputElements[0].focus();
+						}
+					}
+				}
+				break;
+			case 'ArrowLeft|false|false|true':
+				currentTd?.previousElementSibling?.getElementsByTagName('input')[0].focus();
+				break;
+			case 'Enter|false|false|false':
+			case 'ArrowDown|false|false|true':
+			case 'ArrowDown|false|false|false':
+				if (currentTr?.nextElementSibling && index !== null) {
+					const nextRowCells = Array.from(currentTr.nextElementSibling.children);
+					if (index < nextRowCells.length) {
+						const inputElements = nextRowCells[index].getElementsByTagName('input');
+						if (inputElements.length > 0) {
+							inputElements[0].focus();
+						}
+					}
+				}
+				break;
+		}
+	}
+
+	function generateTestId(rowIndex: number, columnIndex: number) {
+		return `cell-row-${rowIndex}-col-${columnIndex}`;
+	}
+</script>
+
+<table data-testid="variable-table" class="table-auto border-collapse border border-gray-400">
+	<thead>
+		<tr>
+			<th class="border border-gray-300">{'endpointId' in prompt ? 'Key' : 'Name'}</th>
+			{#if !('endpointId' in prompt)}
+				<th class="border border-gray-300">Parent ID</th>
+			{/if}
+			<th class="border border-gray-300">{'endpointId' in prompt ? 'Value' : 'Pattern'}</th>
+			<th class="border border-gray-300">{'endpointId' in prompt ? 'Customizable' : 'Is Leaf'}</th>
+			<th class="border border-gray-300">Description</th>
+		</tr>
+	</thead>
+	<tbody>
+		{#each variables as variable, index (index)}
+			{#if 'key' in variable}
+				<!-- RequestVariable -->
+				<tr>
+					<th data-testid={generateTestId(index, 0)} class="border border-gray-300">
+						<input onkeydown={onKeyDown} bind:value={variable.key} class="p-1" />
+					</th>
+					<th data-testid={generateTestId(index, 1)} class="border border-gray-300">
+						<input onkeydown={onKeyDown} bind:value={variable.defaultValue} class="p-1" />
+					</th>
+					<th data-testid={generateTestId(index, 2)} class="border border-gray-300">
+						<input
+							type="checkbox"
+							onkeydown={onKeyDown}
+							bind:checked={variable.customizable}
+							class="p-1"
+						/>
+					</th>
+					<th
+						data-testid={generateTestId(index, 3)}
+						class="group relative flex flex-row border border-gray-300 align-middle"
+					>
+						<input onkeydown={onKeyDown} bind:value={variable.description} class="p-1" />
+						<div
+							data-testid={'delete-row-' + index}
+							class="ml-2 hidden items-center justify-center group-hover:flex"
+						>
+							<button onclick={() => deleteRow(index)}>
+								<Icon name="Trash2" />
+							</button>
+						</div>
+					</th>
+				</tr>
+			{:else}
+				<!-- ResponsePattern -->
+				<tr>
+					<th data-testid={generateTestId(index, 0)} class="border border-gray-300">
+						<input onkeydown={onKeyDown} bind:value={variable.name} class="p-1" />
+					</th>
+					<th data-testid={generateTestId(index, 1)} class="border border-gray-300">
+						<input onkeydown={onKeyDown} bind:value={variable.parentId} class="p-1" />
+					</th>
+					<th data-testid={generateTestId(index, 2)} class="border border-gray-300">
+						<input onkeydown={onKeyDown} bind:value={variable.pattern} class="p-1" />
+					</th>
+					<th data-testid={generateTestId(index, 3)} class="border border-gray-300">
+						<input
+							type="checkbox"
+							onkeydown={onKeyDown}
+							bind:checked={variable.isLeaf}
+							class="p-1"
+						/>
+					</th>
+					<th
+						data-testid={generateTestId(index, 4)}
+						class="group relative flex flex-row border border-gray-300 align-middle"
+					>
+						<input onkeydown={onKeyDown} bind:value={variable.description} class="p-1" />
+						<div
+							data-testid={'delete-row-' + index}
+							class="ml-2 hidden items-center justify-center group-hover:flex"
+						>
+							<button onclick={() => deleteRow(index)}>
+								<Icon name="Trash2" />
+							</button>
+						</div>
+					</th>
+				</tr>
+			{/if}
+		{/each}
+	</tbody>
+</table>
