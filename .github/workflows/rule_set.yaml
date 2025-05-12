@@ -20,7 +20,7 @@ jobs:
       - name: Validate branch name
         run: |
           echo "Event: ${GITHUB_EVENT_NAME}"
-          
+
           if [ "${GITHUB_EVENT_NAME}" = "push" ]; then
             branch_name="${GITHUB_REF#refs/heads/}"
           elif [ "${GITHUB_EVENT_NAME}" = "pull_request" ]; then
@@ -29,11 +29,11 @@ jobs:
             echo "Unsupported event: ${GITHUB_EVENT_NAME}"
             exit 1
           fi
-          
+
           team_regex="^team-[0-9]+-(stable)$"
           developer_regex="^[A-Z]+-[0-9]+$"
           predefined_regex="^(main|dev)$"
-          
+
           if [[ "$branch_name" =~ $team_regex ]] || \
             [[ "$branch_name" =~ $developer_regex ]] || \
             [[ "$branch_name" =~ $predefined_regex ]]; then
@@ -87,11 +87,22 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: 22.x # Or lts/*
+          node-version: lts/*
+
+      - name: Cache Playwright Browsers
+        uses: actions/cache@v4
+        id: playwright-cache
+        with:
+          path: |
+            ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-${{ hashFiles('package-lock.json') }}
+
       - name: Install dependencies
         run: npm ci
-      - name: Install Playwright Browsers
-        run: npx playwright install --with-deps
-      - name: Run
-        run: npm test
 
+      - name: Install Playwright Browsers
+        if: steps.playwright-cache.outputs.cache-hit != 'true'
+        run: npx playwright install --with-deps
+
+      - name: Run tests
+        run: npm test
