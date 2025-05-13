@@ -23,7 +23,7 @@
 	const api = new ApiWrapper();
 
 	let { data }: { data: Params['params'] } = $props();
-	console.log('accesed to endpoint page');
+	console.log('accessed to endpoint page');
 
 	let endpoint = $state<DetailedService>({
 		id: data.id,
@@ -76,7 +76,7 @@
 		queryString: []
 	});
 
-	//This should change when the execute service in backend is ready, and we have the type defined
+	// This should change when the execute service in backend is ready, and we have the type defined
 	// I figure the response status will have a ResponseStatus Type, and that will be accessed in the response section of the page
 	let ExecutionResponse = $state<ServiceResponse>({
 		status: {
@@ -85,6 +85,32 @@
 		},
 		response: []
 	});
+
+	// Mock Response to test UI if the backend is unavailable / the database is empty
+	/*
+	let mockExecutionResponse:ServiceResponse = {
+		status: {
+    code: 200,
+    description: "Success",
+  	},
+		response: [
+			{
+				"firstName": ["John"],
+				"lastName": ["Doe"],
+				"age": ["30"],
+			},
+			{
+				"productName": ["Laptop"],
+				"price": ["1200"],
+				"features": ["Intel Core i7", "16GB RAM", "512GB SSD"],
+			},
+			{
+				"city": ["Chihuahua"],
+				"country": ["Mexico"],
+			},
+		],
+	};
+	*/
 
 	// Function to initialize the RequestService object with the variables from the endpoint and possible default values
 	const initializeRequestService = (variables: RequestVariableString[]) => {
@@ -149,6 +175,7 @@
 	const executeEndpoint = async () => {
 		try {
 			ExecutionResponse = await api.executeService(data.id, requestService);
+			// ExecutionResponse = mockExecutionResponse;
 		} catch (error) {
 			console.log(error);
 			//add alert when component is pushed
@@ -156,8 +183,8 @@
 	};
 
 	// This is a mock function to simulate the fetchEndpoint function if no backend available
-
-	/*const fetchEndpoint = async ( id:number ) => {
+	/*
+	const fetchEndpoint = async ( id:number ) => {
 		endpoint = {
 			id: id,
 			name: "Get PNA by SKU",
@@ -189,8 +216,8 @@
 		};
 
 		initializeRequestService(endpoint.variables);
-	}*/
-
+	}
+	*/
 	const handleSend = async () => {
 		try {
 			await executeEndpoint();
@@ -241,11 +268,11 @@
 
 								<div>
 									{#if !variable.customizable}
-										<Input boxSize="full" disabled={true} bind:text={variable.defaultValue} />
+										<Input boxSize="full" isDisabled={true} bind:text={variable.defaultValue} />
 									{:else if requestValue}
 										<Input
 											boxSize="full"
-											disabled={!variable.customizable}
+											isDisabled={!variable.customizable}
 											bind:text={requestValue.value}
 										/>
 									{/if}
@@ -272,8 +299,10 @@
 			</HeadingFormat>
 
 			<List type="ul">
-				{#each Object.entries(ExecutionResponse.response) as [key, value], index (index)}
-					<li><b>{key}:</b> {value.join(', ')}</li>
+				{#each ExecutionResponse.response as variableResponse, index (index)}
+					{#each Object.entries(variableResponse) as [key, value], innerIndex (innerIndex)}
+						<li><b>{key}:</b> {value.join(', ')}</li>
+					{/each}
 				{/each}
 			</List>
 

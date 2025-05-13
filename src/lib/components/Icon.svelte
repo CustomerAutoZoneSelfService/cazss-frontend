@@ -1,6 +1,6 @@
 <script lang="ts">
 	import * as lucide from 'lucide-svelte';
-	import type { IconList } from '$lib/types/IconList.ts';
+	import { type IconList } from '$lib/types/IconList';
 
 	let {
 		name,

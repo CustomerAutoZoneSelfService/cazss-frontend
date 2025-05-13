@@ -62,7 +62,7 @@
 	};
 	let inlineParamPrompt: InputTablePrompt = {
 		endpointId: endpointId,
-		variableType: VariableType.inlline_param
+		variableType: VariableType.inline_param
 	};
 	let queryStringPrompt: InputTablePrompt = {
 		endpointId: endpointId,
@@ -89,7 +89,7 @@
 		step--;
 	}
 	export function registerEndpoint() {
-		goto('/home');
+		goto('/');
 	}
 </script>
 

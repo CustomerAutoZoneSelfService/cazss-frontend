@@ -20,7 +20,7 @@ export type RequestVariableString = {
 export enum VariableType {
 	header,
 	query_string,
-	inlline_param,
+	inline_param,
 	body
 }
 
