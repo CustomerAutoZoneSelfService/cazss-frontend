@@ -10,7 +10,7 @@
 </script>
 
 <!-- Agregamos `group` acá -->
-<div class="group bg-gray-light hover:bg-accent-red relative rounded-3xl shadow-lg">
+<div class="group bg-gray-light hover:bg-accent-red relative h-40 rounded-3xl shadow-lg">
 	<a href="/endpoint/{id}">
 		<div class="h-full w-full rounded-3xl p-6">
 			<div
