@@ -17,6 +17,7 @@ fi
 # Format and checkstyle
 npm run format
 npm run lint
+npm run check
 
 # Run tests
 # npx playwright test
