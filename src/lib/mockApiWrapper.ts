@@ -1,0 +1,76 @@
+import ApiWrapper from '$lib/ApiWrapper';
+import type { Service, DetailedService } from './types/ApiWrapper';
+import type { ServiceResponse } from './types/ServiceResponse';
+
+export function replaceWithMock(mockApi: ApiWrapper): void {
+	mockApi.getAllServices = async function (): Promise<Service[]> {
+		return [
+			{ endpointId: 1, name: 'getById', description: 'Example description' },
+			{ endpointId: 2, name: 'getByName', description: 'Example description 2' },
+			{ endpointId: 3, name: 'clearCache', description: 'Example description 3' },
+			{ endpointId: 4, name: 'resetSomething', description: 'Example description 4' }
+		];
+	};
+
+	mockApi.getServiceById = async function (): Promise<DetailedService> {
+		return {
+			id: 1,
+			name: 'Get PNA by SKU',
+			description: 'This endpoint retrieves the PNA by SKU.',
+			active: true,
+			method: 'GET',
+			url: 'https:blabla',
+			responses: [
+				{
+					status: 20,
+					description: 'OK'
+				}
+			],
+			filters: [],
+			variables: [
+				{
+					requestVariableId: 1,
+					type: 'HEADER',
+					keyName: 'CLIENT ID',
+					defaultValue: '',
+					customizable: true,
+					description: 'The id of the client'
+				},
+				{
+					requestVariableId: 2,
+					type: 'BODY',
+					keyName: 'SKU',
+					defaultValue: '00000',
+					customizable: true,
+					description: 'The SKU of the product'
+				}
+			],
+			requestBody: 'Template'
+		};
+	};
+
+	mockApi.executeService = async function (): Promise<ServiceResponse> {
+		return {
+			status: {
+				code: 200,
+				description: 'Success'
+			},
+			response: [
+				{
+					firstName: ['John'],
+					lastName: ['Doe'],
+					age: ['30']
+				},
+				{
+					productName: ['Laptop'],
+					price: ['1200'],
+					features: ['Intel Core i7', '16GB RAM', '512GB SSD']
+				},
+				{
+					city: ['Chihuahua'],
+					country: ['Mexico']
+				}
+			]
+		};
+	};
+}

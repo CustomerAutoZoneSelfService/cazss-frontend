@@ -1,9 +1,11 @@
 import { test, expect, type Page, type Locator } from '@playwright/test';
+import { initE2EMocked } from '../initE2EMocked';
 
 const pages = ['demo/input-table'];
 
 for (const path of pages) {
-	test.beforeEach(async ({ page }) => {
+	test.beforeEach(async ({ page }, testInfo) => {
+		await initE2EMocked(page, testInfo); // Call the initialization function
 		await page.goto(`${path}`);
 	});
 
