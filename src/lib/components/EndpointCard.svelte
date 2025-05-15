@@ -39,7 +39,7 @@
 	</a>
 	{#if historyCard}
 		<div class="absolute top-5 right-5">
-			<span class="text-near-black text-xs font-bold group-hover:text-white">History</span>
+			<span class="text-near-black text-sm group-hover:text-white">History</span>
 		</div>
 	{:else}
 		<button

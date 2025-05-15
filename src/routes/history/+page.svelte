@@ -7,9 +7,9 @@
 			<div>
 				<h1 class="text-2xl font-bold">History</h1>
 			</div>
-			<div>
-				<p>container for all the cards</p>
-			</div>
 		</div>
+    <div>
+      <p>container for all the cards</p>
+    </div>
 	</main>
 </div>
