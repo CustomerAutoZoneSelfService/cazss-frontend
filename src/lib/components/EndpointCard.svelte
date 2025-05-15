@@ -3,7 +3,7 @@
 	export let title: string;
 	export let description: string;
 	export let starred: boolean = false;
-
+	export let historyCard: boolean = false;
 	let toggleStarred = () => {
 		starred = !starred;
 	};
@@ -37,10 +37,16 @@
 			</p>
 		</div>
 	</a>
-	<button
-		class="text-near-black hover:bg-accent-red-dark absolute right-5 bottom-5 flex h-7 w-7 items-center justify-center rounded-full group-hover:text-white"
-		on:click|stopPropagation={toggleStarred}
-	>
-		{starred ? '★' : '☆'}
-	</button>
+	{#if historyCard}
+		<div class="absolute top-5 right-5">
+			<span class="text-near-black text-xs font-bold group-hover:text-white">History</span>
+		</div>
+	{:else}
+		<button
+			class="text-near-black hover:bg-accent-red-dark absolute right-5 bottom-5 flex h-7 w-7 items-center justify-center rounded-full group-hover:text-white"
+			on:click|stopPropagation={toggleStarred}
+		>
+			{starred ? '★' : '☆'}
+		</button>
+	{/if}
 </div>
