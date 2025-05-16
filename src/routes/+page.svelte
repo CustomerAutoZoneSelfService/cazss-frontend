@@ -2,26 +2,17 @@
 	import EndpointCard from '$lib/components/EndpointCard.svelte';
 	import SearchBar from '$lib/components/SearchBar.svelte';
 	import { onMount } from 'svelte';
+	import { getContext } from 'svelte';
+	import type ApiWrapper from '$lib/ApiWrapper'; //Exclusively for syntax.
 	import type { Service } from '$lib/types/ApiWrapper';
-	import ApiWrapper from '$lib/ApiWrapper';
 
-	let api = new ApiWrapper();
+	let api: ApiWrapper = getContext('api');
 
 	let endpoints: Service[] = [];
 	let filteredEndpoints: Service[] = [];
 
 	onMount(async () => {
 		endpoints = await api.getAllServices();
-		/*
-		Mock Available Endpoints
-
-		endpoints = [
-			{ endpointId: 1, name: 'getById', description: 'Example description' },
-			{ endpointId: 2, name: 'getByName', description: 'Example description 2' },
-			{ endpointId: 3, name: 'clearCache', description: 'Example description 3' },
-			{ endpointId: 4, name: 'resetSomething', description: 'Example description 4' }
-		];
-		*/
 		filteredEndpoints = [...endpoints];
 	});
 

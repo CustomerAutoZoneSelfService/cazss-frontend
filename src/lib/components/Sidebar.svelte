@@ -1,10 +1,10 @@
 <script lang="ts">
+	import { PanelRightIcon, HomeIcon, ClockIcon, PlusIcon, UserIcon } from 'lucide-svelte';
 	let collapsed = false;
 
 	function toggleCollapse() {
 		collapsed = !collapsed;
 	}
-	import Icon from './Icon.svelte';
 </script>
 
 <div
@@ -12,7 +12,7 @@
 	style="left: {collapsed ? '4.5rem' : '13.5rem'}"
 >
 	<button on:click={toggleCollapse} aria-label="Expandir o colapsar menú">
-		<Icon name="PanelRight" size={24} color="black" />
+		<PanelRightIcon size={24} color="black" />
 	</button>
 </div>
 
@@ -31,7 +31,7 @@
 						? 'justify-center'
 						: ''}"
 				>
-					<Icon name="Home" size={24} color="white" />
+					<HomeIcon size={24} color="white" />
 					{#if !collapsed}
 						<span class="text-white">Home</span>
 					{/if}
@@ -44,7 +44,7 @@
 						? 'justify-center'
 						: ''}"
 				>
-					<Icon name="Clock" size={24} color="white" />
+					<ClockIcon size={24} color="white" />
 					{#if !collapsed}
 						<span class="text-white">History</span>
 					{/if}
@@ -57,7 +57,7 @@
 						? 'justify-center'
 						: ''}"
 				>
-					<Icon name="Plus" size={24} color="white" />
+					<PlusIcon name="Plus" size={24} color="white" />
 					{#if !collapsed}
 						<span class="text-white">Create</span>
 					{/if}
@@ -67,7 +67,7 @@
 		<!-- Usuario -->
 		<div class="flex items-center p-4 text-white">
 			<div class="flex h-8 w-8 items-center justify-center rounded-full bg-white/20">
-				<Icon name="User" size={24} color="white" />
+				<UserIcon name="User" size={24} color="white" />
 			</div>
 			{#if !collapsed}
 				<span class="ml-3">Username</span>

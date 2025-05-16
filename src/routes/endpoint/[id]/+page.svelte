@@ -5,6 +5,9 @@
 	 * This page is responsible for allowing the user to input their request variables for the endpoint (in case they exist)
 	 * and allowing him to send it.
 	 */
+
+	import { getContext } from 'svelte';
+
 	import Button from '$lib/components/Button.svelte';
 	import HeadingFormat from '$lib/components/HeadingFormat.svelte';
 	import TextArea from '$lib/components/TextArea.svelte';
@@ -17,10 +20,10 @@
 	import type { RequestVariableString, VariableTypeString } from '$lib/types/RequestVariable';
 	import type { RequestService } from '$lib/types/RequestService';
 	import type { ServiceResponse } from '$lib/types/ServiceResponse';
+	import type ApiWrapper from '$lib/ApiWrapper';
 
-	import ApiWrapper from '$lib/ApiWrapper';
 	import List from '$lib/components/List.svelte';
-	const api = new ApiWrapper();
+	let api: ApiWrapper = getContext('api');
 
 	let { data }: { data: Params['params'] } = $props();
 	console.log('accessed to endpoint page');
