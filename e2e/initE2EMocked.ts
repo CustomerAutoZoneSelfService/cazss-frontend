@@ -6,6 +6,8 @@ export async function initE2EMocked(page: Page, testInfo: TestInfo): Promise<voi
 
 	await page.evaluate((isMocked) => {
 		window.E2E_MOCKED = isMocked;
+		console.log(isMocked);
+		console.log(window.E2E_MOCKED);
 		// Helps create a global variable so AppContainer can access it,
 		// which results in it knowing if it's going to use the mock version or not.
 	}, isMockedFromEnv);

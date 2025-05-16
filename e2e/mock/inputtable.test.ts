@@ -94,8 +94,6 @@ for (const path of pages) {
 		for (let currentKeyIndex = 0; currentKeyIndex < keyPresses.length; currentKeyIndex++) {
 			await page.keyboard.press(`${keyPresses[currentKeyIndex]}`);
 			const focusedCell = page.locator('th:has(input:focus)');
-			const dataTestId = await focusedCell.getAttribute('data-testid');
-			console.log(dataTestId);
 			await expect(focusedCell).toHaveAttribute('data-testid', expectedMovements[currentKeyIndex]);
 		}
 	}
@@ -181,7 +179,6 @@ for (const path of pages) {
 					await STARTING_CELL.click();
 					await testKeyMovement(page, keysToTest, keyLimits);
 				}
-				console.log('End of table ' + tableArrayIndex + '\n');
 			}
 		}
 	);
