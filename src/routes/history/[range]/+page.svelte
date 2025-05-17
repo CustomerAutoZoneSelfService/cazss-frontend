@@ -16,7 +16,7 @@
 	<div class="mb-6 flex items-center">
 		<div>
 			<!--TODO: Make that when going back, the pages goes to the section that the user click the see more and that is displayed well-->
-			<Button variant="text" size="sm" on:click={() => goto(`/history#${range}`)}>
+			<Button variant="text" size="sm" onclick={() => goto(`/history#${range}`)}>
 				Back (put arrow icon here)
 			</Button>
 		</div>

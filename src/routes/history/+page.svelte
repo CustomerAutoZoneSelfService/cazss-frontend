@@ -3,11 +3,11 @@
 	import Button from '$lib/components/Button.svelte';
 	import { goto } from '$app/navigation';
 
-	const mockEndpointCards = Array.from({ length: 12 }, () => {
+	const mockEndpointCards = Array.from({ length: 12 }, (_, i) => {
 		const date = new Date();
 		date.setDate(date.getDate());
 		return {
-			id: 999,
+			id: 400 + i,
 			title: 'Hora actual',
 			description: 'Esta es una prueba de a ver cómo saldría la card con la hora',
 			useDate: date.toLocaleString('es-MX', {
@@ -21,6 +21,7 @@
 	});
 
 	// TODO: Make empty state for the history page sections
+	// TODO: Handle correctly the unique key for the cards
 </script>
 
 <div class="align-items justify-center">
@@ -42,7 +43,7 @@
 				/>
 			{/each}
 			<div class="col-span-4 flex items-center justify-end">
-				<Button variant="text" size="md" on:click={() => goto('/history/today')}>See more</Button>
+				<Button variant="text" size="md" onclick={() => goto('/history/today')}>See more</Button>
 			</div>
 		</div>
 		<p class="text-bold my-4">Yesterday</p>
@@ -57,7 +58,7 @@
 				/>
 			{/each}
 			<div class="col-span-4 flex items-center justify-end">
-				<Button variant="text" size="md" on:click={() => goto('/history/yesterday')}>
+				<Button variant="text" size="md" onclick={() => goto('/history/yesterday')}>
 					See more
 				</Button>
 			</div>
@@ -74,7 +75,7 @@
 				/>
 			{/each}
 			<div class="col-span-4 flex items-center justify-end">
-				<Button variant="text" size="md" on:click={() => goto('/history/week')}>See more</Button>
+				<Button variant="text" size="md" onclick={() => goto('/history/week')}>See more</Button>
 			</div>
 		</div>
 	</main>

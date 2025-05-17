@@ -1,11 +1,4 @@
 <script lang="ts">
-	// TODO: Verify if there is a better way to do this or change the deprecated way
-	import { createEventDispatcher } from 'svelte';
-	const dispatch = createEventDispatcher<{
-		click: MouseEvent;
-		close: void;
-	}>();
-
 	export let variant: 'primary' | 'secondary' | 'text' = 'primary';
 	export let size: 'sm' | 'md' | 'lg' = 'md';
 	export let disabled: boolean = false;
@@ -19,9 +12,6 @@
 	function handleClick(event: MouseEvent) {
 		if (!disabled && onClick) {
 			onClick(event);
-		}
-		if (!disabled) {
-			dispatch('click', event);
 		}
 	}
 
