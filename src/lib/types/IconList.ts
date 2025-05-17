@@ -12,4 +12,5 @@ export type IconList =
 	| 'ArrowLeft'
 	| 'ArrowRight'
 	| 'Trash2'
-	| 'CircleHelp';
+	| 'CircleHelp'
+	| 'Download'; 
