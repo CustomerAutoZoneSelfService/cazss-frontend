@@ -13,9 +13,9 @@
 </script>
 
 <!-- Agregamos group acá -->
-<div class="group bg-gray-light hover:bg-accent-red relative h-40 rounded-3xl shadow-lg">
+<div class="group bg-gray-light flex flex-col hover:bg-accent-red relative h-fit rounded-3xl shadow-lg p-6">
 	<a href="/endpoint/{id}">
-		<div class="h-full w-full rounded-3xl p-6">
+		<div class="h-full w-full rounded-3xl">
 			<div
 				class="text-near-black text-2xl font-bold group-hover:text-white"
 				style="
@@ -41,12 +41,12 @@
 		</div>
 	</a>
 	{#if historyCard}
-		<div class="absolute right-5 bottom-5">
+		<div class="ml-auto">
 			<span class="text-near-black text-sm group-hover:text-white">{useDate}</span>
 		</div>
 	{:else}
 		<button
-			class="text-near-black hover:bg-accent-red-dark absolute right-5 bottom-5 flex h-7 w-7 items-center justify-center rounded-full group-hover:text-white"
+			class="text-near-black ml-auto hover:bg-accent-red-dark flex h-7 w-7 items-center justify-center rounded-full group-hover:text-white"
 			on:click|stopPropagation={toggleStarred}
 		>
 			{starred ? '★' : '☆'}
