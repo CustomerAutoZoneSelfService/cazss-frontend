@@ -4,12 +4,15 @@
 	export let description: string;
 	export let starred: boolean = false;
 	export let historyCard: boolean = false;
+
+	// Use this prop to show the date in the history card when historyCard is true
+	export let useDate: string = '';
 	let toggleStarred = () => {
 		starred = !starred;
 	};
 </script>
 
-<!-- Agregamos `group` acá -->
+<!-- Agregamos group acá -->
 <div class="group bg-gray-light hover:bg-accent-red relative h-40 rounded-3xl shadow-lg">
 	<a href="/endpoint/{id}">
 		<div class="h-full w-full rounded-3xl p-6">
@@ -38,8 +41,8 @@
 		</div>
 	</a>
 	{#if historyCard}
-		<div class="absolute top-5 right-5">
-			<span class="text-near-black text-sm group-hover:text-white">History</span>
+		<div class="absolute right-5 bottom-5">
+			<span class="text-near-black text-sm group-hover:text-white">{useDate}</span>
 		</div>
 	{:else}
 		<button
