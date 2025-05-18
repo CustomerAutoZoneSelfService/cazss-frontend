@@ -1,6 +1,6 @@
 <script lang="ts">
 	import AccountDropdownMenu from '$lib/components/AccountDropdownMenu.svelte';
-	import { UserIcon } from 'lucide-svelte';
+	import UserIcon from 'lucide-svelte/icons/user';
 
 	let username: string = $state('John Doe');
 	let email: string = $state('some@domain.com');
