@@ -17,7 +17,7 @@
 	style="left: {collapsed ? '4.5rem' : '13.5rem'}"
 >
 	<button on:click={toggleCollapse} aria-label="Expandir o colapsar menú">
-		<PanelRightIcon size={24} color="black" class="cursor-pointer text-inherit" />
+		<PanelRightIcon size={24} color="black" class="text-inherit" />
 	</button>
 </div>
 

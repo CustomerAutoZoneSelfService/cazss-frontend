@@ -145,7 +145,7 @@
 							class="fixed-icon-width invisible ml-2 transition-opacity duration-200 group-hover:visible"
 						>
 							<button onclick={() => deleteRow(index)}>
-								<Trash2Icon class="h-4 w-4 text-red-500 hover:text-red-700" />
+								<Trash2Icon class="shrink-0 text-inherit" />
 							</button>
 						</div>
 					</th>
@@ -174,7 +174,7 @@
 							class="fixed-icon-width invisible ml-2 transition-opacity duration-200 group-hover:visible"
 						>
 							<button onclick={() => deleteRow(index)}>
-								<Trash2Icon class="h-4 w-4 text-red-500 hover:text-red-700" />
+								<Trash2Icon class="shrink-0 text-inherit" />
 							</button>
 						</div>
 					</th>
