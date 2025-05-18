@@ -31,3 +31,5 @@ vite.config.ts.timestamp-*
 ### Custom Validation ###
 .github/*
 .husky/*
+
+/static/test_pdf.txt
