@@ -20,7 +20,7 @@
 	 */
 	function computeClasses() {
 		let baseClasses =
-			'inline-flex items-center justify-center font-bold rounded-md ' +
+			'inline-flex items-center justify-center font-bold rounded-md cursor-pointer ' +
 			'focus:outline-none transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed';
 
 		let variantClasses = '';
