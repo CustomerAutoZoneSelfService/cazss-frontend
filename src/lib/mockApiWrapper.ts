@@ -9,7 +9,8 @@ export function replaceWithMock(mockApi: ApiWrapper): void {
 			{ endpointId: 1, name: 'getById', description: 'Example description' },
 			{ endpointId: 2, name: 'getByName', description: 'Example description 2' },
 			{ endpointId: 3, name: 'clearCache', description: 'Example description 3' },
-			{ endpointId: 4, name: 'resetSomething', description: 'Example description 4' }
+			{ endpointId: 4, name: 'resetSomething', description: 'Example description 4' },
+			{ endpointId: 5, name: 'pdfMockData', description: 'Example pdf endpoint' }
 		];
 	};
 
