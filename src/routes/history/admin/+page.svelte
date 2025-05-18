@@ -1,8 +1,12 @@
 <script lang="ts">
 	import EndpointCard from '$lib/components/EndpointCard.svelte';
 	import Button from '$lib/components/Button.svelte';
+	import { onMount, getContext } from 'svelte';
 	import { goto } from '$app/navigation';
+	import type ApiWrapper from '$lib/ApiWrapper'; //Exclusively for syntax.
+	import type { HistoryService } from '$lib/types/ApiWrapper';
 
+	// Mock data for the endpoint cards
 	const mockEndpointCards = Array.from({ length: 12 }, (_, i) => {
 		const dayOffset = Math.floor(i / 3); // Cada 3 elementos cambia de día
 		const date = new Date();
@@ -29,6 +33,28 @@
 		};
 	});
 
+	// APi Wrapper
+	let api: ApiWrapper = getContext('api');
+
+	let historyEndpoints: HistoryService[] = [];
+
+	onMount(async () => {
+		historyEndpoints = await api.getHistoryAdmin();
+	});
+
+	// Function to format the date
+	// TODO: Move this to a utils file
+	function formatDate(datetime: string) {
+		const date = new Date(datetime);
+		return date.toLocaleString('es-MX', {
+			day: '2-digit',
+			month: '2-digit',
+			hour: '2-digit',
+			minute: '2-digit',
+			hour12: false
+		});
+	}
+
 	// TODO: Make empty state for the history page sections
 	// TODO: Handle correctly the unique key for the cards
 </script>
@@ -42,12 +68,13 @@
 		</div>
 		<p class="text-bold my-4">Today</p>
 		<div id="today" class="grid grid-cols-4 gap-12">
-			{#each mockEndpointCards as card (card.historyId)}
+			{#each historyEndpoints as card (card.historyId)}
 				<EndpointCard
 					id={card.historyId}
 					title={card.endpoint.name}
 					description={card.endpoint.description}
-					useDate={card.createdAt}
+					useDate={formatDate(card.createdAt)}
+					historyCard={true}
 				/>
 			{/each}
 			<div class="col-span-4 flex items-center justify-end">

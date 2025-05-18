@@ -1,8 +1,16 @@
 <script lang="ts">
 	import EndpointCard from '$lib/components/EndpointCard.svelte';
 	import Button from '$lib/components/Button.svelte';
+	import { onMount, getContext } from 'svelte';
 	import { goto } from '$app/navigation';
+	import type ApiWrapper from '$lib/ApiWrapper'; //Exclusively for syntax.
+	import type { HistoryService } from '$lib/types/ApiWrapper';
+	import { splitHistoryByDate } from '$lib/utils/splitHistoryByDate';
+	import { formatDateHistoryCards } from '$lib/utils/dates';
 
+	// Mock data for the endpoint cards
+	/**
+   * Use this if the API is not available
 	const mockEndpointCards = Array.from({ length: 12 }, (_, i) => {
 		const dayOffset = Math.floor(i / 3); // Cada 3 elementos cambia de día
 		const date = new Date();
@@ -29,6 +37,26 @@
 		};
 	});
 
+  */
+
+	// APi Wrapper
+	let api: ApiWrapper = getContext('api');
+
+	let historyEndpoints: HistoryService[] = [];
+
+	let historyToday: HistoryService[] = [];
+	let historyYesterday: HistoryService[] = [];
+	let historyWeek: HistoryService[] = [];
+
+	onMount(async () => {
+		// TODO: Obtain the user Id from the session or context
+		historyEndpoints = await api.getHistoryUser(5);
+		const splitHistory = splitHistoryByDate(historyEndpoints);
+		historyToday = splitHistory.today;
+		historyYesterday = splitHistory.yesterday;
+		historyWeek = splitHistory.week;
+	});
+
 	// TODO: Make empty state for the history page sections
 	// TODO: Handle correctly the unique key for the cards
 </script>
@@ -42,12 +70,13 @@
 		</div>
 		<p class="text-bold my-4">Today</p>
 		<div id="today" class="grid grid-cols-4 gap-12">
-			{#each mockEndpointCards as card (card.historyId)}
+			{#each historyToday as card (card.historyId)}
 				<EndpointCard
 					id={card.historyId}
 					title={card.endpoint.name}
 					description={card.endpoint.description}
-					useDate={card.createdAt}
+					useDate={formatDateHistoryCards(card.createdAt)}
+					historyCard={true}
 				/>
 			{/each}
 			<div class="col-span-4 flex items-center justify-end">
@@ -56,12 +85,12 @@
 		</div>
 		<p class="text-bold my-4">Yesterday</p>
 		<div id="yesterday" class="grid grid-cols-4 gap-12">
-			{#each mockEndpointCards as card (card.historyId)}
+			{#each historyYesterday as card (card.historyId)}
 				<EndpointCard
 					id={card.historyId}
 					title={card.endpoint.name}
 					description={card.endpoint.description}
-					useDate={card.createdAt}
+					useDate={formatDateHistoryCards(card.createdAt)}
 					historyCard={true}
 				/>
 			{/each}
@@ -73,12 +102,12 @@
 		</div>
 		<p class="text-bold my-4">Last 7 days</p>
 		<div id="week" class="grid grid-cols-4 gap-12">
-			{#each mockEndpointCards as card (card.historyId)}
+			{#each historyWeek as card (card.historyId)}
 				<EndpointCard
 					id={card.historyId}
 					title={card.endpoint.name}
 					description={card.endpoint.description}
-					useDate={card.createdAt}
+					useDate={formatDateHistoryCards(card.createdAt)}
 					historyCard={true}
 				/>
 			{/each}

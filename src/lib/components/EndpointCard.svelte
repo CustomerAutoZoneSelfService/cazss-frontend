@@ -13,7 +13,9 @@
 </script>
 
 <!-- Agregamos group acá -->
-<div class="group bg-gray-light flex flex-col hover:bg-accent-red relative h-fit rounded-3xl shadow-lg p-6">
+<div
+	class="group bg-gray-light hover:bg-accent-red relative flex h-fit flex-col rounded-3xl p-6 shadow-lg"
+>
 	<a href="/endpoint/{id}">
 		<div class="h-full w-full rounded-3xl">
 			<div
@@ -46,7 +48,7 @@
 		</div>
 	{:else}
 		<button
-			class="text-near-black ml-auto hover:bg-accent-red-dark flex h-7 w-7 items-center justify-center rounded-full group-hover:text-white"
+			class="text-near-black hover:bg-accent-red-dark ml-auto flex h-7 w-7 items-center justify-center rounded-full group-hover:text-white"
 			on:click|stopPropagation={toggleStarred}
 		>
 			{starred ? '★' : '☆'}
