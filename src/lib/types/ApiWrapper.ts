@@ -34,10 +34,8 @@ export type DetailedService = {
 
 export type HistoryService = {
 	historyId: number;
-	endpoint: {
-		endpointId: number;
-		name: string;
-		description: string;
-	};
+	email: string;
+	endpointName: string;
+	endpointDescription: string;
 	createdAt: string;
 };

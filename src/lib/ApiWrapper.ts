@@ -60,6 +60,6 @@ export default class ApiWrapper {
 	}
 
 	public getHistoryUser(userId: number) {
-		return this.get<HistoryService[]>(`/services/history/user?userId=${userId}`);
+		return this.get<HistoryService[]>(`/services/history?userId=${userId}`);
 	}
 }

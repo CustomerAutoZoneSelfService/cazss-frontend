@@ -73,8 +73,8 @@
 			{#each historyToday as card (card.historyId)}
 				<EndpointCard
 					id={card.historyId}
-					title={card.endpoint.name}
-					description={card.endpoint.description}
+					title={card.endpointName}
+					description={card.endpointDescription}
 					useDate={formatDateHistoryCards(card.createdAt)}
 					historyCard={true}
 				/>
@@ -88,8 +88,8 @@
 			{#each historyYesterday as card (card.historyId)}
 				<EndpointCard
 					id={card.historyId}
-					title={card.endpoint.name}
-					description={card.endpoint.description}
+					title={card.endpointName}
+					description={card.endpointDescription}
 					useDate={formatDateHistoryCards(card.createdAt)}
 					historyCard={true}
 				/>
@@ -105,8 +105,8 @@
 			{#each historyWeek as card (card.historyId)}
 				<EndpointCard
 					id={card.historyId}
-					title={card.endpoint.name}
-					description={card.endpoint.description}
+					title={card.endpointName}
+					description={card.endpointDescription}
 					useDate={formatDateHistoryCards(card.createdAt)}
 					historyCard={true}
 				/>

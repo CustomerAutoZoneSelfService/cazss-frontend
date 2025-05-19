@@ -17,12 +17,10 @@
 
 		return {
 			historyId: i + 2,
-			endpoint: {
-				endpointId: 3,
-				name: 'Get TEST',
-				description:
-					'Dscripcion de un endpount para obtener un recurso y asi poder ver el resultado'
-			},
+			email: `user${i + 1}@example.com`,
+			endpointName: 'Get TEST',
+			endpointDescription:
+				'Descripción de un endpoint para obtener un recurso y así poder ver el resultado',
 			createdAt: date.toLocaleString('es-MX', {
 				day: '2-digit',
 				month: 'short',
@@ -71,8 +69,8 @@
 			{#each historyEndpoints as card (card.historyId)}
 				<EndpointCard
 					id={card.historyId}
-					title={card.endpoint.name}
-					description={card.endpoint.description}
+					title={card.endpointName}
+					description={card.endpointDescription}
 					useDate={formatDate(card.createdAt)}
 					historyCard={true}
 				/>
@@ -86,8 +84,8 @@
 			{#each mockEndpointCards as card (card.historyId)}
 				<EndpointCard
 					id={card.historyId}
-					title={card.endpoint.name}
-					description={card.endpoint.description}
+					title={card.endpointName}
+					description={card.endpointDescription}
 					useDate={card.createdAt}
 					historyCard={true}
 				/>
@@ -103,8 +101,8 @@
 			{#each mockEndpointCards as card (card.historyId)}
 				<EndpointCard
 					id={card.historyId}
-					title={card.endpoint.name}
-					description={card.endpoint.description}
+					title={card.endpointName}
+					description={card.endpointDescription}
 					useDate={card.createdAt}
 					historyCard={true}
 				/>
