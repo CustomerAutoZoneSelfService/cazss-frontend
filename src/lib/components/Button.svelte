@@ -6,35 +6,28 @@
 	export let onClick: ((event: MouseEvent) => void) | null = null;
 	export let iconOnly: boolean = false;
 
-	/**
-	 * Handle click events, but only if not disabled.
-	 */
 	function handleClick(event: MouseEvent) {
 		if (!disabled && onClick) {
 			onClick(event);
 		}
 	}
 
-	/**
-	 * Generate the Tailwind classes based on props.
-	 */
 	function computeClasses() {
 		let baseClasses =
-			'inline-flex items-center justify-center font-bold rounded-md cursor-pointer ' +
+			'inline-flex items-center justify-center font-bold uppercase rounded-[50px] ' +
 			'focus:outline-none transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed';
 
 		let variantClasses = '';
 		switch (variant) {
 			case 'primary':
-				variantClasses = `bg-accent-red text-white hover:bg-accent-red-dark
-                                   hover:shadow-md`;
+				variantClasses = 'bg-accent-red text-white hover:bg-accent-red-dark hover:shadow-md';
 				break;
 			case 'secondary':
 				variantClasses = 'bg-gray-200 text-black hover:bg-gray-300 active:bg-gray-400';
 				break;
 			case 'text':
-				variantClasses = `text-accent-red bg-transparent hover:text-accent-red-dark
-                                hover:underline`;
+				variantClasses =
+					'text-accent-red bg-transparent hover:text-accent-red-dark hover:underline';
 				break;
 		}
 
@@ -44,7 +37,7 @@
 				sizeClasses = iconOnly ? 'w-8 h-8' : 'px-3 py-1 text-sm';
 				break;
 			case 'md':
-				sizeClasses = iconOnly ? 'w-10 h-10' : 'px-4 py-2 text-base';
+				sizeClasses = iconOnly ? 'w-10 h-10' : 'w-55 h-12 px-10 text-base';
 				break;
 			case 'lg':
 				sizeClasses = iconOnly ? 'w-12 h-12' : 'px-6 py-3 text-lg';

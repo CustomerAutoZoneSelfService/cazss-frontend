@@ -4,41 +4,31 @@
 	import type { InputTablePrompt } from '../types/InputTablePrompt';
 	import Trash2Icon from 'lucide-svelte/icons/trash-2';
 
-	//There is a discriminated union type that determines the kind of input the table receives
 	let { prompt }: { prompt: InputTablePrompt } = $props();
 
-	//RequestVariable Array, stores the values of the variables or response patterns
-	//its length determines the length of the table
 	let variables: RequestVariable[] | ResponsePattern[] = $state(
 		'endpointId' in prompt ? (prompt.requestVariables ?? []) : (prompt.responsePatterns ?? [])
 	);
 
-	//Getter for the RequestVariable array so that the parent can access it
 	export function getVariables() {
 		if ('endpointId' in prompt) {
-			// For RequestVariable type
 			return (variables as RequestVariable[]).filter((variable) => variable.key !== '');
 		} else {
-			// For ResponsePattern type
 			return (variables as ResponsePattern[]).filter((variable) => variable.name !== '');
 		}
 	}
 
-	//When you write a new key, a new row is added to the table
 	$effect(() => {
 		if (variables.length > 0) {
 			const lastItem = variables[variables.length - 1];
 			if ('key' in lastItem) {
-				// It's a RequestVariable
 				if (lastItem.key.length > 0) addNewRow();
 			} else {
-				// It's a ResponsePattern
 				if (lastItem.name.length > 0) addNewRow();
 			}
 		}
 	});
 
-	//The table must start with at least one row
 	addNewRow();
 
 	function addNewRow() {
@@ -69,7 +59,6 @@
 		if (variables.length > 1) variables.splice(index, 1);
 	}
 
-	//This function is for moving through the input table with the arrow keys
 	function onKeyDown(e: KeyboardEvent) {
 		let currentInput = document.activeElement;
 		let currentTd = currentInput?.parentElement;
@@ -77,9 +66,8 @@
 		let index = currentTd && currentTr ? Array.from(currentTr.children).indexOf(currentTd) : null;
 
 		let keyCombinationPressed = e.key + '|' + e.shiftKey + '|' + e.ctrlKey + '|' + e.altKey;
-		if (e.altKey) {
-			e.preventDefault();
-		}
+		if (e.altKey) e.preventDefault();
+
 		switch (keyCombinationPressed) {
 			case 'ArrowRight|false|false|true':
 				currentTd?.nextElementSibling?.getElementsByTagName('input')[0].focus();
@@ -91,9 +79,7 @@
 					const prevRowCells = Array.from(currentTr.previousElementSibling.children);
 					if (index < prevRowCells.length) {
 						const inputElements = prevRowCells[index].getElementsByTagName('input');
-						if (inputElements.length > 0) {
-							inputElements[0].focus();
-						}
+						if (inputElements.length > 0) inputElements[0].focus();
 					}
 				}
 				break;
@@ -107,9 +93,7 @@
 					const nextRowCells = Array.from(currentTr.nextElementSibling.children);
 					if (index < nextRowCells.length) {
 						const inputElements = nextRowCells[index].getElementsByTagName('input');
-						if (inputElements.length > 0) {
-							inputElements[0].focus();
-						}
+						if (inputElements.length > 0) inputElements[0].focus();
 					}
 				}
 				break;
@@ -121,88 +105,82 @@
 	}
 </script>
 
-<table data-testid="variable-table" class="table-auto border-collapse border border-gray-400">
+<style>
+	.fixed-icon-width {
+		width: 1.5rem;
+		min-width: 1.5rem;
+	}
+</style>
+
+<table data-testid="variable-table" class="table-auto border-collapse border border-gray-400 w-full">
 	<thead>
-		<tr>
-			<th class="border border-gray-300">{'endpointId' in prompt ? 'Key' : 'Name'}</th>
+		<tr class="bg-gray-100">
+			<th class="border border-gray-300 p-2 text-left">{'endpointId' in prompt ? 'Key' : 'Name'}</th>
 			{#if !('endpointId' in prompt)}
-				<th class="border border-gray-300">Parent ID</th>
+				<th class="border border-gray-300 p-2 text-left">Parent ID</th>
 			{/if}
-			<th class="border border-gray-300">{'endpointId' in prompt ? 'Value' : 'Pattern'}</th>
-			<th class="border border-gray-300">{'endpointId' in prompt ? 'Customizable' : 'Is Leaf'}</th>
-			<th class="border border-gray-300">Description</th>
+			<th class="border border-gray-300 p-2 text-left">{'endpointId' in prompt ? 'Value' : 'Pattern'}</th>
+			<th class="border border-gray-300 p-2 text-left whitespace-nowrap">{'endpointId' in prompt ? 'Customizable' : 'Is Leaf'}</th>
+			<th class="border border-gray-300 p-2 text-left w-[300px]">Description</th>
 		</tr>
 	</thead>
 	<tbody>
 		{#each variables as variable, index (index)}
 			{#if 'key' in variable}
-				<!-- RequestVariable -->
-				<tr>
-					<th data-testid={generateTestId(index, 0)} class="border border-gray-300">
-						<input onkeydown={onKeyDown} bind:value={variable.key} class="p-1" />
-					</th>
-					<th data-testid={generateTestId(index, 1)} class="border border-gray-300">
-						<input onkeydown={onKeyDown} bind:value={variable.defaultValue} class="p-1" />
-					</th>
-					<th data-testid={generateTestId(index, 2)} class="border border-gray-300">
-						<input
-							type="checkbox"
-							onkeydown={onKeyDown}
-							bind:checked={variable.customizable}
-							class="p-1"
-						/>
-					</th>
-					<th
+				<tr class="hover:bg-gray-50">
+					<td data-testid={generateTestId(index, 0)} class="border border-gray-300 p-2">
+						<input onkeydown={onKeyDown} bind:value={variable.key} class="p-1 w-full" />
+					</td>
+					<td data-testid={generateTestId(index, 1)} class="border border-gray-300 p-2">
+						<input onkeydown={onKeyDown} bind:value={variable.defaultValue} class="p-1 w-full" />
+					</td>
+					<td data-testid={generateTestId(index, 2)} class="border border-gray-300 p-2 text-center">
+						<input type="checkbox" onkeydown={onKeyDown} bind:checked={variable.customizable} />
+					</td>
+					<td
 						data-testid={generateTestId(index, 3)}
-						class="group relative flex flex-row border border-gray-300 align-middle"
+						class="border border-gray-300 p-2 relative group w-[300px]"
 					>
-						<input onkeydown={onKeyDown} bind:value={variable.description} class="p-1" />
-						<div
-							data-testid={'delete-row-' + index}
-							class="ml-2 hidden items-center justify-center group-hover:flex"
-						>
-							<button onclick={() => deleteRow(index)}>
-								<Trash2Icon class="shrink-0 text-inherit" />
-							</button>
+						<div class="flex items-center">
+							<input onkeydown={onKeyDown} bind:value={variable.description} class="p-1 w-full" />
+							<div class="fixed-icon-width ml-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+								<button data-testid={'delete-row-' + index} onclick={() => deleteRow(index)}>
+									<Trash2Icon class="w-4 h-4 text-red-500 hover:text-red-700" />
+								</button>
+							</div>
 						</div>
-					</th>
+					</td>
 				</tr>
 			{:else}
-				<!-- ResponsePattern -->
-				<tr>
-					<th data-testid={generateTestId(index, 0)} class="border border-gray-300">
-						<input onkeydown={onKeyDown} bind:value={variable.name} class="p-1" />
-					</th>
-					<th data-testid={generateTestId(index, 1)} class="border border-gray-300">
-						<input onkeydown={onKeyDown} bind:value={variable.parentId} class="p-1" />
-					</th>
-					<th data-testid={generateTestId(index, 2)} class="border border-gray-300">
-						<input onkeydown={onKeyDown} bind:value={variable.pattern} class="p-1" />
-					</th>
-					<th data-testid={generateTestId(index, 3)} class="border border-gray-300">
-						<input
-							type="checkbox"
-							onkeydown={onKeyDown}
-							bind:checked={variable.isLeaf}
-							class="p-1"
-						/>
-					</th>
-					<th
+				<tr class="hover:bg-gray-50">
+					<td data-testid={generateTestId(index, 0)} class="border border-gray-300 p-2">
+						<input onkeydown={onKeyDown} bind:value={variable.name} class="p-1 w-full" />
+					</td>
+					<td data-testid={generateTestId(index, 1)} class="border border-gray-300 p-2">
+						<input onkeydown={onKeyDown} bind:value={variable.parentId} class="p-1 w-full" />
+					</td>
+					<td data-testid={generateTestId(index, 2)} class="border border-gray-300 p-2">
+						<input onkeydown={onKeyDown} bind:value={variable.pattern} class="p-1 w-full" />
+					</td>
+					<td data-testid={generateTestId(index, 3)} class="border border-gray-300 p-2 text-center">
+						<input type="checkbox" onkeydown={onKeyDown} bind:checked={variable.isLeaf} />
+					</td>
+					<td
 						data-testid={generateTestId(index, 4)}
-						class="group relative flex flex-row border border-gray-300 align-middle"
+						class="border border-gray-300 p-2 relative group w-[300px]"
 					>
-						<input onkeydown={onKeyDown} bind:value={variable.description} class="p-1" />
-						<div
-							data-testid={'delete-row-' + index}
-							class="ml-2 hidden items-center justify-center group-hover:flex"
-						>
-							<button onclick={() => deleteRow(index)}>
-								<Trash2Icon class="shrink-0 text-inherit" />
-							</button>
+						<div class="flex items-center">
+							<input onkeydown={onKeyDown} bind:value={variable.description} class="p-1 w-full" />
+							<div class="fixed-icon-width ml-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+								<button data-testid={'delete-row-' + index} onclick={() => deleteRow(index)}>
+									<Trash2Icon class="w-4 h-4 text-red-500 hover:text-red-700" />
+								</button>
+							</div>
 						</div>
-					</th>
+					</td>
 				</tr>
 			{/if}
 		{/each}
 	</tbody>
 </table>
+
