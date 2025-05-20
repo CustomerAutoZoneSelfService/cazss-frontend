@@ -1,6 +1,6 @@
 <script lang="ts">
 	import AccountDropdownMenu from '$lib/components/AccountDropdownMenu.svelte';
-	import Icon from '$lib/components/Icon.svelte';
+	import UserIcon from 'lucide-svelte/icons/user';
 
 	let username: string = $state('John Doe');
 	let email: string = $state('some@domain.com');
@@ -34,7 +34,7 @@
 		class="bg-accent-red hover:bg-accent-red-dark flex h-full w-full rounded-lg p-3 duration-300 hover:cursor-pointer hover:transition"
 		onclick={handleAccountDropdownMenuToggle}
 	>
-		<Icon name="User" color="white" />
+		<UserIcon name="User" color="white" />
 		{#if !isSidebarCollapsed}
 			<span class="mt-1 ml-3 text-white">{username}</span>
 		{/if}

@@ -5,6 +5,9 @@
 	 * This page is responsible for allowing the user to input their request variables for the endpoint (in case they exist)
 	 * and allowing him to send it.
 	 */
+
+	import { getContext } from 'svelte';
+
 	import Button from '$lib/components/Button.svelte';
 	import HeadingFormat from '$lib/components/HeadingFormat.svelte';
 	import TextArea from '$lib/components/TextArea.svelte';
@@ -17,10 +20,10 @@
 	import type { RequestVariableString, VariableTypeString } from '$lib/types/RequestVariable';
 	import type { RequestService } from '$lib/types/RequestService';
 	import type { ServiceResponse } from '$lib/types/ServiceResponse';
+	import type ApiWrapper from '$lib/ApiWrapper';
 
-	import ApiWrapper from '$lib/ApiWrapper';
 	import List from '$lib/components/List.svelte';
-	const api = new ApiWrapper();
+	let api: ApiWrapper = getContext('api');
 
 	let { data }: { data: Params['params'] } = $props();
 	console.log('accessed to endpoint page');
@@ -85,32 +88,6 @@
 		},
 		response: []
 	});
-
-	// Mock Response to test UI if the backend is unavailable / the database is empty
-	/*
-	let mockExecutionResponse:ServiceResponse = {
-		status: {
-    code: 200,
-    description: "Success",
-  	},
-		response: [
-			{
-				"firstName": ["John"],
-				"lastName": ["Doe"],
-				"age": ["30"],
-			},
-			{
-				"productName": ["Laptop"],
-				"price": ["1200"],
-				"features": ["Intel Core i7", "16GB RAM", "512GB SSD"],
-			},
-			{
-				"city": ["Chihuahua"],
-				"country": ["Mexico"],
-			},
-		],
-	};
-	*/
 
 	// Function to initialize the RequestService object with the variables from the endpoint and possible default values
 	const initializeRequestService = (variables: RequestVariableString[]) => {
@@ -182,42 +159,6 @@
 		}
 	};
 
-	// This is a mock function to simulate the fetchEndpoint function if no backend available
-	/*
-	const fetchEndpoint = async ( id:number ) => {
-		endpoint = {
-			id: id,
-			name: "Get PNA by SKU",
-			description: "This endpoint retrieves the PNA by SKU.",
-			active: true,
-			method: 'GET',
-			url: 'https:blabla',
-			responses: [{
-				status: 20,
-				description: 'OK',
-			}
-			],
-			filters: [],
-			variables: [
-				{requestVariableId: 1,
-				type: 'HEADER',
-				keyName: 'CLIENT ID',
-				defaultValue: '',
-				customizable: true,
-				description: 'The id of the client'},
-				{requestVariableId: 2,
-					type: 'BODY',
-					keyName: 'SKU',
-					defaultValue: '00000',
-					customizable: true,
-					description: 'The SKU of the product'}
-			],
-			requestBody: 'Template'
-		};
-
-		initializeRequestService(endpoint.variables);
-	}
-	*/
 	const handleSend = async () => {
 		try {
 			await executeEndpoint();
@@ -307,10 +248,17 @@
 			</List>
 
 			<HeadingFormat as="h4">Raw body</HeadingFormat>
-			<TextArea
-				disabled={true}
-				text={ExecutionResponse.response ? JSON.stringify(ExecutionResponse.response) : ''}
-			/>
+			{#if ExecutionResponse.response.some((variable) => 'content' in variable)}
+				<!--
+				<PdfViewer data={atob(ExecutionResponse.response.find(v => 'content' in v)?.content)} />
+				-->
+				<p>Here goes the pdf visualizer and the button</p>
+			{:else}
+				<TextArea
+					disabled={true}
+					text={ExecutionResponse.response ? JSON.stringify(ExecutionResponse.response) : ''}
+				/>
+			{/if}
 		{/if}
 	</div>
 </main>

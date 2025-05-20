@@ -1,4 +1,22 @@
 <script lang="ts">
+	import { setContext } from 'svelte';
+	import ApiWrapper from '$lib/ApiWrapper';
+	import { replaceWithMock } from '$lib/mockApiWrapper';
+
+	const api = new ApiWrapper();
+	let useMock = false;
+
+	console.log(window.E2E_MOCKED);
+	if (window.E2E_MOCKED != undefined) {
+		useMock = window.E2E_MOCKED === true;
+	}
+
+	if (useMock) {
+		replaceWithMock(api);
+	}
+
+	setContext('api', api);
+
 	let { children } = $props();
 </script>
 

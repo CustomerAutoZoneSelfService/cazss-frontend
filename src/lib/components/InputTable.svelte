@@ -1,9 +1,8 @@
 <script lang="ts">
-	//Imports
 	import type { RequestVariable } from '../types/RequestVariable';
 	import type { ResponsePattern } from '../types/ResponsePattern';
 	import type { InputTablePrompt } from '../types/InputTablePrompt';
-	import Icon from './Icon.svelte';
+	import Trash2Icon from 'lucide-svelte/icons/trash-2';
 
 	//There is a discriminated union type that determines the kind of input the table receives
 	let { prompt }: { prompt: InputTablePrompt } = $props();
@@ -163,7 +162,7 @@
 							class="ml-2 hidden items-center justify-center group-hover:flex"
 						>
 							<button onclick={() => deleteRow(index)}>
-								<Icon name="Trash2" />
+								<Trash2Icon class="shrink-0 text-inherit" />
 							</button>
 						</div>
 					</th>
@@ -198,7 +197,7 @@
 							class="ml-2 hidden items-center justify-center group-hover:flex"
 						>
 							<button onclick={() => deleteRow(index)}>
-								<Icon name="Trash2" />
+								<Trash2Icon class="shrink-0 text-inherit" />
 							</button>
 						</div>
 					</th>

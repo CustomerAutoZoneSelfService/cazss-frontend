@@ -1,6 +1,5 @@
 <script lang="ts">
-	import Icon from '$lib/components/Icon.svelte'; // usa tu wrapper de IconList + lucide
-	export let fileUrl: string = '';
+	import DownloadIcon from 'lucide-svelte/icons/download';	export let fileUrl: string = '';
 	export let fileName: string = 'archivo';
 	export let size: 'sm' | 'md' | 'lg' = 'md';
 	export let disabled: boolean = false;
@@ -32,7 +31,8 @@
 				variantClasses = 'bg-gray-200 text-black hover:bg-gray-300 active:bg-gray-400';
 				break;
 			case 'text':
-				variantClasses = 'text-accent-red bg-transparent hover:text-accent-red-dark hover:underline';
+				variantClasses =
+					'text-accent-red bg-transparent hover:text-accent-red-dark hover:underline';
 				break;
 		}
 
@@ -56,5 +56,5 @@
 </script>
 
 <button class={computeClasses()} on:click={handleDownload} {disabled}>
-	<Icon name="Download" size={20} color="currentColor" />
+	<DownloadIcon size={20} color="currentColor" />
 </button>
