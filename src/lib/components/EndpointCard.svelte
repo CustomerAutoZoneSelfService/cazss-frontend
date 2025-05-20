@@ -1,28 +1,42 @@
 <script lang="ts">
-	export let id: number;
-	export let title: string;
-	export let description: string;
-	export let starred: boolean = false;
-	export let historyCard: boolean = false;
+	let {
+		id,
+		title,
+		description,
+		starred = false,
+		historyCard = false,
+		useDate = '',
+		onClick = (event: MouseEvent) => {}
+	} = $props<{
+		id: number;
+		title: string;
+		description: string;
+		starred?: boolean;
+		historyCard?: boolean;
+		useDate?: string;
+		onClick?: (event: MouseEvent) => void;
+	}>();
 
-	// Use this prop to show the date in the history card when historyCard is true
-	export let useDate: string = '';
-	let toggleStarred = () => {
-		starred = !starred;
-	};
+	let isStarred = $state(starred);
 
-	import { createEventDispatcher } from 'svelte';
-	const dispatch = createEventDispatcher();
+	function toggleStarred(event: MouseEvent) {
+		event.stopPropagation();
+		isStarred = !isStarred;
+	}
 
-	function handleClick(event: MouseEvent) {
-		dispatch('click', event);
+	function handleKeydown(event: KeyboardEvent) {
+		if (event.key === 'Enter' || event.key === ' ') {
+			event.preventDefault(); // Prevent scrolling on Space
+			onClick(new MouseEvent('click'));
+		}
 	}
 </script>
 
 <!-- Make the card clickable and accessible -->
 <div
-	class="group bg-gray-light hover:bg-accent-red relative flex h-fit flex-col rounded-3xl p-6 shadow-lg cursor-pointer"
-	on:click={handleClick}
+	class="group bg-gray-light hover:bg-accent-red relative flex h-fit cursor-pointer flex-col rounded-3xl p-6 shadow-lg"
+	onclick={onClick}
+	onkeydown={handleKeydown}
 	tabindex="0"
 	role="button"
 >
@@ -57,9 +71,9 @@
 	{:else}
 		<button
 			class="text-near-black hover:bg-accent-red-dark ml-auto flex h-7 w-7 items-center justify-center rounded-full group-hover:text-white"
-			on:click|stopPropagation={toggleStarred}
+			onclick={toggleStarred}
 		>
-			{starred ? '★' : '☆'}
+			{isStarred ? '★' : '☆'}
 		</button>
 	{/if}
 </div>
