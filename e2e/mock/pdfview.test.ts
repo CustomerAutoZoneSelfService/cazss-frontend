@@ -1,4 +1,4 @@
-import { test } from '@playwright/test';
+import { test, expect } from '@playwright/test';
 import { initE2EMocked } from '../initE2EMocked';
 
 const pages = ['endpoint/5'];
@@ -9,8 +9,7 @@ for (const path of pages) {
 		await page.goto(`${path}`);
 	});
 
-	/**
-     * test('should have an h1 with text "Pdf demo"', async ({ page }) => {
+	test('should have an h1 with text "Pdf demo"', async ({ page }) => {
 		const h1 = page.locator('h1', { hasText: 'Pdf demo' });
 		await expect(h1).toBeVisible();
 	});
@@ -21,5 +20,4 @@ for (const path of pages) {
 		const paragraph = page.locator('p', { hasText: 'Here goes the pdf visualizer and the button' });
 		await expect(paragraph).toBeVisible();
 	});
-     */
 }
