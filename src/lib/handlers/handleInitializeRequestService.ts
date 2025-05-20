@@ -1,5 +1,5 @@
-import type { RequestVariableString, VariableTypeString } from '$lib/types/RequestVariable';
-import type { DetailedService, KeyValue } from '$lib/types/ApiWrapper';
+import type { RequestVariableString } from '$lib/types/RequestVariable';
+import type { KeyValue } from '$lib/types/ApiWrapper';
 
 // Function to initialize the RequestService object with the variables from the endpoint and possible default values
 export const handleInitializeRequestService = (variables: RequestVariableString[]) => {
@@ -26,7 +26,7 @@ export const handleInitializeRequestService = (variables: RequestVariableString[
 		}
 	});
 
-   return {
+	return {
 		headers: newHeaders,
 		body: newBody,
 		inline: newInline,

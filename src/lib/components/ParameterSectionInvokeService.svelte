@@ -1,16 +1,18 @@
 <script lang="ts">
-    import HeadingFormat from '$lib/components/HeadingFormat.svelte';
-    import TextFormat from '$lib/components/TextFormat.svelte';
-    import Input from '$lib/components/Input.svelte';
-    import Tooltip from '$lib/components/Tooltip.svelte';
-    import Button from '$lib/components/Button.svelte';
-    import type { DetailedService, KeyValue } from '$lib/types/ApiWrapper';
-    import type { RequestVariableString, VariableTypeString  } from '$lib/types/RequestVariable';
+	import HeadingFormat from '$lib/components/HeadingFormat.svelte';
+	import TextFormat from '$lib/components/TextFormat.svelte';
+	import Input from '$lib/components/Input.svelte';
+	import Tooltip from '$lib/components/Tooltip.svelte';
+	import type { DetailedService, KeyValue } from '$lib/types/ApiWrapper';
+	import type { RequestVariableString, VariableTypeString } from '$lib/types/RequestVariable';
 
-    export let endpoint: DetailedService;
-    export let variableTypes: RequestVariableString[][];
-    export let variableTypeHeadingMap: Map<string, string>;
-    export let findRequestKeyValue: (type: VariableTypeString, keyName: string) => KeyValue | undefined
+	export let endpoint: DetailedService;
+	export let variableTypes: RequestVariableString[][];
+	export let variableTypeHeadingMap: Map<string, string>;
+	export let findRequestKeyValue: (
+		type: VariableTypeString,
+		keyName: string
+	) => KeyValue | undefined;
 </script>
 
 <main>
@@ -66,6 +68,5 @@
 
 	<!--
         <Button variant="primary" type="submit" size="md" onClick={handleSend} >Send</Button>
-    --> 
-	
+    -->
 </main>
