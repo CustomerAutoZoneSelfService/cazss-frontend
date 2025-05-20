@@ -1,18 +1,2 @@
 #!/bin/sh
-commit_message_file="$1"
-commit_message_file=$(echo "$commit_message_file" | tr -d '\r') # Remove carriage returns
-commit_message=$(head -n 1 "$commit_message_file")
-
-if ! awk -v msg="$commit_message" '
-BEGIN {
-  pattern = "^(Refactor|Feature|Feat|Bugfix|Docs|Chore|Bug|Hotfix|refactor|feature|feat|bugfix|docs|chore|bug|hotfix): .+ \\([A-Z]+-[0-9]+(, [A-Z]+-[0-9]+)*\\)$"
-  if (msg ~ pattern) {
-    exit 0
-  } else {
-    exit 1
-  }
-}'; then
-  echo "❌ Error: Commit message must match format."
-  echo "   Example: refactor: some message (TI-123)"
-  exit 1
-fi
+python3 .husky/validate-commit-msg.py "$1"
