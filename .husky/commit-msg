@@ -1,6 +1,4 @@
 #!/bin/sh
-. "$(dirname "$0")/_/husky.sh"
-
 # Use `python` or `python3`, based on availability
 if command -v python3 >/dev/null 2>&1; then
   PYTHON_EXEC=python3
