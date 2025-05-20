@@ -61,16 +61,16 @@
 
 	function onKeyDown(e: KeyboardEvent) {
 		let currentInput = document.activeElement;
-		let currentTd = currentInput?.parentElement;
-		let currentTr = currentTd?.parentElement;
-		let index = currentTd && currentTr ? Array.from(currentTr.children).indexOf(currentTd) : null;
+		let currentTh = currentInput?.parentElement;
+		let currentTr = currentTh?.parentElement;
+		let index = currentTh && currentTr ? Array.from(currentTr.children).indexOf(currentTh) : null;
 
 		let keyCombinationPressed = e.key + '|' + e.shiftKey + '|' + e.ctrlKey + '|' + e.altKey;
 		if (e.altKey) e.preventDefault();
 
 		switch (keyCombinationPressed) {
 			case 'ArrowRight|false|false|true':
-				currentTd?.nextElementSibling?.getElementsByTagName('input')[0].focus();
+				currentTh?.nextElementSibling?.getElementsByTagName('input')[0].focus();
 				break;
 			case 'Enter|true|false|false':
 			case 'ArrowUp|false|false|true':
@@ -84,7 +84,7 @@
 				}
 				break;
 			case 'ArrowLeft|false|false|true':
-				currentTd?.previousElementSibling?.getElementsByTagName('input')[0].focus();
+				currentTh?.previousElementSibling?.getElementsByTagName('input')[0].focus();
 				break;
 			case 'Enter|false|false|false':
 			case 'ArrowDown|false|false|true':
@@ -105,82 +105,85 @@
 	}
 </script>
 
-<style>
-	.fixed-icon-width {
-		width: 1.5rem;
-		min-width: 1.5rem;
-	}
-</style>
-
-<table data-testid="variable-table" class="table-auto border-collapse border border-gray-400 w-full">
+<table
+	data-testid="variable-table"
+	class="w-full table-auto border-collapse"
+>
 	<thead>
 		<tr class="bg-gray-100">
-			<th class="border border-gray-300 p-2 text-left">{'endpointId' in prompt ? 'Key' : 'Name'}</th>
+			<th class="border border-gray-300 p-2 text-left">{'endpointId' in prompt ? 'Key' : 'Name'}</th
+			>
 			{#if !('endpointId' in prompt)}
 				<th class="border border-gray-300 p-2 text-left">Parent ID</th>
 			{/if}
-			<th class="border border-gray-300 p-2 text-left">{'endpointId' in prompt ? 'Value' : 'Pattern'}</th>
-			<th class="border border-gray-300 p-2 text-left whitespace-nowrap">{'endpointId' in prompt ? 'Customizable' : 'Is Leaf'}</th>
-			<th class="border border-gray-300 p-2 text-left w-[300px]">Description</th>
+			<th class="border border-gray-300 p-2 text-left"
+				>{'endpointId' in prompt ? 'Value' : 'Pattern'}</th
+			>
+			<th class="border border-gray-300 p-2 text-left whitespace-nowrap"
+				>{'endpointId' in prompt ? 'Customizable' : 'Is Leaf'}</th
+			>
+			<th class="w-[300px] border border-gray-300 p-2 text-left">Description</th>
 		</tr>
 	</thead>
 	<tbody>
 		{#each variables as variable, index (index)}
 			{#if 'key' in variable}
 				<tr class="hover:bg-gray-50">
-					<td data-testid={generateTestId(index, 0)} class="border border-gray-300 p-2">
-						<input onkeydown={onKeyDown} bind:value={variable.key} class="p-1 w-full" />
-					</td>
-					<td data-testid={generateTestId(index, 1)} class="border border-gray-300 p-2">
-						<input onkeydown={onKeyDown} bind:value={variable.defaultValue} class="p-1 w-full" />
-					</td>
-					<td data-testid={generateTestId(index, 2)} class="border border-gray-300 p-2 text-center">
+					<th data-testid={generateTestId(index, 0)} class="border border-gray-300 p-2">
+						<input onkeydown={onKeyDown} bind:value={variable.key} class="w-full p-1" />
+					</th>
+					<th data-testid={generateTestId(index, 1)} class="border border-gray-300 p-2">
+						<input onkeydown={onKeyDown} bind:value={variable.defaultValue} class="w-full p-1" />
+					</th>
+					<th data-testid={generateTestId(index, 2)} class="border border-gray-300 p-2 text-center">
 						<input type="checkbox" onkeydown={onKeyDown} bind:checked={variable.customizable} />
-					</td>
-					<td
-						data-testid={generateTestId(index, 3)}
-						class="border border-gray-300 p-2 relative group w-[300px]"
-					>
-						<div class="flex items-center">
-							<input onkeydown={onKeyDown} bind:value={variable.description} class="p-1 w-full" />
-							<div class="fixed-icon-width ml-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-								<button data-testid={'delete-row-' + index} onclick={() => deleteRow(index)}>
-									<Trash2Icon class="w-4 h-4 text-red-500 hover:text-red-700" />
-								</button>
-							</div>
+					</th>
+					<th data-testid={generateTestId(index, 3)} class="group w-lg border border-gray-300 p-2 flex items-center">
+						<input onkeydown={onKeyDown} bind:value={variable.description} class="w-full p-1" />
+						<div
+							data-testid={'delete-row-' + index}
+							class="fixed-icon-width ml-2 invisible transition-opacity duration-200 group-hover:visible"
+						>
+							<button onclick={() => deleteRow(index)}>
+								<Trash2Icon class="h-4 w-4 text-red-500 hover:text-red-700" />
+							</button>
 						</div>
-					</td>
+					</th>
 				</tr>
 			{:else}
 				<tr class="hover:bg-gray-50">
-					<td data-testid={generateTestId(index, 0)} class="border border-gray-300 p-2">
-						<input onkeydown={onKeyDown} bind:value={variable.name} class="p-1 w-full" />
-					</td>
-					<td data-testid={generateTestId(index, 1)} class="border border-gray-300 p-2">
-						<input onkeydown={onKeyDown} bind:value={variable.parentId} class="p-1 w-full" />
-					</td>
-					<td data-testid={generateTestId(index, 2)} class="border border-gray-300 p-2">
-						<input onkeydown={onKeyDown} bind:value={variable.pattern} class="p-1 w-full" />
-					</td>
-					<td data-testid={generateTestId(index, 3)} class="border border-gray-300 p-2 text-center">
+					<th data-testid={generateTestId(index, 0)} class="border border-gray-300 p-2">
+						<input onkeydown={onKeyDown} bind:value={variable.name} class="w-full p-1" />
+					</th>
+					<th data-testid={generateTestId(index, 1)} class="border border-gray-300 p-2">
+						<input onkeydown={onKeyDown} bind:value={variable.parentId} class="w-full p-1" />
+					</th>
+					<th data-testid={generateTestId(index, 2)} class="border border-gray-300 p-2">
+						<input onkeydown={onKeyDown} bind:value={variable.pattern} class="w-full p-1" />
+					</th>
+					<th data-testid={generateTestId(index, 3)} class="border border-gray-300 p-2 text-center">
 						<input type="checkbox" onkeydown={onKeyDown} bind:checked={variable.isLeaf} />
-					</td>
-					<td
-						data-testid={generateTestId(index, 4)}
-						class="border border-gray-300 p-2 relative group w-[300px]"
-					>
-						<div class="flex items-center">
-							<input onkeydown={onKeyDown} bind:value={variable.description} class="p-1 w-full" />
-							<div class="fixed-icon-width ml-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-								<button data-testid={'delete-row-' + index} onclick={() => deleteRow(index)}>
-									<Trash2Icon class="w-4 h-4 text-red-500 hover:text-red-700" />
-								</button>
-							</div>
+					</th>
+					<th data-testid={generateTestId(index, 4)} class="group w-lg border border-gray-300 p-2 flex items-center">
+						<input onkeydown={onKeyDown} bind:value={variable.description} class="w-full p-1" />
+						<div
+							data-testid={'delete-row-' + index}
+							class="fixed-icon-width ml-2 invisible transition-opacity duration-200 group-hover:visible"
+						>
+							<button onclick={() => deleteRow(index)}>
+								<Trash2Icon class="h-4 w-4 text-red-500 hover:text-red-700" />
+							</button>
 						</div>
-					</td>
+					</th>
 				</tr>
 			{/if}
 		{/each}
 	</tbody>
 </table>
 
+<style>
+	.fixed-icon-width {
+		width: 1.5rem;
+		min-width: 1.5rem;
+	}
+ </style>

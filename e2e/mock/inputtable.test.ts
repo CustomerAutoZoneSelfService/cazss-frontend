@@ -251,11 +251,15 @@ for (const path of pages) {
 					`[data-testid="cell-row-0-col-${numberOfColumns - 1}"]`
 				);
 
+				console.log(row0DescriptionCell);
+
 				await row0KeyCell.locator('input').fill('First Key');
 
 				await row0DescriptionCell.hover();
 
 				const row0DeleteButton = currentTable.locator('[data-testid="delete-row-0"] button');
+
+				console.log(row0DeleteButton);
 
 				await expect(row0DeleteButton).toBeVisible();
 
@@ -322,9 +326,13 @@ for (const path of pages) {
 
 			await finalRowDescriptionCell.hover();
 
+			console.log(finalRowDescriptionCell);
+
 			const finalRowDeleteButton = currentTable.locator(
 				`[data-testid="delete-row-${numberOfRows - 1}"] button`
 			);
+
+			console.log(finalRowDeleteButton);
 
 			await expect(finalRowDeleteButton).toBeVisible();
 

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import HeadingFormat from '$lib/components/HeadingFormat.svelte';
+	//import HeadingFormat from '$lib/components/HeadingFormat.svelte';
 	import TextArea from '$lib/components/TextArea.svelte';
 	import InputTable from '$lib/components/InputTable.svelte';
 	import Button from '$lib/components/Button.svelte';
@@ -28,10 +28,9 @@
 	let statusCodes = statusCodeNames.map((statusCode) => ({ value: statusCode, label: statusCode }));
 	let newStatusCode = '';
 	let selectedStatusCode1 = '';
-	let selectedStatusCode2 = '';
+	//let selectedStatusCode2 = '';
 
-	function addStatusCode() {
-	}
+	function addStatusCode() {}
 
 	let step = $state(1);
 	let endpointId = 0;
@@ -127,7 +126,9 @@
 
 				<div class="flex items-center space-x-8">
 					<div class="flex flex-1 items-center space-x-2">
-						<TextFormat as="label" variant="muted" size="subtitle">Authentication Strategy:</TextFormat>
+						<TextFormat as="label" variant="muted" size="subtitle"
+							>Authentication Strategy:</TextFormat
+						>
 						<Select options={authStrategies} bind:selected={endpoint.authenticationStrategy} />
 					</div>
 					<div class="flex flex-1 items-center space-x-2">
@@ -140,7 +141,7 @@
 	{/if}
 
 	{#if step === 2}
-		<main class='flex-1 bg-white p-8'>
+		<main class="flex-1 bg-white p-8">
 			<h1 class="text-2xl font-bold">New Endpoint</h1>
 			<div class="flex flex-col">
 				<div class="py-2">
@@ -168,18 +169,18 @@
 	{/if}
 
 	{#if step === 3}
-		<main class='flex-1 bg-white p-8'>
+		<main class="flex-1 bg-white p-8">
 			<h1 class="text-2xl font-bold">New Endpoint</h1>
 
 			<!-- Add new status code -->
-			<div class="py-2 flex items-center gap-2">
+			<div class="flex items-center gap-2 py-2">
 				<TextFormat as="label" variant="muted" size="subtitle">Add New Status Code:</TextFormat>
 				<Input bind:text={newStatusCode} boxSize="sm" />
 				<Button type="button" size="sm" variant="secondary" onClick={addStatusCode}>Add</Button>
 			</div>
 
 			<!-- Select an existing status code -->
-			<div class="py-2 flex items-center gap-2">
+			<div class="flex items-center gap-2 py-2">
 				<TextFormat as="label" variant="muted" size="subtitle">Status Code:</TextFormat>
 				<Select options={statusCodes} bind:selected={selectedStatusCode1} />
 			</div>
