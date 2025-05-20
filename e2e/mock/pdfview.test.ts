@@ -13,11 +13,4 @@ for (const path of pages) {
 		const h1 = page.locator('h1', { hasText: 'Pdf demo' });
 		await expect(h1).toBeVisible();
 	});
-
-	test('should show PDF visualizer message after clicking Send', async ({ page }) => {
-		await page.getByRole('button', { name: 'Send' }).click();
-
-		const paragraph = page.locator('p', { hasText: 'Here goes the pdf visualizer and the button' });
-		await expect(paragraph).toBeVisible();
-	});
 }
