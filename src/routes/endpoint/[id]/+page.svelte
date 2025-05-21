@@ -26,6 +26,9 @@
 	const phase: string[] = ['variables', 'filters'];
 	let phaseIndex: number = $state(0);
 
+	let disabledForward: boolean = $state(false)
+	let disabledBackwards: boolean = $state(false)
+
 	let endpoint = $state<DetailedService>({
 		id: data.id,
 		name: '',
@@ -108,14 +111,36 @@
 	};
 
 	const handlePhaseChangeForward = () => {
+		disabledBackwards = false;
+		disabledForward = false;
+
 		if (phaseIndex !== phase.length - 1) {
 			phaseIndex += 1;
+		}
+
+		if (phaseIndex === 0){
+			disabledBackwards = true;
+		}
+
+		if (phaseIndex === phase.length - 1) {
+			disabledForward = true;
 		}
 	};
 
 	const handlePhaseChangeBackward = () => {
+		disabledBackwards = false;
+		disabledForward = false;
+
 		if (phaseIndex !== 0) {
 			phaseIndex -= 1;
+		}
+
+		if (phaseIndex === 0){
+			disabledBackwards = true;
+		}
+
+		if (phaseIndex === phase.length - 1) {
+			disabledForward = true;
 		}
 	};
 
@@ -172,12 +197,15 @@
 				{findRequestKeyValue}
 			></ParameterSectionInvokeService>
 		{:else if phase[phaseIndex] == 'filters'}
-			<h1>Filters Page</h1>
-			<Button variant="primary" type="submit" size="md" onClick={handleSend}>Send</Button>
+			<div class="flex-col">
+				<h1>Filters Page</h1>
+				<Button variant="primary" type="submit" size="md" onClick={handleSend}>Send</Button>
+			</div>
+			
 		{:else}
 			<p>Nothing</p>
 		{/if}
-		<Button onClick={handlePhaseChangeBackward}>Return</Button>
-		<Button onClick={handlePhaseChangeForward}>Next</Button>
+		<Button onClick={handlePhaseChangeBackward} disabled={disabledBackwards} >Return</Button>
+		<Button onClick={handlePhaseChangeForward} disabled={disabledForward}>Next</Button>
 	{/if}
 </main>
