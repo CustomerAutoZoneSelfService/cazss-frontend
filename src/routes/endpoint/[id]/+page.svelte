@@ -26,8 +26,8 @@
 	const phase: string[] = ['variables', 'filters'];
 	let phaseIndex: number = $state(0);
 
-	let disabledForward: boolean = $state(false)
-	let disabledBackwards: boolean = $state(false)
+	let disabledForward: boolean = $state(false);
+	let disabledBackwards: boolean = $state(false);
 
 	let endpoint = $state<DetailedService>({
 		id: data.id,
@@ -118,7 +118,7 @@
 			phaseIndex += 1;
 		}
 
-		if (phaseIndex === 0){
+		if (phaseIndex === 0) {
 			disabledBackwards = true;
 		}
 
@@ -135,7 +135,7 @@
 			phaseIndex -= 1;
 		}
 
-		if (phaseIndex === 0){
+		if (phaseIndex === 0) {
 			disabledBackwards = true;
 		}
 
@@ -201,11 +201,10 @@
 				<h1>Filters Page</h1>
 				<Button variant="primary" type="submit" size="md" onClick={handleSend}>Send</Button>
 			</div>
-			
 		{:else}
 			<p>Nothing</p>
 		{/if}
-		<Button onClick={handlePhaseChangeBackward} disabled={disabledBackwards} >Return</Button>
+		<Button onClick={handlePhaseChangeBackward} disabled={disabledBackwards}>Return</Button>
 		<Button onClick={handlePhaseChangeForward} disabled={disabledForward}>Next</Button>
 	{/if}
 </main>
