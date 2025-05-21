@@ -14,8 +14,9 @@
 
 <!-- Agregamos group acá -->
 <div
-	class="group bg-gray-light hover:bg-accent-red relative flex h-fit flex-col rounded-3xl p-6 shadow-lg"
+	class="group bg-gray-light hover:bg-accent-red relative flex flex-col rounded-3xl p-6 shadow-lg h-[12rem] justify-between"
 >
+
 	<a href="/endpoint/{id}">
 		<div class="h-full w-full rounded-3xl">
 			<div
