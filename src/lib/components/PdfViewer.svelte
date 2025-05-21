@@ -1,5 +1,5 @@
 <script lang="ts">
-  export let data: string | undefined;
+  let { data }: { data: string | undefined } = $props();
 </script>
 
 <div class="w-full max-w-[1000px] mx-auto border border-gray-300 rounded-lg overflow-hidden shadow-md">
