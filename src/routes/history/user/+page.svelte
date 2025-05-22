@@ -2,44 +2,13 @@
 	import EndpointCard from '$lib/components/EndpointCard.svelte';
 	import Button from '$lib/components/Button.svelte';
 	import { onMount, getContext } from 'svelte';
-	import { goto } from '$app/navigation';
-	import type ApiWrapper from '$lib/ApiWrapper'; //Exclusively for syntax.
+	import type ApiWrapper from '$lib/ApiWrapper';
 	import type { HistoryService } from '$lib/types/ApiWrapper';
 	import { splitHistoryByDate } from '$lib/utils/splitHistoryByDate';
 	import { formatDateHistoryCards } from '$lib/utils/dates';
+	import HistoryCardDetailsPanel from '$lib/components/HistoryCardDetailsPanel.svelte';
+	import LoadingSvg from '$lib/components/LoadingSVG.svelte';
 
-	// Mock data for the endpoint cards
-	/**
-   * Use this if the API is not available
-	const mockEndpointCards = Array.from({ length: 12 }, (_, i) => {
-		const dayOffset = Math.floor(i / 3); // Cada 3 elementos cambia de día
-		const date = new Date();
-		date.setDate(date.getDate() - dayOffset); // Resta días por grupo
-
-		// Para diferenciarlos un poco, agrega unos segundos
-		date.setSeconds(date.getSeconds() + (i % 3) * 10);
-
-		return {
-			historyId: i + 2,
-			endpoint: {
-				endpointId: 3,
-				name: 'Get TEST',
-				description:
-					'Dscripcion de un endpount para obtener un recurso y asi poder ver el resultado'
-			},
-			createdAt: date.toLocaleString('es-MX', {
-				day: '2-digit',
-				month: 'short',
-				hour: '2-digit',
-				minute: '2-digit',
-				hour12: false
-			})
-		};
-	});
-
-  */
-
-	// APi Wrapper
 	let api: ApiWrapper = getContext('api');
 
 	let historyEndpoints: HistoryService[] = [];
@@ -48,17 +17,30 @@
 	let historyYesterday: HistoryService[] = [];
 	let historyWeek: HistoryService[] = [];
 
+	let showDetailsPanel = false;
+	let selectedHistoryId: number | null = null;
+
+	let loading = true;
+
+	function handleCardClick(id: number) {
+		selectedHistoryId = id;
+		showDetailsPanel = true;
+	}
+
+	function closeDetailsPanel() {
+		showDetailsPanel = false;
+		selectedHistoryId = null;
+	}
+
 	onMount(async () => {
-		// TODO: Obtain the user Id from the session or context
+		loading = true;
 		historyEndpoints = await api.getHistoryUser(5);
 		const splitHistory = splitHistoryByDate(historyEndpoints);
 		historyToday = splitHistory.today;
 		historyYesterday = splitHistory.yesterday;
 		historyWeek = splitHistory.week;
+		loading = false;
 	});
-
-	// TODO: Make empty state for the history page sections
-	// TODO: Handle correctly the unique key for the cards
 </script>
 
 <div class="align-items justify-center">
@@ -68,52 +50,70 @@
 				<h1 class="text-2xl font-bold">History</h1>
 			</div>
 		</div>
-		<p class="text-bold my-4">Today</p>
-		<div id="today" class="grid grid-cols-4 gap-12">
-			{#each historyToday as card (card.historyId)}
-				<EndpointCard
-					id={card.historyId}
-					title={card.endpointName}
-					description={card.endpointDescription}
-					useDate={formatDateHistoryCards(card.createdAt)}
-					historyCard={true}
-				/>
-			{/each}
-			<div class="col-span-4 flex items-center justify-end">
-				<Button variant="text" size="md" onclick={() => goto('/history/today')}>See more</Button>
+		{#if loading}
+			<div class="flex h-96 items-center justify-center">
+				<LoadingSvg />
 			</div>
-		</div>
-		<p class="text-bold my-4">Yesterday</p>
-		<div id="yesterday" class="grid grid-cols-4 gap-12">
-			{#each historyYesterday as card (card.historyId)}
-				<EndpointCard
-					id={card.historyId}
-					title={card.endpointName}
-					description={card.endpointDescription}
-					useDate={formatDateHistoryCards(card.createdAt)}
-					historyCard={true}
-				/>
-			{/each}
-			<div class="col-span-4 flex items-center justify-end">
-				<Button variant="text" size="md" onclick={() => goto('/history/yesterday')}>
-					See more
-				</Button>
+		{:else}
+			<p class="text-bold my-4">Today</p>
+			<div id="today" class="grid grid-cols-4 gap-12">
+				{#each historyToday as card (card.historyId)}
+					<EndpointCard
+						id={card.historyId}
+						title={card.endpointName}
+						description={card.endpointDescription}
+						useDate={formatDateHistoryCards(card.createdAt)}
+						historyCard={true}
+						onClick={() => handleCardClick(card.historyId)}
+					/>
+				{/each}
 			</div>
-		</div>
-		<p class="text-bold my-4">Last 7 days</p>
-		<div id="week" class="grid grid-cols-4 gap-12">
-			{#each historyWeek as card (card.historyId)}
-				<EndpointCard
-					id={card.historyId}
-					title={card.endpointName}
-					description={card.endpointDescription}
-					useDate={formatDateHistoryCards(card.createdAt)}
-					historyCard={true}
-				/>
-			{/each}
-			<div class="col-span-4 flex items-center justify-end">
-				<Button variant="text" size="md" onclick={() => goto('/history/week')}>See more</Button>
+			<p class="text-bold my-4">Yesterday</p>
+			<div id="yesterday" class="grid grid-cols-4 gap-12">
+				{#each historyYesterday as card (card.historyId)}
+					<EndpointCard
+						id={card.historyId}
+						title={card.endpointName}
+						description={card.endpointDescription}
+						useDate={formatDateHistoryCards(card.createdAt)}
+						historyCard={true}
+						onClick={() => handleCardClick(card.historyId)}
+					/>
+				{/each}
 			</div>
-		</div>
+			<p class="text-bold my-4">Last 7 days</p>
+			<div id="week" class="grid grid-cols-4 gap-12">
+				{#each historyWeek as card (card.historyId)}
+					<EndpointCard
+						id={card.historyId}
+						title={card.endpointName}
+						description={card.endpointDescription}
+						useDate={formatDateHistoryCards(card.createdAt)}
+						historyCard={true}
+						onClick={() => handleCardClick(card.historyId)}
+					/>
+				{/each}
+			</div>
+		{/if}
+
+		{#if showDetailsPanel && selectedHistoryId !== null}
+			<div
+				class="pointer-events-none fixed inset-y-0 right-0 z-50 flex h-full w-full max-w-2xl justify-end"
+			>
+				<div
+					class="animate-slide-in pointer-events-auto relative flex h-full w-full max-w-2xl flex-col rounded-l-2xl bg-white shadow-2xl"
+				>
+					<Button
+						class="absolute top-4 right-4 z-10 cursor-pointer text-2xl"
+						onclick={closeDetailsPanel}
+						iconOnly={true}
+						size="md"
+						variant="text"
+						aria-label="Cerrar panel">×</Button
+					>
+					<HistoryCardDetailsPanel historyId={selectedHistoryId} />
+				</div>
+			</div>
+		{/if}
 	</main>
 </div>

@@ -14,6 +14,7 @@
 	onMount(async () => {
 		endpoints = await api.getAllServices();
 		filteredEndpoints = [...endpoints];
+		console.log('Endpoints:', endpoints);
 	});
 
 	function handleFilter(allData: string[]) {
