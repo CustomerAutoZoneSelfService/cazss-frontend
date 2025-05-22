@@ -15,6 +15,8 @@
 	import type { Filter } from '$lib/types/Filter';
 
 	import List from '$lib/components/List.svelte';
+	import PdfViewer from '$lib/components/PdfViewer.svelte';
+	
 	let api: ApiWrapper = getContext('api');
 
 	let { data }: { data: Params['params'] } = $props();
@@ -374,10 +376,9 @@
 
 			<HeadingFormat as="h4">Raw body</HeadingFormat>
 			{#if ExecutionResponse.response.some((variable) => 'content' in variable)}
-				<!--
-				<PdfViewer data={atob(ExecutionResponse.response.find(v => 'content' in v)?.content)} />
-				-->
-				<p>Here goes the pdf visualizer and the button</p>
+				
+				<PdfViewer data={`data:application/pdf;base64,` + ExecutionResponse.response.find(v => 'content' in v)?.content[0]} />
+				
 			{:else}
 				<TextArea
 					disabled={true}
