@@ -14,11 +14,14 @@
 	import type { RequestService } from '$lib/types/RequestService';
 	import type { ServiceResponse } from '$lib/types/ServiceResponse';
 	import type ApiWrapper from '$lib/ApiWrapper';
-
 	import ParameterSectionInvokeService from '$lib/components/ParameterSectionInvokeService.svelte';
 	import DisplayResultSectionInvokeService from '$lib/components/DisplayResultSectionInvokeService.svelte';
 	import { handleInitializeRequestService } from '$lib/handlers/handleInitializeRequestService';
 	import Button from '$lib/components/Button.svelte';
+	import List from '$lib/components/List.svelte';
+	import PdfViewer from '$lib/components/PdfViewer.svelte';
+	
+
 	let api: ApiWrapper = getContext('api');
 
 	let { data }: { data: Params['params'] } = $props();
@@ -186,8 +189,18 @@
 </script>
 
 <main class="space-y-10 p-10">
+
 	{#if ExecutionResponse.status.code}
-		<DisplayResultSectionInvokeService {ExecutionResponse}></DisplayResultSectionInvokeService>
+		{#if ExecutionResponse.response.some((variable) => 'content' in variable)}
+				
+				<PdfViewer data={`data:application/pdf;base64,` + ExecutionResponse.response.find(v => 'content' in v)?.content[0]} />
+				
+			{:else}
+				<TextArea
+					disabled={true}
+					text={ExecutionResponse.response ? JSON.stringify(ExecutionResponse.response) : ''}
+				/>
+			{/if}
 	{:else}
 		{#if phase[phaseIndex] == 'variables'}
 			<ParameterSectionInvokeService
@@ -203,6 +216,7 @@
 			</div>
 		{:else}
 			<p>Nothing</p>
+
 		{/if}
 		<Button onClick={handlePhaseChangeBackward} disabled={disabledBackwards}>Return</Button>
 		<Button onClick={handlePhaseChangeForward} disabled={disabledForward}>Next</Button>
