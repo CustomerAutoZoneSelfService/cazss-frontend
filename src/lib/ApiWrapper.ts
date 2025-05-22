@@ -5,6 +5,9 @@ import type { ServiceResponse } from './types/ServiceResponse';
 const BASE_URL = 'http://localhost:8080';
 
 export default class ApiWrapper {
+	static getHistoryUser(_userId: number): HistoryService[] | PromiseLike<HistoryService[]> {
+		throw new Error('Method not implemented.');
+	}
 	constructor(
 		private baseUrl: string = BASE_URL,
 		private headers: Record<string, string> = {}
@@ -55,11 +58,15 @@ export default class ApiWrapper {
 		return this.post<ServiceResponse>(`/services/executeService/${id}`, body);
 	}
 
-	public getHistoryAdmin() {
+	/*public getHistoryAdmin() {
 		return this.get<HistoryService[]>('/services/history');
-	}
+	}*/
 
 	public getHistoryUser(userId: number) {
 		return this.get<HistoryService[]>(`/services/history?userId=${userId}`);
+	}
+
+	public getAllHistory() {
+		return this.get<HistoryService[]>('/services/history');
 	}
 }

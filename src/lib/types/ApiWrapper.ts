@@ -33,6 +33,10 @@ export type DetailedService = {
 };
 
 export type HistoryService = {
+	endpoint: any;
+	created: string | number | Date;
+	description: string;
+	name: string;
 	historyId: number;
 	email: string;
 	endpointName: string;
