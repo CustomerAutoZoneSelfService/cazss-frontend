@@ -4,7 +4,7 @@
 	import { replaceWithMock } from '$lib/mockApiWrapper';
 
 	const api = new ApiWrapper();
-	let useMock = true; // Enable mock mode by default
+	let useMock = false;
 
 	// window
 	if (window.E2E_MOCKED != undefined) {
