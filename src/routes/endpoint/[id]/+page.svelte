@@ -1,11 +1,4 @@
 <script lang="ts">
-	/*
-	 * Endpoint Page
-	 *
-	 * This page is responsible for allowing the user to input their request variables for the endpoint (in case they exist)
-	 * and allowing him to send it.
-	 */
-
 	import { getContext } from 'svelte';
 
 	import type { Params } from './+page';
@@ -18,9 +11,6 @@
 	import DisplayResultSectionInvokeService from '$lib/components/DisplayResultSectionInvokeService.svelte';
 	import { handleInitializeRequestService } from '$lib/handlers/handleInitializeRequestService';
 	import Button from '$lib/components/Button.svelte';
-	import List from '$lib/components/List.svelte';
-	import PdfViewer from '$lib/components/PdfViewer.svelte';
-	
 
 	let api: ApiWrapper = getContext('api');
 
@@ -189,18 +179,8 @@
 </script>
 
 <main class="space-y-10 p-10">
-
 	{#if ExecutionResponse.status.code}
-		{#if ExecutionResponse.response.some((variable) => 'content' in variable)}
-				
-				<PdfViewer data={`data:application/pdf;base64,` + ExecutionResponse.response.find(v => 'content' in v)?.content[0]} />
-				
-			{:else}
-				<TextArea
-					disabled={true}
-					text={ExecutionResponse.response ? JSON.stringify(ExecutionResponse.response) : ''}
-				/>
-			{/if}
+		<DisplayResultSectionInvokeService {ExecutionResponse}></DisplayResultSectionInvokeService>
 	{:else}
 		{#if phase[phaseIndex] == 'variables'}
 			<ParameterSectionInvokeService
@@ -212,13 +192,16 @@
 		{:else if phase[phaseIndex] == 'filters'}
 			<div class="flex-col">
 				<h1>Filters Page</h1>
-				<Button variant="primary" type="submit" size="md" onClick={handleSend}>Send</Button>
 			</div>
 		{:else}
 			<p>Nothing</p>
-
 		{/if}
 		<Button onClick={handlePhaseChangeBackward} disabled={disabledBackwards}>Return</Button>
-		<Button onClick={handlePhaseChangeForward} disabled={disabledForward}>Next</Button>
+
+		{#if disabledForward}
+			<Button variant="primary" type="submit" size="md" onClick={handleSend}>Send</Button>
+		{:else}
+			<Button onClick={handlePhaseChangeForward} disabled={disabledForward}>Next</Button>
+		{/if}
 	{/if}
 </main>
