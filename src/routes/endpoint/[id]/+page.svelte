@@ -7,6 +7,7 @@
 	 */
 
 	import { getContext } from 'svelte';
+	import { page } from '$app/stores';
 
 	import Button from '$lib/components/Button.svelte';
 	import HeadingFormat from '$lib/components/HeadingFormat.svelte';
@@ -96,8 +97,18 @@
 		const newInline: KeyValue[] = [];
 		const newQueryString: KeyValue[] = [];
 
+		// Check for pre-filled data in URL
+		const prefilledData = $page.url.searchParams.get('prefilled');
+		const prefilledInputs: Array<{ label: string; value: string }> = prefilledData
+			? JSON.parse(prefilledData)
+			: [];
+
 		variables.forEach((variable) => {
-			const kv: KeyValue = { key: variable.keyName, value: variable.defaultValue ?? '' };
+			// Try to find pre-filled value first
+			const prefilledInput = prefilledInputs.find((input) => input.label === variable.keyName);
+			const defaultValue = prefilledInput ? prefilledInput.value : (variable.defaultValue ?? '');
+
+			const kv: KeyValue = { key: variable.keyName, value: defaultValue };
 			switch (variable.type) {
 				case 'HEADER':
 					newHeaders.push(kv);

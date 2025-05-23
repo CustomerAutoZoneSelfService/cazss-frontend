@@ -1,5 +1,6 @@
 import ApiWrapper from '$lib/ApiWrapper';
 import type { Service, DetailedService } from './types/ApiWrapper';
+//import type { HistoryService } from './types/ApiWrapper';
 import type { ServiceResponse } from './types/ServiceResponse';
 
 export function replaceWithMock(mockApi: ApiWrapper): void {
@@ -112,4 +113,24 @@ export function replaceWithMock(mockApi: ApiWrapper): void {
 			};
 		}
 	};
+
+	/*mockApi.getHistoryAdmin = async function (): Promise<HistoryService[]> {
+		return Array.from({ length: 12 }, (_, i) => {
+			const dayOffset = Math.floor(i / 3); // Each 3 elements changes day
+			const date = new Date();
+			date.setDate(date.getDate() - dayOffset); // Subtract days by group
+
+			// To differentiate them a bit, add some seconds
+			date.setSeconds(date.getSeconds() + (i % 3) * 10);
+
+			return {
+				historyId: i + 2,
+				email: `user${i + 1}@example.com`,
+				endpointName: 'Get TEST',
+				endpointDescription:
+					'Descripción de un endpoint para obtener un recurso y así poder ver el resultado',
+				createdAt: date.toISOString()
+			};
+		});
+	};*/
 }
