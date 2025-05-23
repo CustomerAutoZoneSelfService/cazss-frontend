@@ -14,9 +14,6 @@
 	import FilterSectionInvokeService from '$lib/components/FilterSectionInvokeService.svelte';
 	import type { Filter } from '$lib/types/Filter';
 
-	import List from '$lib/components/List.svelte';
-	import PdfViewer from '$lib/components/PdfViewer.svelte';
-	
 	let api: ApiWrapper = getContext('api');
 
 	let { data }: { data: Params['params'] } = $props();
@@ -386,5 +383,12 @@
 				/>
 			{/if}
 		{/if}
-	</div>
+		<Button onClick={handlePhaseChangeBackward} disabled={disabledBackwards}>Return</Button>
+
+		{#if disabledForward}
+			<Button variant="primary" type="submit" size="md" onClick={handleSend}>Send</Button>
+		{:else}
+			<Button onClick={handlePhaseChangeForward} disabled={disabledForward}>Next</Button>
+		{/if}
+	{/if}
 </main>
