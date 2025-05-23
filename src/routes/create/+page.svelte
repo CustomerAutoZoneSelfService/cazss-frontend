@@ -26,8 +26,8 @@
 
 	let statusCodeNames = ['200', '201'];
 	let statusCodes = statusCodeNames.map((statusCode) => ({ value: statusCode, label: statusCode }));
-	let newStatusCode = '';
-	let selectedStatusCode1 = '';
+	let newStatusCode = $state('');
+	let selectedStatusCode1 = $state('');
 	//let selectedStatusCode2 = '';
 
 	function addStatusCode() {}
@@ -49,7 +49,8 @@
 		url: '',
 		authenticationStrategy: '',
 		category: '',
-		enabled: true
+		enabled: true,
+		name: '' // <- Agrega esto
 	});
 
 	let headersPrompt: InputTablePrompt = {

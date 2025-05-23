@@ -7,24 +7,50 @@
 	import { goto } from '$app/navigation';
 	import type ApiWrapper from '$lib/ApiWrapper';
 	import type { HistoryService } from '$lib/types/ApiWrapper';
-	import { splitHistoryByDate } from '$lib/utils/splitHistoryByDate';
+	import { page } from '$app/stores';
+	//import { splitHistoryByDate } from '$lib/utils/splitHistoryByDate';
 
 	let api: ApiWrapper = getContext('api');
 
-	let historyEndpoints: HistoryService[] = [];
-	let todayEndpoints: HistoryService[] = [];
-	let yesterdayEndpoints: HistoryService[] = [];
-	let weekEndpoints: HistoryService[] = [];
+	let todayCards: HistoryService[] = [];
+	let yesterdayCards: HistoryService[] = [];
+	let weekCards: HistoryService[] = [];
 
 	onMount(async () => {
-		historyEndpoints = await api.getHistoryAdmin();
-		const { today, yesterday, week } = splitHistoryByDate(historyEndpoints);
-		todayEndpoints = today;
-		yesterdayEndpoints = yesterday;
-		weekEndpoints = week;
+		const userId = $page.data.user?.userId;
+		if (!userId) return;
+
+		const allHistory = await api.getAllHistory();
+		const now = new Date();
+		const today = now.toDateString();
+
+		const yesterdayDate = new Date();
+		yesterdayDate.setDate(now.getDate() - 1);
+		const yesterday = yesterdayDate.toDateString();
+
+		todayCards = [];
+		yesterdayCards = [];
+		weekCards = [];
+
+		for (const card of allHistory) {
+			const cardDate = new Date(card.created);
+			const cardDateStr = cardDate.toDateString();
+
+			if (cardDateStr === today) {
+				todayCards.push(card);
+			} else if (cardDateStr === yesterday) {
+				yesterdayCards.push(card);
+			} else {
+				const daysAgo = (now.getTime() - cardDate.getTime()) / (1000 * 60 * 60 * 24);
+				if (daysAgo <= 7) {
+					weekCards.push(card);
+				}
+			}
+		}
 	});
 
-	function formatDate(datetime: string) {
+	function formatDate(datetime: string | number | Date) {
+
 		const date = new Date(datetime);
 		return date.toLocaleString('es-MX', {
 			day: '2-digit',
@@ -55,6 +81,7 @@
 			<h1 class="text-2xl font-bold">History</h1>
 		</div>
 
+
 		<!-- TODAY -->
 		<p class="text-bold my-4">Today</p>
 		<div id="today" class="flex flex-col gap-4">
@@ -66,11 +93,13 @@
 					useDate={formatDate(card.createdAt)}
 					username={card.email?.split('@')[0] || 'Usuario'}
 					userInitial={card.email?.charAt(0).toUpperCase() || 'U'}
+                           
 					historyCard={true}
 					onClick={() => handleCardClick(card)}
 				/>
 			{/each}
 		</div>
+
 
 		<!-- YESTERDAY -->
 		<p class="text-bold my-4">Yesterday</p>
@@ -87,6 +116,7 @@
 					onClick={() => handleCardClick(card)}
 				/>
 			{/each}
+
 		</div>
 
 		<!-- LAST 7 DAYS -->
@@ -100,6 +130,7 @@
 					useDate={formatDate(card.createdAt)}
 					username={card.email?.split('@')[0] || 'Usuario'}
 					userInitial={card.email?.charAt(0).toUpperCase() || 'U'}
+
 					historyCard={true}
 					onClick={() => handleCardClick(card)}
 				/>

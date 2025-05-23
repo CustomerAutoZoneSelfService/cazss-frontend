@@ -32,6 +32,7 @@
 		selectedCard = null;
 	}
 
+
 	onMount(() => {
 		async function cargarHistorial() {
 			historyEndpoints = await api.getHistoryUser(5);
