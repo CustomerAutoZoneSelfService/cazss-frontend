@@ -56,15 +56,27 @@
 	</div>
 
 	<!-- Output Box -->
-	<div class="flex min-h-[120px] flex-col gap-2 rounded-2xl bg-gray-100 p-6 shadow-md">
+	<div class="flex min-h-[280px] flex-col gap-2 rounded-2xl bg-gray-100 p-6 shadow-md">
 		<TextFormat as="div" size="subtitle" variant="primary" className="mb-2">Output</TextFormat>
+
 		{#if output.length === 0}
-			<TextFormat as="span" size="body" variant="muted">No output</TextFormat>
+			<!-- Placeholder for expected output -->
+			<div class="overflow-auto rounded bg-white p-4 text-sm text-gray-500 shadow-inner">
+				Expected response here: <br /><br />
+				{`{\n  "message": "Lorem ipsum dolor sit amet, consectetur adipiscing elit",\n  "status": 200\n}`}
+			</div>
 		{:else}
 			{#each output as item (item.label)}
-				<div class="mb-1 flex flex-row items-center justify-between">
+				<div class="mb-1 flex flex-row items-start justify-between">
 					<TextFormat as="span" size="body" variant="muted">{item.label}:</TextFormat>
-					<TextFormat as="span" size="body" variant="primary">{item.value}</TextFormat>
+					<TextFormat
+						as="span"
+						size="body"
+						variant="primary"
+						className="bg-white rounded px-3 py-1 shadow text-right max-w-[16rem] break-words"
+					>
+						{item.value}
+					</TextFormat>
 				</div>
 			{/each}
 		{/if}

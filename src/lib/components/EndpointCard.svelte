@@ -1,12 +1,12 @@
 <script lang="ts">
 	let {
-		id,
+		// id, id commented because husky said no
 		title,
 		description,
 		starred = false,
 		historyCard = false,
 		useDate = '',
-		onClick = (event: MouseEvent) => {}
+		onClick = () => {}
 	} = $props<{
 		id: number;
 		title: string;
@@ -14,7 +14,7 @@
 		starred?: boolean;
 		historyCard?: boolean;
 		useDate?: string;
-		onClick?: (event: MouseEvent) => void;
+		onClick?: () => void;
 	}>();
 
 	let isStarred = $state(starred);
@@ -34,7 +34,7 @@
 
 <!-- Make the card clickable and accessible -->
 <div
-	class="group bg-gray-light hover:bg-accent-red relative flex h-fit cursor-pointer flex-col rounded-3xl p-6 shadow-lg"
+	class="group bg-gray-light hover:bg-accent-red relative flex h-fit min-h-[8rem] cursor-pointer flex-col rounded-3xl p-6 shadow-lg"
 	onclick={onClick}
 	onkeydown={handleKeydown}
 	tabindex="0"

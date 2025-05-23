@@ -8,6 +8,31 @@
 	import type { HistoryService } from '$lib/types/ApiWrapper';
 	import { splitHistoryByDate } from '$lib/utils/splitHistoryByDate';
 
+	// Mock data for the endpoint cards
+	// const mockEndpointCards = Array.from({ length: 12 }, (_, i) => {
+	// 	const dayOffset = Math.floor(i / 3); // Cada 3 elementos cambia de día
+	// 	const date = new Date();
+	// 	date.setDate(date.getDate() - dayOffset); // Resta días por grupo
+
+	// 	// Para diferenciarlos un poco, agrega unos segundos
+	// 	date.setSeconds(date.getSeconds() + (i % 3) * 10);
+
+	// 	return {
+	// 		historyId: i + 2,
+	// 		email: `user${i + 1}@example.com`,
+	// 		endpointName: 'Get TEST',
+	// 		endpointDescription:
+	// 			'Descripción de un endpoint para obtener un recurso y así poder ver el resultado',
+	// 		createdAt: date.toLocaleString('es-MX', {
+	// 			day: '2-digit',
+	// 			month: 'short',
+	// 			hour: '2-digit',
+	// 			minute: '2-digit',
+	// 			hour12: false
+	// 		})
+	// 	};
+	// });
+
 	// APi Wrapper
 	let api: ApiWrapper = getContext('api');
 
@@ -82,7 +107,7 @@
 					title={card.endpointName}
 					description={card.endpointDescription}
 					useDate={formatDate(card.createdAt)}
-					historyCard={true}
+					historyCard={false}
 					onClick={() => handleCardClick(card)}
 				/>
 			{/each}
