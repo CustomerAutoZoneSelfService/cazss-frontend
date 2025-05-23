@@ -10,10 +10,6 @@
         Headers, inline params, query strings, and body variables, grouped by type.
     - responsePatternsData: ResponsePattern
         Patterns for endpoint responses.
-    - template: string
-        The request body template.
-    - statusCodes: ResponseStatusEntry[]
-        List of status codes and their response patterns.
     - onSubmit: () => void
         Function to call when the user submits the form.
 
@@ -35,7 +31,6 @@
 	import Input from '$lib/components/Input.svelte';
 	import TextFormat from '$lib/components/TextFormat.svelte';
 	import CheckBox from '$lib/components/CheckBox.svelte';
-	import { onMount } from 'svelte';
 
 	// Types
 	import type { Props } from '$lib/types/EndpointForm';
@@ -63,7 +58,6 @@
 		console.log('step:', $state.snapshot(step));
 	});
 
-	
 	// Options for method, auth strategies, categories, and status codes
 	// These should be fetched from the backend later
 
@@ -101,9 +95,7 @@
 	});
 
 	// Headers, In Line Params, Query String, Body Template, Body Variables definitions
-	// let endpointId = 0;
-	// let responseId = 0;
-	//let template = $state('');
+	
 
 	let headers: InputTable;
 	let inlineParams: InputTable;
@@ -137,7 +129,6 @@
 		return endpoint;
 	}
 
-	//let headersInput = headers?.getVariables() ?? [];
 
 	// To add a NewStatusCode and description, both immediatly added in the form and further sent to the backend
 
@@ -194,9 +185,7 @@
 	}
 
 	// function addNewDescriptionToField() {
-	// 	const selected = newStatusCode.find(sc => sc.value === newStatusDescription);
-	// 	return selected ? selected.description : '';
-	// }
+	
 
 	// Prompts for InputTable for headers, inline params, query strings, and body variables
 
@@ -209,10 +198,6 @@
 
 	let responseId = 0; // for editing is neccesary, for creating it is not
 	let responsesPatternPrompt = $state({ responseId });
-
-
-
-
 </script>
 
 <div class="align-items justify-center">
