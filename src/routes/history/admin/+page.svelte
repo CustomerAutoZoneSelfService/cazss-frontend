@@ -7,6 +7,7 @@
 	import type ApiWrapper from '$lib/ApiWrapper';
 	import type { HistoryService } from '$lib/types/ApiWrapper';
 	import { page } from '$app/stores';
+	import { splitHistoryByDate } from '$lib/utils/splitHistoryByDate';
 
 	let api: ApiWrapper = getContext('api');
 
@@ -17,7 +18,6 @@
 	onMount(async () => {
 		const userId = $page.data.user?.userId;
 		if (!userId) return;
-	import { splitHistoryByDate } from '$lib/utils/splitHistoryByDate';
 
 
 		const allHistory = await api.getAllHistory();
