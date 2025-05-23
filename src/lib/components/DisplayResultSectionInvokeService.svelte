@@ -5,7 +5,8 @@
 	import TextArea from '$lib/components/TextArea.svelte';
 	import type { ServiceResponse } from '$lib/types/ServiceResponse';
 	import PdfViewer from './PdfViewer.svelte';
-
+	import type { KeyValue } from '$lib/types/ApiWrapper';
+	export let filters: KeyValue[] = [];
 	export let ExecutionResponse: ServiceResponse;
 </script>
 
@@ -27,11 +28,14 @@
 			/>
 		{:else}
 			<List type="ul">
-				{#each ExecutionResponse.response as variableResponse, index (index)}
-					{#each Object.entries(variableResponse) as [key, value], innerIndex (innerIndex)}
-						<li><b>{key}:</b> {value.join(', ')}</li>
-					{/each}
-				{/each}
+				{#each ExecutionResponse.response as variableResponse}
+					{#each Object.entries(variableResponse) as [key, value]}
+			{#if filters.length === 0 || filters.some(f => f.key === key)}
+				<li><b>{key}:</b> {value.join(', ')}</li>
+			{/if}
+
+	{/each}
+{/each}
 			</List>
 			<TextArea
 				disabled={true}

@@ -6,4 +6,5 @@ export type RequestService = {
 	body: KeyValue[];
 	inline: KeyValue[];
 	queryString: KeyValue[];
+	filters: KeyValue[];
 };
