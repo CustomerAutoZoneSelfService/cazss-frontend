@@ -53,7 +53,8 @@
 		url: '',
 		authenticationStrategy: '',
 		category: '',
-		enabled: true
+		enabled: true,
+		name: '' // <- Agrega esto
 	});
 
 	let headersPrompt: InputTablePrompt = {

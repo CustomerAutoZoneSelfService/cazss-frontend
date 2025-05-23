@@ -1,12 +1,12 @@
 <script lang="ts">
 	let {
-		id,
+		//id,
 		title,
 		description,
 		starred = false,
 		historyCard = false,
 		useDate = '',
-		onClick = (event: MouseEvent) => {}
+		onClick = () => {}
 	} = $props<{
 		id: number;
 		title: string;

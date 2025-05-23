@@ -4,7 +4,7 @@
 	import { goto } from '$app/navigation';
 	import ApiWrapper from '$lib/ApiWrapper';
 	import type { HistoryService } from '$lib/types/ApiWrapper';
-
+	import { sameDay } from '$lib/utils/splitHistoryByDate';
 
 	import { onMount } from 'svelte';
 	import { page } from '$app/stores';
@@ -13,16 +13,14 @@
 	let yesterdayCards: HistoryService[] = [];
 	let weekCards: HistoryService[] = [];
 
-
 	onMount(async () => {
-		const userId = $page.data.user?.userId; 
+		const userId = $page.data.user?.userId;
 		if (!userId) return;
 
 		const api = new ApiWrapper();
 		api.getHistoryUser(userId);
 
-
-		const history: HistoryService[] = await ApiWrapper.getHistoryUser(userId);
+		const history: HistoryService[] = await ApiWrapper.getHistoryUser();
 
 		const today = new Date();
 		const yesterday = new Date();
@@ -35,18 +33,7 @@
 			const diff = (today.getTime() - d.getTime()) / (1000 * 60 * 60 * 24);
 			return diff <= 7 && !sameDay(d, today) && !sameDay(d, yesterday);
 		});
-
-				
 	});
-
-	function sameDay(date1: Date, date2: Date) {
-		return (
-			date1.getDate() === date2.getDate() &&
-			date1.getMonth() === date2.getMonth() &&
-			date1.getFullYear() === date2.getFullYear()
-		);
-	}
-
 
 	// TODO: Make empty state for the history page sections
 	// TODO: Handle correctly the unique key for the cards

@@ -7,6 +7,7 @@
 	import type ApiWrapper from '$lib/ApiWrapper';
 	import type { HistoryService } from '$lib/types/ApiWrapper';
 	import { page } from '$app/stores';
+	//import { splitHistoryByDate } from '$lib/utils/splitHistoryByDate';
 
 	let api: ApiWrapper = getContext('api');
 
@@ -17,8 +18,6 @@
 	onMount(async () => {
 		const userId = $page.data.user?.userId;
 		if (!userId) return;
-	import { splitHistoryByDate } from '$lib/utils/splitHistoryByDate';
-
 
 		const allHistory = await api.getAllHistory();
 		const now = new Date();
@@ -102,7 +101,6 @@
 
 		<p class="text-bold my-4">Yesterday</p>
 		<div id="yesterday" class="grid grid-cols-4 gap-12">
-
 			{#each yesterdayCards as card (card.historyId)}
 				<EndpointCard
 					id={card.historyId}
@@ -114,16 +112,13 @@
 				/>
 			{/each}
 			<div class="col-span-4 flex items-center justify-end">
-
 				<Button variant="text" size="md" onclick={() => goto('/history/yesterday')}>See more</Button
 				>
-
 			</div>
 		</div>
 
 		<p class="text-bold my-4">Last 7 days</p>
 		<div id="week" class="grid grid-cols-4 gap-12">
-
 			{#each weekCards as card (card.historyId)}
 				<EndpointCard
 					id={card.historyId}
