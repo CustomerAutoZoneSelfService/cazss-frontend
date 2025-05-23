@@ -104,9 +104,9 @@
 			{#each yesterdayCards as card (card.historyId)}
 				<EndpointCard
 					id={card.historyId}
-					title={card.name}
-					description={card.description}
-					useDate={formatDate(card.created)}
+					title={card.endpointName}
+					description={card.endpointDescription}
+					useDate={formatDate(card.createdAt)}
 					historyCard={true}
 					onClick={() => handleCardClick(card)}
 				/>

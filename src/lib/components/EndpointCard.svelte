@@ -1,4 +1,4 @@
-<script lang="ts">
+z<script lang="ts">
 	let {
 		id,
 		title,
@@ -34,7 +34,7 @@
 
 <!-- Make the card clickable and accessible -->
 <div
-	class="group bg-gray-light hover:bg-accent-red relative flex h-fit cursor-pointer flex-col rounded-3xl p-6 shadow-lg"
+	class="group bg-gray-light hover:bg-accent-red relative flex h-fit min-h-[8rem] cursor-pointer flex-col rounded-3xl p-6 shadow-lg"
 	onclick={onClick}
 	onkeydown={handleKeydown}
 	tabindex="0"
