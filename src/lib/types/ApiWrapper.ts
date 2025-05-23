@@ -1,5 +1,6 @@
 import type { RequestVariableString } from './RequestVariable';
 import type { Filter } from './Filter';
+import type { Endpoint } from './Endpoint';
 
 export type HTTPMethod = 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
 
@@ -30,4 +31,18 @@ export type DetailedService = {
 	filters: Filter[];
 	variables: RequestVariableString[];
 	requestBody: string; // ? This should be the template
+};
+
+export type HistoryService = {
+	endpoint: Endpoint;
+	created: string | number | Date;
+	description: string;
+	name: string;
+	historyId: number;
+	email: string;
+	endpointName: string;
+	endpointDescription: string;
+	createdAt: string;
+	inputs?: Array<{ name: string; value: string }>;
+	output?: { status: number; data: Record<string, unknown> };
 };
