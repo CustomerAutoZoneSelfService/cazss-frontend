@@ -120,4 +120,16 @@ export default class ApiWrapper {
 	public deleteUserFilter(endpointId: number, patternId: number): Promise<void> {
 		return this.delete<void>(`/responses/${endpointId}/user-filters/${patternId}`);
 	}
+
+	public getHistoryAdmin() {
+		return this.get<HistoryService[]>('/services/history');
+	}
+
+	public getHistoryUser(userId: number) {
+		return this.get<HistoryService[]>(`/services/history?userId=${userId}`);
+	}
+
+	public getAllHistory() {
+		return this.get<HistoryService[]>('/services/history');
+	}
 }

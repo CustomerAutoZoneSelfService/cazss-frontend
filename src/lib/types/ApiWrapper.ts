@@ -1,5 +1,6 @@
 import type { RequestVariableString } from './RequestVariable';
 import type { Filter } from './Filter';
+import type { Endpoint } from './Endpoint';
 
 export type HTTPMethod = 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
 
