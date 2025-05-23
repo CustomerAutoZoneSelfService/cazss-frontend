@@ -132,7 +132,6 @@ export function replaceWithMock(mockApi: ApiWrapper): void {
 			const dayOffset = Math.floor(i / 3);
 			const date = new Date();
 			date.setDate(date.getDate() - dayOffset);
-
 			date.setSeconds(date.getSeconds() + (i % 3) * 10);
 
 			return {
@@ -144,6 +143,7 @@ export function replaceWithMock(mockApi: ApiWrapper): void {
 				createdAt: date.toISOString()
 			};
 		});
+
 	};
 
 	mockApi.getHistoryUser = async function (userId: number): Promise<HistoryService[]> {

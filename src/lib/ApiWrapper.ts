@@ -75,4 +75,16 @@ export default class ApiWrapper {
 	public getDetailedHistory(id: number) {
 		return this.get<DetailedHistoryService>(`/services/history/${id}`);
 	}
+
+	public getHistoryAdmin() {
+		return this.get<HistoryService[]>('/services/history');
+	}
+
+	public getHistoryUser(userId: number) {
+		return this.get<HistoryService[]>(`/services/history?userId=${userId}`);
+	}
+
+	public getAllHistory() {
+		return this.get<HistoryService[]>('/services/history');
+	}
 }
