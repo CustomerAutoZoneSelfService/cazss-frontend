@@ -11,16 +11,18 @@
 	import DisplayResultSectionInvokeService from '$lib/components/DisplayResultSectionInvokeService.svelte';
 	import { handleInitializeRequestService } from '$lib/handlers/handleInitializeRequestService';
 	import Button from '$lib/components/Button.svelte';
+	import FilterSectionInvokeService from '$lib/components/FilterSectionInvokeService.svelte';
 
 	let api: ApiWrapper = getContext('api');
 
 	let { data }: { data: Params['params'] } = $props();
 
-	const phase: string[] = ['variables', 'filters'];
+	const phase: string[] = ['variables', 'filters', 'results'];
 	let phaseIndex: number = $state(0);
 
 	let disabledForward: boolean = $state(false);
 	let disabledBackwards: boolean = $state(false);
+	let selectedFilterIds = $state<number[]>([]);
 
 	let endpoint = $state<DetailedService>({
 		id: data.id,
@@ -70,7 +72,8 @@
 		headers: [],
 		body: [],
 		inline: [],
-		queryString: []
+		queryString: [],
+		filters: [],
 	});
 
 	// This should change when the execute service in backend is ready, and we have the type defined
@@ -136,6 +139,7 @@
 			disabledForward = true;
 		}
 	};
+	
 
 	const fetchEndpoint = async (id: number) => {
 		try {
@@ -167,6 +171,9 @@
 			await executeEndpoint();
 			console.log('Sending endpoint');
 			console.log(requestService);
+			phaseIndex = 2;
+			disabledForward = true;
+			disabledBackwards = false;
 		} catch (error) {
 			if (error) {
 				console.log(`There was an error with the request for the endpoint: ${data.id}`);
@@ -175,33 +182,54 @@
 		}
 	};
 
+	const handleFilterChange = (selectedIds: number[]) => {
+		selectedFilterIds = selectedIds;
+		requestService.filters = endpoint.filters
+			.filter(f => selectedIds.includes(f.responsePatternId))
+			.map(f => ({ key: f.name, value: '' }));
+	};
+
+
+
 	fetchEndpoint(data.id);
 </script>
 
 <main class="space-y-10 p-10">
-	{#if ExecutionResponse.status.code}
-		<DisplayResultSectionInvokeService {ExecutionResponse}></DisplayResultSectionInvokeService>
-	{:else}
-		{#if phase[phaseIndex] == 'variables'}
-			<ParameterSectionInvokeService
-				{endpoint}
-				{variableTypes}
-				{variableTypeHeadingMap}
-				{findRequestKeyValue}
-			></ParameterSectionInvokeService>
-		{:else if phase[phaseIndex] == 'filters'}
-			<div class="flex-col">
-				<h1>Filters Page</h1>
-			</div>
-		{:else}
-			<p>Nothing</p>
-		{/if}
-		<Button onClick={handlePhaseChangeBackward} disabled={disabledBackwards}>Return</Button>
+	{#if phase[phaseIndex] === 'results'}
+		<DisplayResultSectionInvokeService
+			{ExecutionResponse}
+			filters={requestService.filters}
+		/>
+	{:else if phase[phaseIndex] == 'variables'}
+		<ParameterSectionInvokeService
+			{endpoint}
+			{variableTypes}
+			{variableTypeHeadingMap}
+			{findRequestKeyValue}
+		/>
+	{:else if phase[phaseIndex] == 'filters'}
+		<FilterSectionInvokeService 
+			filters={endpoint.filters}
+			selected={selectedFilterIds}
+			on:filterChange={(e) => handleFilterChange(e.detail)}
+		/>
 
-		{#if disabledForward}
+	{:else}
+		<p>Nothing</p>
+	{/if}
+
+<div class="flex justify-between items-center w-full">	<div>
+		<Button type="button" size="md" variant="secondary" onClick={handlePhaseChangeBackward} disabled={disabledBackwards}>
+			Return
+		</Button>
+	</div>
+	<div>
+		{#if phase[phaseIndex] === 'filters'}
 			<Button variant="primary" type="submit" size="md" onClick={handleSend}>Send</Button>
-		{:else}
+		{:else if phase[phaseIndex] !== 'results'}
 			<Button onClick={handlePhaseChangeForward} disabled={disabledForward}>Next</Button>
 		{/if}
-	{/if}
+	</div>
+</div>
+
 </main>

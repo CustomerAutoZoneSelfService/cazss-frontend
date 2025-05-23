@@ -28,7 +28,20 @@ export function replaceWithMock(mockApi: ApiWrapper): void {
 						description: 'OK'
 					}
 				],
-				filters: [],
+				filters: [
+					{
+						responsePatternId: 1,
+						pattern: 'PRODUCT_NAME',
+						name: 'productName',
+						description: 'Name of the product.'
+					},
+					{
+						responsePatternId: 2,
+						pattern: 'PRICE',
+						name: 'price',
+						description: 'Price of the product.'
+					},
+				],
 				variables: [
 					{
 						requestVariableId: 1,
