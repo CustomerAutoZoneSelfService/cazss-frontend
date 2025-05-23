@@ -7,46 +7,29 @@
 	import type { HistoryService } from '$lib/types/ApiWrapper';
 	import { splitHistoryByDate } from '$lib/utils/splitHistoryByDate';
 	import { formatDateHistoryCards } from '$lib/utils/dates';
-
-	// Mock data for the endpoint cards
-	/**
-   * Use this if the API is not available
-	const mockEndpointCards = Array.from({ length: 12 }, (_, i) => {
-		const dayOffset = Math.floor(i / 3); // Cada 3 elementos cambia de día
-		const date = new Date();
-		date.setDate(date.getDate() - dayOffset); // Resta días por grupo
-
-		// Para diferenciarlos un poco, agrega unos segundos
-		date.setSeconds(date.getSeconds() + (i % 3) * 10);
-
-		return {
-			historyId: i + 2,
-			endpoint: {
-				endpointId: 3,
-				name: 'Get TEST',
-				description:
-					'Dscripcion de un endpount para obtener un recurso y asi poder ver el resultado'
-			},
-			createdAt: date.toLocaleString('es-MX', {
-				day: '2-digit',
-				month: 'short',
-				hour: '2-digit',
-				minute: '2-digit',
-				hour12: false
-			})
-		};
-	});
-
-  */
+	import HistoryCardDetailsPanel from '$lib/components/HistoryCardDetailsPanel.svelte';
 
 	// APi Wrapper
 	let api: ApiWrapper = getContext('api');
 
 	let historyEndpoints: HistoryService[] = [];
-
 	let historyToday: HistoryService[] = [];
 	let historyYesterday: HistoryService[] = [];
 	let historyWeek: HistoryService[] = [];
+
+	// State for selected card and panel visibility
+	let selectedCard: HistoryService | null = null;
+	let showPanel = false;
+
+	function handleCardClick(card: HistoryService) {
+		selectedCard = card;
+		showPanel = true;
+	}
+
+	function closePanel() {
+		showPanel = false;
+		selectedCard = null;
+	}
 
 	onMount(async () => {
 		// TODO: Obtain the user Id from the session or context
@@ -61,7 +44,7 @@
 	// TODO: Handle correctly the unique key for the cards
 </script>
 
-<div class="align-items justify-center">
+<div class="align-items relative justify-center">
 	<main class="flex-1 bg-white p-8">
 		<div class="mb-6 flex items-center justify-between">
 			<div>
@@ -77,10 +60,11 @@
 					description={card.endpointDescription}
 					useDate={formatDateHistoryCards(card.createdAt)}
 					historyCard={true}
+					onClick={() => handleCardClick(card)}
 				/>
 			{/each}
 			<div class="col-span-4 flex items-center justify-end">
-				<Button variant="text" size="md" onclick={() => goto('/history/today')}>See more</Button>
+				<Button variant="text" size="md" onClick={() => goto('/history/today')}>See more</Button>
 			</div>
 		</div>
 		<p class="text-bold my-4">Yesterday</p>
@@ -92,10 +76,11 @@
 					description={card.endpointDescription}
 					useDate={formatDateHistoryCards(card.createdAt)}
 					historyCard={true}
+					onClick={() => handleCardClick(card)}
 				/>
 			{/each}
 			<div class="col-span-4 flex items-center justify-end">
-				<Button variant="text" size="md" onclick={() => goto('/history/yesterday')}>
+				<Button variant="text" size="md" onClick={() => goto('/history/yesterday')}>
 					See more
 				</Button>
 			</div>
@@ -109,11 +94,28 @@
 					description={card.endpointDescription}
 					useDate={formatDateHistoryCards(card.createdAt)}
 					historyCard={true}
+					onClick={() => handleCardClick(card)}
 				/>
 			{/each}
 			<div class="col-span-4 flex items-center justify-end">
-				<Button variant="text" size="md" onclick={() => goto('/history/week')}>See more</Button>
+				<Button variant="text" size="md" onClick={() => goto('/history/week')}>See more</Button>
 			</div>
 		</div>
 	</main>
+
+	{#if showPanel && selectedCard}
+		<!-- HistoryCardDetailsPanel as a side panel, no overlay -->
+		<div class="fixed top-0 right-0 z-50 flex h-full w-[32rem] flex-col bg-white shadow-2xl">
+			<Button class="m-4 self-end" variant="text" size="md" onClick={closePanel}>✕</Button>
+			<HistoryCardDetailsPanel
+				title={selectedCard.endpointName}
+				titleHighlight={selectedCard.endpointName.split(' ').at(-1) || ''}
+				description={selectedCard.endpointDescription}
+				inputs={selectedCard.inputs?.map((input) => ({ label: input.name, value: input.value })) ||
+					[]}
+				output={[{ label: 'Response', value: JSON.stringify(selectedCard.output, null, 2) }]}
+				historyData={selectedCard}
+			/>
+		</div>
+	{/if}
 </div>
