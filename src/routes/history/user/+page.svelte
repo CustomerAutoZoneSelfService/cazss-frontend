@@ -33,11 +33,14 @@
 
 	onMount(async () => {
 		// TODO: Obtain the user Id from the session or context
-		historyEndpoints = await api.getHistoryUser(5);
+		const userId = 1; // TODO: Replace with session user ID
+		historyEndpoints = await api.getHistoryUser(userId);
 		const splitHistory = splitHistoryByDate(historyEndpoints);
 		historyToday = splitHistory.today;
 		historyYesterday = splitHistory.yesterday;
 		historyWeek = splitHistory.week;
+
+		console.log(historyEndpoints);
 	});
 
 	// TODO: Make empty state for the history page sections

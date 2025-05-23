@@ -6,26 +6,49 @@
 	import { goto } from '$app/navigation';
 	import type ApiWrapper from '$lib/ApiWrapper';
 	import type { HistoryService } from '$lib/types/ApiWrapper';
-	import { splitHistoryByDate } from '$lib/utils/splitHistoryByDate';
+	import { page } from '$app/stores';
+	//import { splitHistoryByDate } from '$lib/utils/splitHistoryByDate';
 
-	// APi Wrapper
 	let api: ApiWrapper = getContext('api');
 
-	let historyEndpoints: HistoryService[] = [];
-	let todayEndpoints: HistoryService[] = [];
-	let yesterdayEndpoints: HistoryService[] = [];
-	let weekEndpoints: HistoryService[] = [];
+	let todayCards: HistoryService[] = [];
+	let yesterdayCards: HistoryService[] = [];
+	let weekCards: HistoryService[] = [];
 
 	onMount(async () => {
-		historyEndpoints = await api.getHistoryAdmin();
-		const { today, yesterday, week } = splitHistoryByDate(historyEndpoints);
-		todayEndpoints = today;
-		yesterdayEndpoints = yesterday;
-		weekEndpoints = week;
+		const userId = $page.data.user?.userId;
+		if (!userId) return;
+
+		const allHistory = await api.getAllHistory();
+		const now = new Date();
+		const today = now.toDateString();
+
+		const yesterdayDate = new Date();
+		yesterdayDate.setDate(now.getDate() - 1);
+		const yesterday = yesterdayDate.toDateString();
+
+		todayCards = [];
+		yesterdayCards = [];
+		weekCards = [];
+
+		for (const card of allHistory) {
+			const cardDate = new Date(card.created);
+			const cardDateStr = cardDate.toDateString();
+
+			if (cardDateStr === today) {
+				todayCards.push(card);
+			} else if (cardDateStr === yesterday) {
+				yesterdayCards.push(card);
+			} else {
+				const daysAgo = (now.getTime() - cardDate.getTime()) / (1000 * 60 * 60 * 24);
+				if (daysAgo <= 7) {
+					weekCards.push(card);
+				}
+			}
+		}
 	});
 
-	// Function to format the date
-	function formatDate(datetime: string) {
+	function formatDate(datetime: string | number | Date) {
 		const date = new Date(datetime);
 		return date.toLocaleString('es-MX', {
 			day: '2-digit',
@@ -58,14 +81,15 @@
 				<h1 class="text-2xl font-bold">History</h1>
 			</div>
 		</div>
+
 		<p class="text-bold my-4">Today</p>
 		<div id="today" class="grid grid-cols-4 gap-12">
-			{#each todayEndpoints as card (card.historyId)}
+			{#each todayCards as card (card.historyId)}
 				<EndpointCard
 					id={card.historyId}
-					title={card.endpointName}
-					description={card.endpointDescription}
-					useDate={formatDate(card.createdAt)}
+					title={card.name}
+					description={card.description}
+					useDate={formatDate(card.created)}
 					historyCard={true}
 					onClick={() => handleCardClick(card)}
 				/>
@@ -74,32 +98,33 @@
 				<Button variant="text" size="md" onClick={() => goto('/history/today')}>See more</Button>
 			</div>
 		</div>
+
 		<p class="text-bold my-4">Yesterday</p>
 		<div id="yesterday" class="grid grid-cols-4 gap-12">
-			{#each yesterdayEndpoints as card (card.historyId)}
+			{#each yesterdayCards as card (card.historyId)}
 				<EndpointCard
 					id={card.historyId}
-					title={card.endpointName}
-					description={card.endpointDescription}
-					useDate={formatDate(card.createdAt)}
+					title={card.name}
+					description={card.description}
+					useDate={formatDate(card.created)}
 					historyCard={true}
 					onClick={() => handleCardClick(card)}
 				/>
 			{/each}
 			<div class="col-span-4 flex items-center justify-end">
-				<Button variant="text" size="md" onClick={() => goto('/history/yesterday')}>
-					See more
-				</Button>
+				<Button variant="text" size="md" onclick={() => goto('/history/yesterday')}>See more</Button
+				>
 			</div>
 		</div>
+
 		<p class="text-bold my-4">Last 7 days</p>
 		<div id="week" class="grid grid-cols-4 gap-12">
-			{#each weekEndpoints as card (card.historyId)}
+			{#each weekCards as card (card.historyId)}
 				<EndpointCard
 					id={card.historyId}
-					title={card.endpointName}
-					description={card.endpointDescription}
-					useDate={formatDate(card.createdAt)}
+					title={card.name}
+					description={card.description}
+					useDate={formatDate(card.created)}
 					historyCard={true}
 					onClick={() => handleCardClick(card)}
 				/>

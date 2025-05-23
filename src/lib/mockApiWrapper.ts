@@ -1,5 +1,6 @@
 import ApiWrapper from '$lib/ApiWrapper';
-import type { Service, DetailedService, HistoryService } from './types/ApiWrapper';
+import type { Service, DetailedService } from './types/ApiWrapper';
+//import type { HistoryService } from './types/ApiWrapper';
 import type { ServiceResponse } from './types/ServiceResponse';
 
 export function replaceWithMock(mockApi: ApiWrapper): void {
@@ -74,7 +75,7 @@ export function replaceWithMock(mockApi: ApiWrapper): void {
 		};
 	};
 
-	mockApi.getHistoryAdmin = async function (): Promise<HistoryService[]> {
+	/*mockApi.getHistoryAdmin = async function (): Promise<HistoryService[]> {
 		return Array.from({ length: 12 }, (_, i) => {
 			const dayOffset = Math.floor(i / 3); // Each 3 elements changes day
 			const date = new Date();
@@ -92,5 +93,5 @@ export function replaceWithMock(mockApi: ApiWrapper): void {
 				createdAt: date.toISOString()
 			};
 		});
-	};
+	};*/
 }
