@@ -145,7 +145,7 @@
 				description={selectedCard.endpointDescription}
 				inputs={[{ label: 'Email', value: selectedCard.email || 'N/A' }]}
 				output={[{ label: 'Date', value: formatDate(selectedCard.createdAt) || 'N/A' }]}
-				onCallAgain={() => {}}
+				historyData={selectedCard}
 			/>
 		</div>
 	{/if}
