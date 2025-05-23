@@ -1,5 +1,6 @@
 <script lang="ts">
 	import EndpointCard from '$lib/components/EndpointCard.svelte';
+	import EndpointCardAdmin from '$lib/components/EndpointCardAdmin.svelte';
 	import Button from '$lib/components/Button.svelte';
 	import HistoryCardDetailsPanel from '$lib/components/HistoryCardDetailsPanel.svelte';
 	import { onMount, getContext } from 'svelte';
@@ -8,7 +9,6 @@
 	import type { HistoryService } from '$lib/types/ApiWrapper';
 	import { splitHistoryByDate } from '$lib/utils/splitHistoryByDate';
 
-	// APi Wrapper
 	let api: ApiWrapper = getContext('api');
 
 	let historyEndpoints: HistoryService[] = [];
@@ -24,7 +24,6 @@
 		weekEndpoints = week;
 	});
 
-	// Function to format the date
 	function formatDate(datetime: string) {
 		const date = new Date(datetime);
 		return date.toLocaleString('es-MX', {
@@ -36,7 +35,6 @@
 		});
 	}
 
-	// State for selected card and panel visibility
 	let selectedCard: HistoryService | null = null;
 	let showPanel = false;
 
@@ -54,59 +52,58 @@
 <div class="align-items relative justify-center">
 	<main class="flex-1 bg-white p-8">
 		<div class="mb-6 flex items-center justify-between">
-			<div>
-				<h1 class="text-2xl font-bold">History</h1>
-			</div>
+			<h1 class="text-2xl font-bold">History</h1>
 		</div>
+
+		<!-- TODAY -->
 		<p class="text-bold my-4">Today</p>
-		<div id="today" class="grid grid-cols-4 gap-12">
+		<div id="today" class="flex flex-col gap-4">
 			{#each todayEndpoints as card (card.historyId)}
-				<EndpointCard
+				<EndpointCardAdmin
 					id={card.historyId}
 					title={card.endpointName}
 					description={card.endpointDescription}
 					useDate={formatDate(card.createdAt)}
+					username={card.email?.split('@')[0] || 'Usuario'}
+					userInitial={card.email?.charAt(0).toUpperCase() || 'U'}
 					historyCard={true}
 					onClick={() => handleCardClick(card)}
 				/>
 			{/each}
-			<div class="col-span-4 flex items-center justify-end">
-				<Button variant="text" size="md" onClick={() => goto('/history/today')}>See more</Button>
-			</div>
 		</div>
+
+		<!-- YESTERDAY -->
 		<p class="text-bold my-4">Yesterday</p>
-		<div id="yesterday" class="grid grid-cols-4 gap-12">
+		<div id="yesterday" class="flex flex-col gap-4">
 			{#each yesterdayEndpoints as card (card.historyId)}
-				<EndpointCard
+				<EndpointCardAdmin
 					id={card.historyId}
 					title={card.endpointName}
 					description={card.endpointDescription}
 					useDate={formatDate(card.createdAt)}
+					username={card.email?.split('@')[0] || 'Usuario'}
+					userInitial={card.email?.charAt(0).toUpperCase() || 'U'}
 					historyCard={true}
 					onClick={() => handleCardClick(card)}
 				/>
 			{/each}
-			<div class="col-span-4 flex items-center justify-end">
-				<Button variant="text" size="md" onClick={() => goto('/history/yesterday')}>
-					See more
-				</Button>
-			</div>
 		</div>
+
+		<!-- LAST 7 DAYS -->
 		<p class="text-bold my-4">Last 7 days</p>
-		<div id="week" class="grid grid-cols-4 gap-12">
+		<div id="week" class="flex flex-col gap-4">
 			{#each weekEndpoints as card (card.historyId)}
-				<EndpointCard
+				<EndpointCardAdmin
 					id={card.historyId}
 					title={card.endpointName}
 					description={card.endpointDescription}
 					useDate={formatDate(card.createdAt)}
+					username={card.email?.split('@')[0] || 'Usuario'}
+					userInitial={card.email?.charAt(0).toUpperCase() || 'U'}
 					historyCard={true}
 					onClick={() => handleCardClick(card)}
 				/>
 			{/each}
-			<div class="col-span-4 flex items-center justify-end">
-				<Button variant="text" size="md" onClick={() => goto('/history/week')}>See more</Button>
-			</div>
 		</div>
 	</main>
 
