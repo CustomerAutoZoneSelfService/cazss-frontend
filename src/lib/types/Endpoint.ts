@@ -1,4 +1,5 @@
 export type Endpoint = {
+	name: string;
 	id?: number;
 	title: string;
 	description: string;
