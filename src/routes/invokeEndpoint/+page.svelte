@@ -4,11 +4,16 @@
 	import Input from '$lib/components/Input.svelte';
 	import TextArea from '$lib/components/TextArea.svelte';
 	import TextFormat from '$lib/components/TextFormat.svelte';
+	import { goto } from '$app/navigation';
 
 	const sections = [
 		{ id: 1, title: 'Body variables', label: 'SKU', tooltip: '(?)' },
 		{ id: 2, title: 'Params / Headers', label: 'ClientId' }
 	];
+
+	export function editService() {
+		goto('/edit/1');
+	}
 </script>
 
 <main class="mx-auto flex w-full flex-col items-start gap-10 p-10">
@@ -35,6 +40,15 @@
 	{/each}
 
 	<span class="flex min-w-lg items-center justify-center gap-4">
+		<Button
+			variant="primary"
+			type="submit"
+			size="lg"
+			className="w-[300px] h-14 shadow-md"
+			onClick={editService}
+		>
+			Edit Service
+		</Button>
 		<Button variant="primary" type="submit" size="lg" className="w-[300px] h-14 shadow-md">
 			Send
 		</Button>

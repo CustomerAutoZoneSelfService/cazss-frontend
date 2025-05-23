@@ -1,5 +1,6 @@
-import type { RequestVariableString } from './RequestVariable';
-import type { Filter } from './Filter';
+// import type { RequestVariableString } from './RequestVariable';
+// import type { ResponseStatusEntry } from './ResponseStatusEntry';
+// import type { Filter } from './Filter';
 
 export type HTTPMethod = 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
 
@@ -21,15 +22,14 @@ export type Service = {
 
 export type DetailedService = {
 	id: number; // TODO Check this later
+	categoryId: number;
+	authenticationStrategy: string;
 	name: string;
 	description: string;
 	active: boolean;
 	method: HTTPMethod;
 	url: string;
-	responses: ResponseStatus[];
-	filters: Filter[];
-	variables: RequestVariableString[];
-	requestBody: string; // ? This should be the template
+	template: string;
 };
 
 export type HistoryService = {
@@ -39,3 +39,13 @@ export type HistoryService = {
 	endpointDescription: string;
 	createdAt: string;
 };
+
+// export type RequestVariable = {
+
+// 	type: string;
+// 	key: string;
+// 	defaultValue: string;
+// 	customizable: boolean;
+// 	description: string;
+
+// }
