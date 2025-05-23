@@ -9,9 +9,9 @@ export type RequestVariable = {
 };
 
 export type RequestVariableString = {
-	requestVariableId?: number; //para post new endpoint no tiene aun asignado
+	requestVariableId: number;
 	type: VariableTypeString;
-	key: string;
+	keyName: string;
 	defaultValue: string;
 	customizable: boolean;
 	description: string;

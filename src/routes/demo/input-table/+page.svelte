@@ -21,7 +21,7 @@
 		{
 			responsePatternId: 0,
 			responseId: 0,
-			parentId: null,
+			parentId: undefined,
 			pattern: '',
 			name: 'response1',
 			description: 'lorem',

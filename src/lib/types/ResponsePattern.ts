@@ -1,7 +1,7 @@
 export type ResponsePattern = {
 	responsePatternId: number;
 	responseId: number;
-	parentId: number | null;
+	parentId?: number;
 	pattern: string;
 	name: string;
 	description: string;

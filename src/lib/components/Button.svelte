@@ -14,7 +14,7 @@
 
 	function computeClasses() {
 		let baseClasses =
-			'inline-flex items-center justify-center font-bold uppercase rounded-[50px] ' +
+			'inline-flex items-center justify-center font-bold uppercase rounded-[50px] cursor-pointer' +
 			'focus:outline-none transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed';
 
 		let variantClasses = '';

@@ -12,9 +12,13 @@
 
 	export function getVariables() {
 		if ('endpointId' in prompt) {
-			return (variables as RequestVariable[]).filter((variable) => variable.key !== '');
+			return ($state.snapshot(variables) as RequestVariable[]).filter(
+				(variable) => variable.key !== ''
+			);
 		} else {
-			return (variables as ResponsePattern[]).filter((variable) => variable.name !== '');
+			return ($state.snapshot(variables) as ResponsePattern[]).filter(
+				(variable) => variable.name !== ''
+			);
 		}
 	}
 
@@ -28,6 +32,8 @@
 			}
 		}
 	});
+
+	addNewRow();
 
 	function addNewRow() {
 		if ('endpointId' in prompt) {
@@ -44,7 +50,7 @@
 			(variables as ResponsePattern[]).push({
 				responsePatternId: 0,
 				responseId: prompt.responseId,
-				parentId: null,
+				parentId: undefined,
 				pattern: '',
 				name: '',
 				description: '',

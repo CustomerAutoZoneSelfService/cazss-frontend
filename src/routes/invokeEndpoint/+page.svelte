@@ -1,18 +1,18 @@
 <script>
+	import { goto } from '$app/navigation';
 	import Button from '$lib/components/Button.svelte';
 	import HeadingFormat from '$lib/components/HeadingFormat.svelte';
 	import Input from '$lib/components/Input.svelte';
 	import TextArea from '$lib/components/TextArea.svelte';
 	import TextFormat from '$lib/components/TextFormat.svelte';
-	import { goto } from '$app/navigation';
 
 	const sections = [
 		{ id: 1, title: 'Body variables', label: 'SKU', tooltip: '(?)' },
 		{ id: 2, title: 'Params / Headers', label: 'ClientId' }
 	];
 
-	export function editService() {
-		goto('/edit/1');
+	function editService() {
+		goto('/create');
 	}
 </script>
 

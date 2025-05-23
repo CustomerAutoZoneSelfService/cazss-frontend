@@ -2,31 +2,37 @@
 	import EndpointCard from '$lib/components/EndpointCard.svelte';
 	import Button from '$lib/components/Button.svelte';
 	import { goto } from '$app/navigation';
+	import ApiWrapper from '$lib/ApiWrapper';
+	import type { HistoryService } from '$lib/types/ApiWrapper';
+	import { sameDay } from '$lib/utils/splitHistoryByDate';
 
-	const mockEndpointCards = Array.from({ length: 12 }, (_, i) => {
-		const dayOffset = Math.floor(i / 3); // Cada 3 elementos cambia de día
-		const date = new Date();
-		date.setDate(date.getDate() - dayOffset); // Resta días por grupo
+	import { onMount } from 'svelte';
+	import { page } from '$app/stores';
 
-		// Para diferenciarlos un poco, agrega unos segundos
-		date.setSeconds(date.getSeconds() + (i % 3) * 10);
+	let todayCards: HistoryService[] = [];
+	let yesterdayCards: HistoryService[] = [];
+	let weekCards: HistoryService[] = [];
 
-		return {
-			historyId: i + 2,
-			endpoint: {
-				endpointId: 3,
-				name: 'Get TEST',
-				description:
-					'Dscripcion de un endpount para obtener un recurso y asi poder ver el resultado'
-			},
-			createdAt: date.toLocaleString('es-MX', {
-				day: '2-digit',
-				month: 'short',
-				hour: '2-digit',
-				minute: '2-digit',
-				hour12: false
-			})
-		};
+	onMount(async () => {
+		const userId = $page.data.user?.userId;
+		if (!userId) return;
+
+		const api = new ApiWrapper();
+		api.getHistoryUser(userId);
+
+		const history: HistoryService[] = await ApiWrapper.getHistoryUser();
+
+		const today = new Date();
+		const yesterday = new Date();
+		yesterday.setDate(today.getDate() - 1);
+
+		todayCards = history.filter((h) => sameDay(new Date(h.createdAt), today));
+		yesterdayCards = history.filter((h) => sameDay(new Date(h.createdAt), yesterday));
+		weekCards = history.filter((h) => {
+			const d = new Date(h.createdAt);
+			const diff = (today.getTime() - d.getTime()) / (1000 * 60 * 60 * 24);
+			return diff <= 7 && !sameDay(d, today) && !sameDay(d, yesterday);
+		});
 	});
 
 	// TODO: Make empty state for the history page sections
@@ -42,29 +48,43 @@
 		</div>
 		<p class="text-bold my-4">Today</p>
 		<div id="today" class="grid grid-cols-4 gap-12">
-			{#each mockEndpointCards as card (card.historyId)}
+			{#each todayCards as card (card.historyId)}
 				<EndpointCard
 					id={card.historyId}
 					title={card.endpoint.name}
 					description={card.endpoint.description}
-					useDate={card.createdAt}
+					useDate={new Date(card.createdAt).toLocaleString('es-MX', {
+						day: '2-digit',
+						month: 'short',
+						hour: '2-digit',
+						minute: '2-digit',
+						hour12: false
+					})}
 				/>
 			{/each}
+
 			<div class="col-span-4 flex items-center justify-end">
 				<Button variant="text" size="md" onclick={() => goto('/history/today')}>See more</Button>
 			</div>
 		</div>
 		<p class="text-bold my-4">Yesterday</p>
 		<div id="yesterday" class="grid grid-cols-4 gap-12">
-			{#each mockEndpointCards as card (card.historyId)}
+			{#each yesterdayCards as card (card.historyId)}
 				<EndpointCard
 					id={card.historyId}
 					title={card.endpoint.name}
 					description={card.endpoint.description}
-					useDate={card.createdAt}
+					useDate={new Date(card.createdAt).toLocaleString('es-MX', {
+						day: '2-digit',
+						month: 'short',
+						hour: '2-digit',
+						minute: '2-digit',
+						hour12: false
+					})}
 					historyCard={true}
 				/>
 			{/each}
+
 			<div class="col-span-4 flex items-center justify-end">
 				<Button variant="text" size="md" onclick={() => goto('/history/yesterday')}>
 					See more
@@ -73,15 +93,22 @@
 		</div>
 		<p class="text-bold my-4">Last 7 days</p>
 		<div id="week" class="grid grid-cols-4 gap-12">
-			{#each mockEndpointCards as card (card.historyId)}
+			{#each weekCards as card (card.historyId)}
 				<EndpointCard
 					id={card.historyId}
 					title={card.endpoint.name}
 					description={card.endpoint.description}
-					useDate={card.createdAt}
+					useDate={new Date(card.createdAt).toLocaleString('es-MX', {
+						day: '2-digit',
+						month: 'short',
+						hour: '2-digit',
+						minute: '2-digit',
+						hour12: false
+					})}
 					historyCard={true}
 				/>
 			{/each}
+
 			<div class="col-span-4 flex items-center justify-end">
 				<Button variant="text" size="md" onclick={() => goto('/history/week')}>See more</Button>
 			</div>
