@@ -1,20 +1,5 @@
 <script lang="ts">
-	/*
-	 * Endpoint Page
-	 *
-	 * This page is responsible for allowing the user to input their request variables for the endpoint (in case they exist)
-	 * and allowing him to send it.
-	 */
-
 	import { getContext } from 'svelte';
-	import { page } from '$app/stores';
-
-	import Button from '$lib/components/Button.svelte';
-	import HeadingFormat from '$lib/components/HeadingFormat.svelte';
-	import TextArea from '$lib/components/TextArea.svelte';
-	import TextFormat from '$lib/components/TextFormat.svelte';
-	import Input from '$lib/components/Input.svelte';
-	import Tooltip from '$lib/components/Tooltip.svelte';
 
 	import type { Params } from './+page';
 	import type { DetailedService, KeyValue } from '$lib/types/ApiWrapper';
@@ -22,12 +7,20 @@
 	import type { RequestService } from '$lib/types/RequestService';
 	import type { ServiceResponse } from '$lib/types/ServiceResponse';
 	import type ApiWrapper from '$lib/ApiWrapper';
+	import ParameterSectionInvokeService from '$lib/components/ParameterSectionInvokeService.svelte';
+	import DisplayResultSectionInvokeService from '$lib/components/DisplayResultSectionInvokeService.svelte';
+	import { handleInitializeRequestService } from '$lib/handlers/handleInitializeRequestService';
+	import Button from '$lib/components/Button.svelte';
 
-	import List from '$lib/components/List.svelte';
 	let api: ApiWrapper = getContext('api');
 
 	let { data }: { data: Params['params'] } = $props();
-	console.log('accessed to endpoint page');
+
+	const phase: string[] = ['variables', 'filters'];
+	let phaseIndex: number = $state(0);
+
+	let disabledForward: boolean = $state(false);
+	let disabledBackwards: boolean = $state(false);
 
 	let endpoint = $state<DetailedService>({
 		id: data.id,
@@ -90,46 +83,6 @@
 		response: []
 	});
 
-	// Function to initialize the RequestService object with the variables from the endpoint and possible default values
-	const initializeRequestService = (variables: RequestVariableString[]) => {
-		const newHeaders: KeyValue[] = [];
-		const newBody: KeyValue[] = [];
-		const newInline: KeyValue[] = [];
-		const newQueryString: KeyValue[] = [];
-
-		// Check for pre-filled data in URL
-		const prefilledData = $page.url.searchParams.get('prefilled');
-		const prefilledInputs: Array<{ label: string; value: string }> = prefilledData
-			? JSON.parse(prefilledData)
-			: [];
-
-		variables.forEach((variable) => {
-			// Try to find pre-filled value first
-			const prefilledInput = prefilledInputs.find((input) => input.label === variable.keyName);
-			const defaultValue = prefilledInput ? prefilledInput.value : (variable.defaultValue ?? '');
-
-			const kv: KeyValue = { key: variable.keyName, value: defaultValue };
-			switch (variable.type) {
-				case 'HEADER':
-					newHeaders.push(kv);
-					break;
-				case 'BODY':
-					newBody.push(kv);
-					break;
-				case 'INLINE_PARAM':
-					newInline.push(kv);
-					break;
-				case 'QUERY_STRING':
-					newQueryString.push(kv);
-					break;
-			}
-		});
-		requestService.headers = newHeaders;
-		requestService.body = newBody;
-		requestService.inline = newInline;
-		requestService.queryString = newQueryString;
-	};
-
 	// Function to find a KeyValue object in the RequestService object based on its type and keyName from the INPUT
 	const findRequestKeyValue = (type: VariableTypeString, keyName: string): KeyValue | undefined => {
 		let targetArray: KeyValue[] | undefined;
@@ -150,10 +103,49 @@
 		return targetArray?.find((kv) => kv.key === keyName);
 	};
 
+	const handlePhaseChangeForward = () => {
+		disabledBackwards = false;
+		disabledForward = false;
+
+		if (phaseIndex !== phase.length - 1) {
+			phaseIndex += 1;
+		}
+
+		if (phaseIndex === 0) {
+			disabledBackwards = true;
+		}
+
+		if (phaseIndex === phase.length - 1) {
+			disabledForward = true;
+		}
+	};
+
+	const handlePhaseChangeBackward = () => {
+		disabledBackwards = false;
+		disabledForward = false;
+
+		if (phaseIndex !== 0) {
+			phaseIndex -= 1;
+		}
+
+		if (phaseIndex === 0) {
+			disabledBackwards = true;
+		}
+
+		if (phaseIndex === phase.length - 1) {
+			disabledForward = true;
+		}
+	};
+
 	const fetchEndpoint = async (id: number) => {
 		try {
 			endpoint = await api.getServiceById(id);
-			initializeRequestService(endpoint.variables);
+			const result = handleInitializeRequestService(endpoint.variables);
+
+			requestService.headers = result.headers;
+			requestService.body = result.body;
+			requestService.inline = result.inline;
+			requestService.queryString = result.queryString;
 		} catch (error) {
 			console.log(error);
 			//add alert when component is pushed
@@ -187,89 +179,29 @@
 </script>
 
 <main class="space-y-10 p-10">
-	<!-- Header section -->
-	<div class="flex flex-col gap-6">
-		<HeadingFormat>
-			{endpoint.name}
-		</HeadingFormat>
-		<TextFormat size="body" variant="primary">{endpoint.description}</TextFormat>
-	</div>
-
-	<!-- Request variables input section -->
-	<div class="flex flex-col gap-4">
-		<!-- Variables Section -->
-		{#each variableTypes as variables, index (index)}
-			{#if variables.length > 0}
-				<div class="flex flex-col gap-4">
-					<HeadingFormat as="h4">{variableTypeHeadingMap.get(variables[0].type)}</HeadingFormat>
-					<div class="flex flex-col">
-						{#each variables as variable (variable.keyName)}
-							{@const requestValue = findRequestKeyValue(variable.type, variable.keyName)}
-							<div class="flex items-center gap-4">
-								<div class="flex flex-row gap-2">
-									<TextFormat as="label" size="body" className="whitespace-nowrap">
-										{variable.keyName}
-									</TextFormat>
-
-									{#if variable.description}
-										<Tooltip value={variable.description}>
-											<span class="cursor-pointer text-red-500">(?)</span>
-										</Tooltip>
-									{/if}
-								</div>
-
-								<div>
-									{#if !variable.customizable}
-										<Input boxSize="full" isDisabled={true} bind:text={variable.defaultValue} />
-									{:else if requestValue}
-										<Input
-											boxSize="full"
-											isDisabled={!variable.customizable}
-											bind:text={requestValue.value}
-										/>
-									{/if}
-								</div>
-							</div>
-						{/each}
-					</div>
-				</div>
-			{/if}
-		{/each}
-	</div>
-
-	<!-- Send Button -->
-	<Button variant="primary" type="submit" size="lg" onClick={handleSend}>Send</Button>
-
-	<!-- Response Section -->
-	<div class="space-y-4">
-		{#if ExecutionResponse.status.code}
-			<HeadingFormat as="h3"
-				>Response
-				<Tooltip value={ExecutionResponse.status.description}
-					>(Status code: {ExecutionResponse.status.code})</Tooltip
-				>
-			</HeadingFormat>
-
-			<List type="ul">
-				{#each ExecutionResponse.response as variableResponse, index (index)}
-					{#each Object.entries(variableResponse) as [key, value], innerIndex (innerIndex)}
-						<li><b>{key}:</b> {value.join(', ')}</li>
-					{/each}
-				{/each}
-			</List>
-
-			<HeadingFormat as="h4">Raw body</HeadingFormat>
-			{#if ExecutionResponse.response.some((variable) => 'content' in variable)}
-				<!--
-				<PdfViewer data={atob(ExecutionResponse.response.find(v => 'content' in v)?.content)} />
-				-->
-				<p>Here goes the pdf visualizer and the button</p>
-			{:else}
-				<TextArea
-					disabled={true}
-					text={ExecutionResponse.response ? JSON.stringify(ExecutionResponse.response) : ''}
-				/>
-			{/if}
+	{#if ExecutionResponse.status.code}
+		<DisplayResultSectionInvokeService {ExecutionResponse}></DisplayResultSectionInvokeService>
+	{:else}
+		{#if phase[phaseIndex] == 'variables'}
+			<ParameterSectionInvokeService
+				{endpoint}
+				{variableTypes}
+				{variableTypeHeadingMap}
+				{findRequestKeyValue}
+			></ParameterSectionInvokeService>
+		{:else if phase[phaseIndex] == 'filters'}
+			<div class="flex-col">
+				<h1>Filters Page</h1>
+			</div>
+		{:else}
+			<p>Nothing</p>
 		{/if}
-	</div>
+		<Button onClick={handlePhaseChangeBackward} disabled={disabledBackwards}>Return</Button>
+
+		{#if disabledForward}
+			<Button variant="primary" type="submit" size="md" onClick={handleSend}>Send</Button>
+		{:else}
+			<Button onClick={handlePhaseChangeForward} disabled={disabledForward}>Next</Button>
+		{/if}
+	{/if}
 </main>

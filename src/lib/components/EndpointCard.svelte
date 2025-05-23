@@ -32,7 +32,7 @@
 	}
 </script>
 
-z<!-- Make the card clickable and accessible -->
+<!-- Make the card clickable and accessible -->
 <div
 	class="group bg-gray-light hover:bg-accent-red relative flex h-fit min-h-[8rem] cursor-pointer flex-col rounded-3xl p-6 shadow-lg"
 	onclick={onClick}
