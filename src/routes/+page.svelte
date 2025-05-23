@@ -5,20 +5,45 @@
 	import { getContext } from 'svelte';
 	import type ApiWrapper from '$lib/ApiWrapper'; //Exclusively for syntax.
 	import type { Service } from '$lib/types/ApiWrapper';
+	import { goto } from '$app/navigation';
 
 	let api: ApiWrapper = getContext('api');
 
 	let endpoints: Service[] = [];
 	let filteredEndpoints: Service[] = [];
+	let selectedEndpoint: Service | null = null;
+	let prefilledInputs: Array<{ label: string; value: string }> = [];
 
 	onMount(async () => {
 		endpoints = await api.getAllServices();
 		filteredEndpoints = [...endpoints];
+
+		// Check for pre-filled data from history
+		const prefilledData = sessionStorage.getItem('prefilledEndpointData');
+		if (prefilledData) {
+			const data = JSON.parse(prefilledData);
+			// Find the endpoint that matches the name from history
+			selectedEndpoint = endpoints.find((ep) => ep.name === data.endpointName) || null;
+			prefilledInputs = data.inputs || [];
+			// Clear the stored data after using it
+			sessionStorage.removeItem('prefilledEndpointData');
+
+			// If we found the endpoint, navigate to its details
+			if (selectedEndpoint) {
+				goto(
+					`/endpoint/${selectedEndpoint.endpointId}?prefilled=${JSON.stringify(prefilledInputs)}`
+				);
+			}
+		}
 	});
 
 	function handleFilter(allData: string[]) {
 		const filteredTitles = allData;
 		filteredEndpoints = endpoints.filter((endpoint) => filteredTitles.includes(endpoint.name));
+	}
+
+	function handleEndpointClick(endpoint: Service) {
+		goto(`/endpoint/${endpoint.endpointId}`);
 	}
 </script>
 
@@ -37,6 +62,7 @@
 						id={endpoint.endpointId}
 						title={endpoint.name}
 						description={endpoint.description}
+						onClick={() => handleEndpointClick(endpoint)}
 					/>
 				{/each}
 			{/if}
