@@ -2,7 +2,6 @@
 	let {
 		id,
 		title,
-		description,
 		historyCard = false,
 		useDate = '',
 		onClick = () => {},
@@ -11,7 +10,6 @@
 	} = $props<{
 		id: number;
 		title: string;
-		description: string;
 		historyCard?: boolean;
 		useDate?: string;
 		onClick?: () => void;
@@ -34,20 +32,22 @@
 	tabindex="0"
 	role="button"
 	data-endpoint-id={id}
-> 
+>
 	<!--Usuario -->
-    <div class="flex items-center gap-4">
-        <div class="flex h-10 w-10 items-center justify-center rounded-full bg-gray-400 text-white font-bold">
-            {userInitial}
-        </div>
-        <div class="text-near-black group-hover:text-white">
-            <span class="font-semibold">{username}</span> used <strong>{title}</strong>
-        </div>
-    </div>
+	<div class="flex items-center gap-4">
+		<div
+			class="flex h-10 w-10 items-center justify-center rounded-full bg-gray-400 font-bold text-white"
+		>
+			{userInitial}
+		</div>
+		<div class="text-near-black group-hover:text-white">
+			<span class="font-semibold">{username}</span> used <strong>{title}</strong>
+		</div>
+	</div>
 
 	<!-- Fecha/Hora -->
 	{#if historyCard}
-		<div class="ml-auto text-sm text-near-black group-hover:text-white">
+		<div class="text-near-black ml-auto text-sm group-hover:text-white">
 			{useDate}
 		</div>
 	{/if}

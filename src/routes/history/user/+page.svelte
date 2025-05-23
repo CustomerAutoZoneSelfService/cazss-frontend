@@ -7,6 +7,7 @@
 	import { splitHistoryByDate } from '$lib/utils/splitHistoryByDate';
 	import { formatDateHistoryCards } from '$lib/utils/dates';
 	import HistoryCardDetailsPanel from '$lib/components/HistoryCardDetailsPanel.svelte';
+	import LoadingSVG from '$lib/components/LoadingSVG.svelte';
 
 	let api: ApiWrapper = getContext('api');
 
@@ -17,6 +18,7 @@
 
 	let selectedCard: HistoryService | null = null;
 	let showPanel = false;
+	let isLoading = true;
 
 	function handleCardClick(card: HistoryService) {
 		if (selectedCard?.historyId === card.historyId) {
@@ -32,14 +34,15 @@
 		selectedCard = null;
 	}
 
-
 	onMount(() => {
 		async function cargarHistorial() {
+			isLoading = true;
 			historyEndpoints = await api.getHistoryUser(5);
 			const splitHistory = splitHistoryByDate(historyEndpoints);
 			historyToday = splitHistory.today;
 			historyYesterday = splitHistory.yesterday;
 			historyWeek = splitHistory.week;
+			isLoading = false;
 		}
 
 		cargarHistorial();
@@ -62,6 +65,121 @@
 	});
 </script>
 
+<div class="align-items relative justify-center">
+	{#if isLoading}
+		<div class="flex-1 bg-white p-8">
+			<div class="mb-6 flex items-center justify-between">
+				<div>
+					<h1 class="text-2xl font-bold">History</h1>
+				</div>
+			</div>
+
+			<div class="flex h-[60vh] items-center justify-center">
+				<LoadingSVG />
+			</div>
+		</div>
+	{:else}
+		<main class="flex-1 bg-white p-8">
+			<div class="mb-6 flex items-center justify-between">
+				<div>
+					<h1 class="text-2xl font-bold">History</h1>
+				</div>
+			</div>
+
+			<p class="text-bold my-4">Today</p>
+			<div id="today" class="grid grid-cols-4 gap-12">
+				{#each historyToday as card (card.historyId)}
+					<!-- Aquí uso un botón accesible -->
+					<button
+						class="endpoint-card"
+						type="button"
+						on:click={() => handleCardClick(card)}
+						on:keydown={(e) => {
+							if (e.key === 'Enter' || e.key === ' ') {
+								e.preventDefault();
+								handleCardClick(card);
+							}
+						}}
+						aria-pressed={selectedCard?.historyId === card.historyId}
+						style="all:unset; cursor:pointer; display: block;"
+					>
+						<EndpointCard
+							id={card.historyId}
+							title={card.endpointName}
+							description={card.endpointDescription}
+							useDate={formatDateHistoryCards(card.createdAt)}
+							historyCard={true}
+						/>
+					</button>
+				{/each}
+			</div>
+
+			<p class="text-bold my-4">Yesterday</p>
+			<div id="yesterday" class="grid grid-cols-4 gap-12">
+				{#each historyYesterday as card (card.historyId)}
+					<button
+						class="endpoint-card"
+						type="button"
+						on:click={() => handleCardClick(card)}
+						on:keydown={(e) => {
+							if (e.key === 'Enter' || e.key === ' ') {
+								e.preventDefault();
+								handleCardClick(card);
+							}
+						}}
+						aria-pressed={selectedCard?.historyId === card.historyId}
+						style="all:unset; cursor:pointer; display: block;"
+					>
+						<EndpointCard
+							id={card.historyId}
+							title={card.endpointName}
+							description={card.endpointDescription}
+							useDate={formatDateHistoryCards(card.createdAt)}
+							historyCard={true}
+						/>
+					</button>
+				{/each}
+			</div>
+
+			<p class="text-bold my-4">Last 7 days</p>
+			<div id="week" class="grid grid-cols-4 gap-12">
+				{#each historyWeek as card (card.historyId)}
+					<button
+						class="endpoint-card"
+						type="button"
+						on:click={() => handleCardClick(card)}
+						on:keydown={(e) => {
+							if (e.key === 'Enter' || e.key === ' ') {
+								e.preventDefault();
+								handleCardClick(card);
+							}
+						}}
+						aria-pressed={selectedCard?.historyId === card.historyId}
+						style="all:unset; cursor:pointer; display: block;"
+					>
+						<EndpointCard
+							id={card.historyId}
+							title={card.endpointName}
+							description={card.endpointDescription}
+							useDate={formatDateHistoryCards(card.createdAt)}
+							historyCard={true}
+						/>
+					</button>
+				{/each}
+			</div>
+		</main>
+	{/if}
+
+	{#if showPanel && selectedCard}
+		<div class="history-details-panel">
+			<Button class="m-4 cursor-pointer self-end" variant="text" size="md" onclick={closePanel}
+				>✕</Button
+			>
+			<HistoryCardDetailsPanel historyId={selectedCard.historyId} />
+		</div>
+	{/if}
+</div>
+
 <style>
 	/* Necesitamos esta clase para que querySelector funcione para el panel */
 	.history-details-panel {
@@ -71,115 +189,9 @@
 		right: 0;
 		height: 100%;
 		background: white;
-		box-shadow: 0 0 10px rgba(0,0,0,0.3);
+		box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
 		z-index: 50;
 		display: flex;
 		flex-direction: column;
 	}
 </style>
-
-<div class="align-items relative justify-center">
-	<main class="flex-1 bg-white p-8">
-		<div class="mb-6 flex items-center justify-between">
-			<div>
-				<h1 class="text-2xl font-bold">History</h1>
-			</div>
-		</div>
-
-		<p class="text-bold my-4">Today</p>
-		<div id="today" class="grid grid-cols-4 gap-12">
-			{#each historyToday as card (card.historyId)}
-				<!-- Aquí uso un botón accesible -->
-				<button
-					class="endpoint-card"
-					type="button"
-					on:click={() => handleCardClick(card)}
-					on:keydown={(e) => {
-						if (e.key === 'Enter' || e.key === ' ') {
-							e.preventDefault();
-							handleCardClick(card);
-						}
-					}}
-					aria-pressed={selectedCard?.historyId === card.historyId}
-					style="all:unset; cursor:pointer; display: block;"
-				>
-					<EndpointCard
-						id={card.historyId}
-						title={card.endpointName}
-						description={card.endpointDescription}
-						useDate={formatDateHistoryCards(card.createdAt)}
-						historyCard={true}
-					/>
-				</button>
-			{/each}
-		</div>
-
-		<p class="text-bold my-4">Yesterday</p>
-		<div id="yesterday" class="grid grid-cols-4 gap-12">
-			{#each historyYesterday as card (card.historyId)}
-				<button
-					class="endpoint-card"
-					type="button"
-					on:click={() => handleCardClick(card)}
-					on:keydown={(e) => {
-						if (e.key === 'Enter' || e.key === ' ') {
-							e.preventDefault();
-							handleCardClick(card);
-						}
-					}}
-					aria-pressed={selectedCard?.historyId === card.historyId}
-					style="all:unset; cursor:pointer; display: block;"
-				>
-					<EndpointCard
-						id={card.historyId}
-						title={card.endpointName}
-						description={card.endpointDescription}
-						useDate={formatDateHistoryCards(card.createdAt)}
-						historyCard={true}
-					/>
-				</button>
-			{/each}
-		</div>
-
-		<p class="text-bold my-4">Last 7 days</p>
-		<div id="week" class="grid grid-cols-4 gap-12">
-			{#each historyWeek as card (card.historyId)}
-				<button
-					class="endpoint-card"
-					type="button"
-					on:click={() => handleCardClick(card)}
-					on:keydown={(e) => {
-						if (e.key === 'Enter' || e.key === ' ') {
-							e.preventDefault();
-							handleCardClick(card);
-						}
-					}}
-					aria-pressed={selectedCard?.historyId === card.historyId}
-					style="all:unset; cursor:pointer; display: block;"
-				>
-					<EndpointCard
-						id={card.historyId}
-						title={card.endpointName}
-						description={card.endpointDescription}
-						useDate={formatDateHistoryCards(card.createdAt)}
-						historyCard={true}
-					/>
-				</button>
-			{/each}
-		</div>
-	</main>
-
-	{#if showPanel && selectedCard}
-		<div class="history-details-panel">
-			<Button class="m-4 self-end" variant="text" size="md" on:click={closePanel}>✕</Button>
-			<HistoryCardDetailsPanel
-				title={selectedCard.endpointName}
-				titleHighlight={selectedCard.endpointName.split(' ').at(-1) || ''}
-				description={selectedCard.endpointDescription}
-				inputs={selectedCard.inputs?.map((input) => ({ label: input.name, value: input.value })) || []}
-				output={[{ label: 'Response', value: JSON.stringify(selectedCard.output, null, 2) }]}
-				historyData={selectedCard}
-			/>
-		</div>
-	{/if}
-</div>

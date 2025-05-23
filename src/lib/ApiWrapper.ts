@@ -1,4 +1,9 @@
-import type { Service, DetailedService, HistoryService } from './types/ApiWrapper';
+import type {
+	Service,
+	DetailedService,
+	HistoryService,
+	DetailedHistoryService
+} from './types/ApiWrapper';
 import type { RequestService } from './types/RequestService';
 import type { ServiceResponse } from './types/ServiceResponse';
 
@@ -69,5 +74,9 @@ export default class ApiWrapper {
 
 	public getAllHistory() {
 		return this.get<HistoryService[]>('/services/history');
+	}
+
+	public getDetailedHistory(id: number) {
+		return this.get<DetailedHistoryService>(`/services/history/${id}`);
 	}
 }
