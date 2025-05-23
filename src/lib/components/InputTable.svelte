@@ -105,10 +105,7 @@
 	}
 </script>
 
-<table
-	data-testid="variable-table"
-	class="w-full table-auto border-collapse"
->
+<table data-testid="variable-table" class="w-full table-auto border-collapse">
 	<thead>
 		<tr class="bg-gray-100">
 			<th class="border border-gray-300 p-2 text-left">{'endpointId' in prompt ? 'Key' : 'Name'}</th
@@ -138,11 +135,14 @@
 					<th data-testid={generateTestId(index, 2)} class="border border-gray-300 p-2 text-center">
 						<input type="checkbox" onkeydown={onKeyDown} bind:checked={variable.customizable} />
 					</th>
-					<th data-testid={generateTestId(index, 3)} class="group w-lg border border-gray-300 p-2 flex items-center">
+					<th
+						data-testid={generateTestId(index, 3)}
+						class="group flex w-lg items-center border border-gray-300 p-2"
+					>
 						<input onkeydown={onKeyDown} bind:value={variable.description} class="w-full p-1" />
 						<div
 							data-testid={'delete-row-' + index}
-							class="fixed-icon-width ml-2 invisible transition-opacity duration-200 group-hover:visible"
+							class="fixed-icon-width invisible ml-2 transition-opacity duration-200 group-hover:visible"
 						>
 							<button onclick={() => deleteRow(index)}>
 								<Trash2Icon class="h-4 w-4 text-red-500 hover:text-red-700" />
@@ -164,11 +164,14 @@
 					<th data-testid={generateTestId(index, 3)} class="border border-gray-300 p-2 text-center">
 						<input type="checkbox" onkeydown={onKeyDown} bind:checked={variable.isLeaf} />
 					</th>
-					<th data-testid={generateTestId(index, 4)} class="group w-lg border border-gray-300 p-2 flex items-center">
+					<th
+						data-testid={generateTestId(index, 4)}
+						class="group flex w-lg items-center border border-gray-300 p-2"
+					>
 						<input onkeydown={onKeyDown} bind:value={variable.description} class="w-full p-1" />
 						<div
 							data-testid={'delete-row-' + index}
-							class="fixed-icon-width ml-2 invisible transition-opacity duration-200 group-hover:visible"
+							class="fixed-icon-width invisible ml-2 transition-opacity duration-200 group-hover:visible"
 						>
 							<button onclick={() => deleteRow(index)}>
 								<Trash2Icon class="h-4 w-4 text-red-500 hover:text-red-700" />
@@ -186,4 +189,4 @@
 		width: 1.5rem;
 		min-width: 1.5rem;
 	}
- </style>
+</style>
