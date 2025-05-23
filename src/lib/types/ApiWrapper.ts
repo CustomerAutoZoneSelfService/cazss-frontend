@@ -38,4 +38,6 @@ export type HistoryService = {
 	endpointName: string;
 	endpointDescription: string;
 	createdAt: string;
+	inputs?: Array<{ name: string; value: string }>;
+	output?: { status: number; data: Record<string, unknown> };
 };

@@ -6,7 +6,7 @@
 		starred = false,
 		historyCard = false,
 		useDate = '',
-		onClick = (event: MouseEvent) => {}
+		onClick = () => {}
 	} = $props<{
 		id: number;
 		title: string;
@@ -14,7 +14,7 @@
 		starred?: boolean;
 		historyCard?: boolean;
 		useDate?: string;
-		onClick?: (event: MouseEvent) => void;
+		onClick?: () => void;
 	}>();
 
 	let isStarred = $state(starred);
@@ -27,7 +27,7 @@
 	function handleKeydown(event: KeyboardEvent) {
 		if (event.key === 'Enter' || event.key === ' ') {
 			event.preventDefault(); // Prevent scrolling on Space
-			onClick(new MouseEvent('click'));
+			onClick();
 		}
 	}
 </script>
@@ -39,6 +39,7 @@
 	onkeydown={handleKeydown}
 	tabindex="0"
 	role="button"
+	data-endpoint-id={id}
 >
 	<div class="h-full w-full rounded-3xl">
 		<div

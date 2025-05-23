@@ -2,6 +2,7 @@
 	import HeadingFormat from './HeadingFormat.svelte';
 	import TextFormat from './TextFormat.svelte';
 	import Button from './Button.svelte';
+	import { goto } from '$app/navigation';
 
 	let {
 		title,
@@ -9,14 +10,36 @@
 		description = '',
 		inputs = [],
 		output = [],
-		onCallAgain = null,
-		callAgainLabel = 'Call again'
-	} = $props();
+		callAgainLabel = 'Call again',
+		historyData = null
+	} = $props<{
+		title: string;
+		titleHighlight?: string;
+		description?: string;
+		inputs: Array<{ label: string; value: string }>;
+		output: Array<{ label: string; value: string }>;
+		callAgainLabel?: string;
+		historyData: { endpointName: string } | null;
+	}>();
 
 	// Helper to split title for highlight
 	let titleParts = $derived(
 		titleHighlight && title.includes(titleHighlight) ? title.split(titleHighlight) : null
 	);
+
+	function handleCallAgain() {
+		if (historyData) {
+			// Store the history data in sessionStorage to be used by the home page
+			sessionStorage.setItem(
+				'prefilledEndpointData',
+				JSON.stringify({
+					endpointName: historyData.endpointName,
+					inputs: inputs
+				})
+			);
+			goto('/');
+		}
+	}
 </script>
 
 <div class="animate-slide-in flex h-full w-full flex-col gap-6 p-8">
@@ -72,7 +95,7 @@
 
 	<!-- Call again button -->
 	<div class="mt-auto flex justify-end">
-		<Button size="lg" variant="secondary" onClick={onCallAgain}>
+		<Button size="lg" variant="secondary" onClick={handleCallAgain}>
 			{callAgainLabel}
 		</Button>
 	</div>
