@@ -107,7 +107,7 @@
 					title={card.endpointName}
 					description={card.endpointDescription}
 					useDate={formatDate(card.createdAt)}
-					historyCard={false}
+					historyCard={true}
 					onClick={() => handleCardClick(card)}
 				/>
 			{/each}

@@ -1,6 +1,6 @@
-<script lang="ts">
+z<script lang="ts">
 	let {
-		// id, id commented because husky said no
+		id,
 		title,
 		description,
 		starred = false,
