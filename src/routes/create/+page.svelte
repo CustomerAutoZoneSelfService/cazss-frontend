@@ -32,7 +32,9 @@
 	let categories = categoryNames.map((category) => ({ value: category, label: category }));
 
 	let statusCodeNames = ['200', '201'];
-	let statusCodes = $state(statusCodeNames.map((statusCode) => ({ value: statusCode, label: statusCode })));
+	let statusCodes = $state(
+		statusCodeNames.map((statusCode) => ({ value: statusCode, label: statusCode }))
+	);
 	let newStatusCode = $state('');
 	let selectedStatusCode1 = $state('');
 	//let selectedStatusCode2 = '';
@@ -201,7 +203,7 @@
 		try {
 			endpointData.categoryId = 59; // The gods have chosen this value
 			endpointData.authenticationStrategy = null;
-			
+
 			const response: Service = await api.createService(endpointData);
 			console.log(response);
 		} catch (error) {
