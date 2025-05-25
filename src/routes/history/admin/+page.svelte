@@ -5,12 +5,14 @@
 	import { onMount, getContext } from 'svelte';
 	import type ApiWrapper from '$lib/ApiWrapper';
 	import { splitHistoryByDate } from '$lib/utils/dates';
+	import { formatDateHistoryCards } from '$lib/utils/dates';
 	import type { HistoryService } from '$lib/types/ApiWrapper';
 	import SidePanel from '$lib/components/RightSidePanel.svelte';
 	//import { splitHistoryByDate } from '$lib/utils/splitHistoryByDate';
 
 	let api: ApiWrapper = getContext('api');
 
+	let allHistory: HistoryService[] = [];
 	let todayHistoryCards: HistoryService[] = [];
 	let yesterdayHistoryCards: HistoryService[] = [];
 	let weekHistoryCards: HistoryService[] = [];
@@ -18,34 +20,23 @@
 
 	onMount(async () => {
 		isLoading = true;
-		let allHistory = [];
+
 		try {
 			allHistory = await api.getAllHistory();
 		} catch (error) {
 			// TODO: Handle error
 			// For now, just log it to the console
 			console.error('Error loading history:', error);
+		} finally {
 			isLoading = false;
-			return;
 		}
-
+		// TODO: MANAGE IF THE ARRAY IS EMPTY
 		const splitHistory = splitHistoryByDate(allHistory);
 		todayHistoryCards = splitHistory.today;
 		yesterdayHistoryCards = splitHistory.yesterday;
 		weekHistoryCards = splitHistory.week;
 		isLoading = false;
 	});
-
-	function formatDate(datetime: string | number | Date) {
-		const date = new Date(datetime);
-		return date.toLocaleString('es-MX', {
-			day: '2-digit',
-			month: '2-digit',
-			hour: '2-digit',
-			minute: '2-digit',
-			hour12: false
-		});
-	}
 
 	let selectedCard: HistoryService | null = null;
 	let showPanel = false;
@@ -84,7 +75,7 @@
 					<EndpointCardAdmin
 						id={card.historyId}
 						title={card.endpointName}
-						useDate={formatDate(card.createdAt)}
+						useDate={formatDateHistoryCards(card.createdAt)}
 						username={card.email?.split('@')[0] || 'Usuario'}
 						userInitial={card.email?.charAt(0).toUpperCase() || 'U'}
 						historyCard={true}
@@ -100,7 +91,7 @@
 					<EndpointCardAdmin
 						id={card.historyId}
 						title={card.endpointName}
-						useDate={formatDate(card.createdAt)}
+						useDate={formatDateHistoryCards(card.createdAt)}
 						username={card.email?.split('@')[0] || 'Usuario'}
 						userInitial={card.email?.charAt(0).toUpperCase() || 'U'}
 						historyCard={true}
@@ -116,7 +107,7 @@
 					<EndpointCardAdmin
 						id={card.historyId}
 						title={card.endpointName}
-						useDate={formatDate(card.createdAt)}
+						useDate={formatDateHistoryCards(card.createdAt)}
 						username={card.email?.split('@')[0] || 'Usuario'}
 						userInitial={card.email?.charAt(0).toUpperCase() || 'U'}
 						historyCard={true}

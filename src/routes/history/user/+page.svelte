@@ -37,13 +37,19 @@
 	onMount(() => {
 		async function loadHistory() {
 			isLoading = true;
-			// TODO: CHANGE SO IT GETS THE USER ID FROM THE URL OR SESSION OR CONTEXT OR SOMETHING
-			historyEndpoints = await api.getHistoryUser(90);
-			const splitHistory = splitHistoryByDate(historyEndpoints);
-			todayHistoryCards = splitHistory.today;
-			yesterdayHistoryCards = splitHistory.yesterday;
-			weekHistoryCards = splitHistory.week;
-			isLoading = false;
+			try {
+				// TODO: CHANGE SO IT GETS THE USER ID FROM THE URL OR SESSION OR CONTEXT OR SOMETHING
+				historyEndpoints = await api.getHistoryUser(90);
+				const splitHistory = splitHistoryByDate(historyEndpoints);
+				todayHistoryCards = splitHistory.today;
+				yesterdayHistoryCards = splitHistory.yesterday;
+				weekHistoryCards = splitHistory.week;
+			} catch (error) {
+				// TODO: Handle error
+				console.error('Error loading user history:', error);
+			} finally {
+				isLoading = false;
+			}
 		}
 
 		loadHistory();
