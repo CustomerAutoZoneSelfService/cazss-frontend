@@ -24,7 +24,7 @@
 	}
 </script>
 
-<main class="flex flex-col gap-6 flex-1">
+<main class="flex flex-1 flex-col gap-6">
 	<div>
 		<HeadingFormat variant="primary">Edit filters</HeadingFormat>
 		<TextFormat size="body">
@@ -32,9 +32,9 @@
 		</TextFormat>
 	</div>
 
-	<div class="flex flex-col gap-4 mt-6">
+	<div class="mt-6 flex flex-col gap-4">
 		{#each filters as filter (filter.responsePatternId)}
-			<label class="flex items-start gap-3 cursor-pointer">
+			<label class="flex cursor-pointer items-start gap-3">
 				<CheckBox
 					checked={isChecked(filter.responsePatternId)}
 					on:click={() => toggleFilter(filter.responsePatternId)}

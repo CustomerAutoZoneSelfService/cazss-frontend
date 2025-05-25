@@ -1,5 +1,6 @@
 <script lang="ts">
 	//import HeadingFormat from '$lib/components/HeadingFormat.svelte';
+	import { getContext } from 'svelte';
 	import TextArea from '$lib/components/TextArea.svelte';
 	import InputTable from '$lib/components/InputTable.svelte';
 	import Button from '$lib/components/Button.svelte';
@@ -10,7 +11,13 @@
 	import { goto } from '$app/navigation';
 	import { VariableType } from '$lib/types/RequestVariable';
 	import type { InputTablePrompt } from '$lib/types/InputTablePrompt';
-	import type { Endpoint } from '$lib/types/Endpoint';
+	import type { CreateService, CreateResponse } from '$lib/types/CreateService';
+	import type { RequestVariable } from '$lib/types/RequestVariable';
+	import type { ResponsePattern } from '$lib/types/ResponsePattern';
+	import type ApiWrapper from '$lib/ApiWrapper';
+	import type { Service } from '$lib/types/ApiWrapper';
+
+	let api: ApiWrapper = getContext('api');
 
 	const methodNames = ['GET', 'POST', 'PUT', 'DELETE'];
 	const methods = methodNames.map((method) => ({ value: method, label: method }));
@@ -25,32 +32,48 @@
 	let categories = categoryNames.map((category) => ({ value: category, label: category }));
 
 	let statusCodeNames = ['200', '201'];
-	let statusCodes = statusCodeNames.map((statusCode) => ({ value: statusCode, label: statusCode }));
+	let statusCodes = $state(statusCodeNames.map((statusCode) => ({ value: statusCode, label: statusCode })));
 	let newStatusCode = $state('');
 	let selectedStatusCode1 = $state('');
 	//let selectedStatusCode2 = '';
 
-	function addStatusCode() {}
+	function addStatusCode() {
+		const code = newStatusCode.trim();
+		// Validar que sean exactamente 3 dígitos numéricos
+		if (!/^\d{3}$/.test(code)) {
+			alert('El código de estado debe tener exactamente 3 dígitos numéricos.');
+			return;
+		}
+		// Verificar si ya existe
+		if (!statusCodeNames.includes(code)) {
+			statusCodeNames = [...statusCodeNames, code];
+			statusCodes = statusCodeNames.map((statusCode) => ({ value: statusCode, label: statusCode }));
+		}
+		selectedStatusCode1 = code;
+		newStatusCode = '';
+	}
 
 	let step = $state(1);
 	let endpointId = 0;
 	let responseId = 0;
-	let template = $state('');
 	let responseDescription = $state('');
 
 	$effect(() => {
 		console.log($state.snapshot(step));
 	});
 
-	let endpoint: Endpoint = $state({
-		title: '',
+	let endpoint: CreateService = $state({
+		categoryId: -1,
+		active: true,
+		name: '',
 		description: '',
 		method: 'GET',
 		url: '',
-		authenticationStrategy: '',
-		category: '',
-		enabled: true,
-		name: '' // <- Agrega esto
+		authenticationStrategy: 0, // Currently not used
+
+		template: '',
+		requestVariables: [],
+		responses: []
 	});
 
 	let headersPrompt: InputTablePrompt = {
@@ -81,13 +104,109 @@
 	let responsePatterns: InputTable | undefined = $state();
 
 	function goToNextPage() {
+		if (step === 2) pullValuesFromTables();
+		console.log($state.snapshot(endpoint));
 		step++;
 	}
+
 	function goToPreviousPage() {
+		if (step === 2) pullValuesFromTables();
 		step--;
 	}
+
 	export function registerEndpoint() {
+		const responsePatternsRaw = responsePatterns!.getVariables() as ResponsePattern[];
+		const createResponse: CreateResponse = {
+			statusCode: 200,
+			description: 'lorem',
+			patterns: []
+		};
+		for (let index = 0; index < responsePatternsRaw.length; index++) {
+			const responsePattern = responsePatternsRaw[index];
+
+			createResponse.patterns.push({
+				parentId: responsePattern.parentId,
+				name: responsePattern.name,
+				description: responsePattern.description,
+				isLeaf: responsePattern.isLeaf,
+				pattern: responsePattern.pattern
+			});
+		}
+
+		endpoint.responses.push(createResponse);
+		fetchEndpoint($state.snapshot(endpoint));
 		goto('/');
+	}
+
+	function pullValuesFromTables() {
+		const headersDataRaw = headers!.getVariables() as RequestVariable[];
+		const inlineParamsRaw = inlineParams!.getVariables() as RequestVariable[];
+		const bodyRaw = bodyVariables!.getVariables() as RequestVariable[];
+		const queryStringRaw = queryString!.getVariables() as RequestVariable[];
+
+		// Headers
+		for (let index = 0; index < headersDataRaw.length; index++) {
+			const headers = headersDataRaw[index];
+
+			endpoint.requestVariables.push({
+				type: 'HEADER',
+				key: headers.key,
+				defaultValue: headers.defaultValue,
+				customizable: headers.customizable,
+				description: headers.description
+			});
+		}
+
+		// Inline params
+		for (let index = 0; index < inlineParamsRaw.length; index++) {
+			const inlineParams = inlineParamsRaw[index];
+
+			endpoint.requestVariables.push({
+				type: 'INLINE',
+				key: inlineParams.key,
+				defaultValue: inlineParams.defaultValue,
+				customizable: inlineParams.customizable,
+				description: inlineParams.description
+			});
+		}
+
+		// Body
+		for (let index = 0; index < bodyRaw.length; index++) {
+			const body = bodyRaw[index];
+
+			endpoint.requestVariables.push({
+				type: 'BODY',
+				key: body.key,
+				defaultValue: body.defaultValue,
+				customizable: body.customizable,
+				description: body.description
+			});
+		}
+
+		// Query strings
+		for (let index = 0; index < queryStringRaw.length; index++) {
+			const queryString = queryStringRaw[index];
+
+			endpoint.requestVariables.push({
+				type: 'QUERY_STRING',
+				key: queryString.key,
+				defaultValue: queryString.defaultValue,
+				customizable: queryString.customizable,
+				description: queryString.description
+			});
+		}
+	}
+
+	async function fetchEndpoint(endpointData: CreateService) {
+		try {
+			endpointData.categoryId = 59; // The gods have chosen this value
+			endpointData.authenticationStrategy = null;
+			
+			const response: Service = await api.createService(endpointData);
+			console.log(response);
+		} catch (error) {
+			console.log(error);
+		}
 	}
 </script>
 
@@ -104,9 +223,9 @@
 			<form class="space-y-6">
 				<div class="flex items-center space-x-4">
 					<TextFormat as="label" variant="muted" size="subtitle">Title:</TextFormat>
-					<Input bind:text={endpoint.title} boxSize="md" />
+					<Input bind:text={endpoint.name} boxSize="md" />
 					<TextFormat as="label" variant="muted" size="subtitle">Enabled:</TextFormat>
-					<CheckBox bind:checked={endpoint.enabled} />
+					<CheckBox bind:checked={endpoint.active} />
 				</div>
 
 				<div>
@@ -130,11 +249,11 @@
 						<TextFormat as="label" variant="muted" size="subtitle"
 							>Authentication Strategy:</TextFormat
 						>
-						<Select options={authStrategies} bind:selected={endpoint.authenticationStrategy} />
+						<Select options={authStrategies} bind:selected={endpoint.authenticationStrategy!} />
 					</div>
 					<div class="flex flex-1 items-center space-x-2">
 						<TextFormat as="label" variant="muted" size="subtitle">Category:</TextFormat>
-						<Select options={categories} bind:selected={endpoint.category} />
+						<Select options={categories} bind:selected={endpoint.categoryId} />
 					</div>
 				</div>
 			</form>
@@ -159,7 +278,7 @@
 				</div>
 				<div class="py-2">
 					<TextFormat as="label" variant="muted" size="subtitle">Body Template:</TextFormat>
-					<TextArea bind:text={template} />
+					<TextArea bind:text={endpoint.template} />
 				</div>
 				<div class="py-2">
 					<TextFormat as="label" variant="muted" size="subtitle">Body Variables:</TextFormat>
