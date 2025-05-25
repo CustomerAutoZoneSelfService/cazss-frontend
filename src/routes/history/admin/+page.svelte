@@ -1,8 +1,10 @@
 <script lang="ts">
+	import EndpointCard from '$lib/components/EndpointCard.svelte';
 	import EndpointCardAdmin from '$lib/components/EndpointCardAdmin.svelte';
 	import Button from '$lib/components/Button.svelte';
 	import HistoryCardDetailsPanel from '$lib/components/HistoryCardDetailsPanel.svelte';
 	import { onMount, getContext } from 'svelte';
+	import { goto } from '$app/navigation';
 	import type ApiWrapper from '$lib/ApiWrapper';
 	import type { HistoryService } from '$lib/types/ApiWrapper';
 	import { page } from '$app/stores';
@@ -48,6 +50,7 @@
 	});
 
 	function formatDate(datetime: string | number | Date) {
+
 		const date = new Date(datetime);
 		return date.toLocaleString('es-MX', {
 			day: '2-digit',
@@ -78,10 +81,11 @@
 			<h1 class="text-2xl font-bold">History</h1>
 		</div>
 
+
 		<!-- TODAY -->
 		<p class="text-bold my-4">Today</p>
 		<div id="today" class="flex flex-col gap-4">
-			{#each todayCards as card (card.historyId)}
+			{#each todayEndpoints as card (card.historyId)}
 				<EndpointCardAdmin
 					id={card.historyId}
 					title={card.endpointName}
@@ -89,16 +93,18 @@
 					useDate={formatDate(card.createdAt)}
 					username={card.email?.split('@')[0] || 'Usuario'}
 					userInitial={card.email?.charAt(0).toUpperCase() || 'U'}
+                           
 					historyCard={true}
 					onClick={() => handleCardClick(card)}
 				/>
 			{/each}
 		</div>
 
+
 		<!-- YESTERDAY -->
 		<p class="text-bold my-4">Yesterday</p>
 		<div id="yesterday" class="flex flex-col gap-4">
-			{#each yesterdayCards as card (card.historyId)}
+			{#each yesterdayEndpoints as card (card.historyId)}
 				<EndpointCardAdmin
 					id={card.historyId}
 					title={card.endpointName}
@@ -110,12 +116,13 @@
 					onClick={() => handleCardClick(card)}
 				/>
 			{/each}
+
 		</div>
 
 		<!-- LAST 7 DAYS -->
 		<p class="text-bold my-4">Last 7 days</p>
 		<div id="week" class="flex flex-col gap-4">
-			{#each weekCards as card (card.historyId)}
+			{#each weekEndpoints as card (card.historyId)}
 				<EndpointCardAdmin
 					id={card.historyId}
 					title={card.endpointName}
@@ -123,6 +130,7 @@
 					useDate={formatDate(card.createdAt)}
 					username={card.email?.split('@')[0] || 'Usuario'}
 					userInitial={card.email?.charAt(0).toUpperCase() || 'U'}
+
 					historyCard={true}
 					onClick={() => handleCardClick(card)}
 				/>

@@ -1,5 +1,13 @@
 <script lang="ts">
 	import { getContext } from 'svelte';
+	import { page } from '$app/stores';
+
+	import Button from '$lib/components/Button.svelte';
+	import HeadingFormat from '$lib/components/HeadingFormat.svelte';
+	import TextArea from '$lib/components/TextArea.svelte';
+	import TextFormat from '$lib/components/TextFormat.svelte';
+	import Input from '$lib/components/Input.svelte';
+	import Tooltip from '$lib/components/Tooltip.svelte';
 
 	import type { Params } from './+page';
 	import type { DetailedService, KeyValue } from '$lib/types/ApiWrapper';
@@ -85,6 +93,72 @@
 		},
 		response: []
 	});
+
+	// Mock Response to test UI if the backend is unavailable / the database is empty
+	/*
+	let mockExecutionResponse:ServiceResponse = {
+		status: {
+    code: 200,
+    description: "Success",
+  	},
+		response: [
+			{
+				"firstName": ["John"],
+				"lastName": ["Doe"],
+				"age": ["30"],
+			},
+			{
+				"productName": ["Laptop"],
+				"price": ["1200"],
+				"features": ["Intel Core i7", "16GB RAM", "512GB SSD"],
+			},
+			{
+				"city": ["Chihuahua"],
+				"country": ["Mexico"],
+			},
+		],
+	};
+	*/
+
+	// Function to initialize the RequestService object with the variables from the endpoint and possible default values
+	const initializeRequestService = (variables: RequestVariableString[]) => {
+		const newHeaders: KeyValue[] = [];
+		const newBody: KeyValue[] = [];
+		const newInline: KeyValue[] = [];
+		const newQueryString: KeyValue[] = [];
+
+		// Check for pre-filled data in URL
+		const prefilledData = $page.url.searchParams.get('prefilled');
+		const prefilledInputs: Array<{ label: string; value: string }> = prefilledData
+			? JSON.parse(prefilledData)
+			: [];
+
+		variables.forEach((variable) => {
+			// Try to find pre-filled value first
+			const prefilledInput = prefilledInputs.find((input) => input.label === variable.keyName);
+			const defaultValue = prefilledInput ? prefilledInput.value : (variable.defaultValue ?? '');
+
+			const kv: KeyValue = { key: variable.keyName, value: defaultValue };
+			switch (variable.type) {
+				case 'HEADER':
+					newHeaders.push(kv);
+					break;
+				case 'BODY':
+					newBody.push(kv);
+					break;
+				case 'INLINE_PARAM':
+					newInline.push(kv);
+					break;
+				case 'QUERY_STRING':
+					newQueryString.push(kv);
+					break;
+			}
+		});
+		requestService.headers = newHeaders;
+		requestService.body = newBody;
+		requestService.inline = newInline;
+		requestService.queryString = newQueryString;
+	};
 
 	// Function to find a KeyValue object in the RequestService object based on its type and keyName from the INPUT
 	const findRequestKeyValue = (type: VariableTypeString, keyName: string): KeyValue | undefined => {

@@ -32,6 +32,7 @@
 		selectedCard = null;
 	}
 
+
 	onMount(() => {
 		async function cargarHistorial() {
 			historyEndpoints = await api.getHistoryUser(5);
@@ -60,6 +61,22 @@
 		};
 	});
 </script>
+
+<style>
+	/* Necesitamos esta clase para que querySelector funcione para el panel */
+	.history-details-panel {
+		width: 32rem;
+		position: fixed;
+		top: 0;
+		right: 0;
+		height: 100%;
+		background: white;
+		box-shadow: 0 0 10px rgba(0,0,0,0.3);
+		z-index: 50;
+		display: flex;
+		flex-direction: column;
+	}
+</style>
 
 <div class="align-items relative justify-center">
 	<main class="flex-1 bg-white p-8">
@@ -159,27 +176,10 @@
 				title={selectedCard.endpointName}
 				titleHighlight={selectedCard.endpointName.split(' ').at(-1) || ''}
 				description={selectedCard.endpointDescription}
-				inputs={selectedCard.inputs?.map((input) => ({ label: input.name, value: input.value })) ||
-					[]}
+				inputs={selectedCard.inputs?.map((input) => ({ label: input.name, value: input.value })) || []}
 				output={[{ label: 'Response', value: JSON.stringify(selectedCard.output, null, 2) }]}
 				historyData={selectedCard}
 			/>
 		</div>
 	{/if}
 </div>
-
-<style>
-	/* Necesitamos esta clase para que querySelector funcione para el panel */
-	.history-details-panel {
-		width: 32rem;
-		position: fixed;
-		top: 0;
-		right: 0;
-		height: 100%;
-		background: white;
-		box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
-		z-index: 50;
-		display: flex;
-		flex-direction: column;
-	}
-</style>
