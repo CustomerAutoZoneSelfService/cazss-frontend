@@ -1,47 +1,38 @@
 <script lang="ts">
 	import EndpointCardAdmin from '$lib/components/EndpointCardAdmin.svelte';
-	import Button from '$lib/components/Button.svelte';
 	import HistoryCardDetailsPanel from '$lib/components/HistoryCardDetailsPanel.svelte';
 	import LoadingSVG from '$lib/components/LoadingSVG.svelte';
 	import { onMount, getContext } from 'svelte';
 	import type ApiWrapper from '$lib/ApiWrapper';
+	import { splitHistoryByDate } from '$lib/utils/dates';
 	import type { HistoryService } from '$lib/types/ApiWrapper';
+	import SidePanel from '$lib/components/RightSidePanel.svelte';
 	//import { splitHistoryByDate } from '$lib/utils/splitHistoryByDate';
 
 	let api: ApiWrapper = getContext('api');
 
-	let todayCards: HistoryService[] = [];
-	let yesterdayCards: HistoryService[] = [];
-	let weekCards: HistoryService[] = [];
+	let todayHistoryCards: HistoryService[] = [];
+	let yesterdayHistoryCards: HistoryService[] = [];
+	let weekHistoryCards: HistoryService[] = [];
 	let isLoading = true;
 
 	onMount(async () => {
 		isLoading = true;
-		const allHistory = await api.getAllHistory();
-		const now = new Date();
-		const today = now.toDateString();
-
-		const yesterdayDate = new Date();
-		yesterdayDate.setDate(now.getDate() - 1);
-		const yesterday = yesterdayDate.toDateString();
-
-		todayCards = [];
-		yesterdayCards = [];
-		weekCards = [];
-		for (const card of allHistory) {
-			const cardDate = new Date(card.createdAt);
-			const cardDateStr = cardDate.toDateString();
-			if (cardDateStr === today) {
-				todayCards.push(card);
-			} else if (cardDateStr === yesterday) {
-				yesterdayCards.push(card);
-			} else {
-				const daysAgo = (now.getTime() - cardDate.getTime()) / (1000 * 60 * 60 * 24);
-				if (daysAgo <= 7 && daysAgo > 1) {
-					weekCards.push(card);
-				}
-			}
+		let allHistory = [];
+		try {
+			allHistory = await api.getAllHistory();
+		} catch (error) {
+			// TODO: Handle error
+			// For now, just log it to the console
+			console.error('Error loading history:', error);
+			isLoading = false;
+			return;
 		}
+
+		const splitHistory = splitHistoryByDate(allHistory);
+		todayHistoryCards = splitHistory.today;
+		yesterdayHistoryCards = splitHistory.yesterday;
+		weekHistoryCards = splitHistory.week;
 		isLoading = false;
 	});
 
@@ -89,7 +80,7 @@
 			<!-- TODAY -->
 			<p class="text-bold my-4">Today</p>
 			<div id="today" class="flex flex-col gap-4">
-				{#each todayCards as card (card.historyId)}
+				{#each todayHistoryCards as card (card.historyId)}
 					<EndpointCardAdmin
 						id={card.historyId}
 						title={card.endpointName}
@@ -105,7 +96,7 @@
 			<!-- YESTERDAY -->
 			<p class="text-bold my-4">Yesterday</p>
 			<div id="yesterday" class="flex flex-col gap-4">
-				{#each yesterdayCards as card (card.historyId)}
+				{#each yesterdayHistoryCards as card (card.historyId)}
 					<EndpointCardAdmin
 						id={card.historyId}
 						title={card.endpointName}
@@ -121,7 +112,7 @@
 			<!-- LAST 7 DAYS -->
 			<p class="text-bold my-4">Last 7 days</p>
 			<div id="week" class="flex flex-col gap-4">
-				{#each weekCards as card (card.historyId)}
+				{#each weekHistoryCards as card (card.historyId)}
 					<EndpointCardAdmin
 						id={card.historyId}
 						title={card.endpointName}
@@ -137,10 +128,8 @@
 	{/if}
 
 	{#if showPanel && selectedCard}
-		<!-- HistoryCardDetailsPanel as a side panel, no overlay -->
-		<div class="fixed top-0 right-0 z-50 flex h-full w-[32rem] flex-col bg-white shadow-2xl">
-			<Button class="m-4 self-end" variant="text" size="md" onClick={closePanel}>✕</Button>
-			<HistoryCardDetailsPanel historyId={selectedCard.historyId} />
-		</div>
+		<SidePanel visible={showPanel} onClose={closePanel}>
+			<HistoryCardDetailsPanel historyId={selectedCard?.historyId} />
+		</SidePanel>
 	{/if}
 </div>

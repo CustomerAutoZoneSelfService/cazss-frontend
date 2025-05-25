@@ -18,23 +18,26 @@
 	let detailedHistoryData = $state<DetailedHistoryService | null>(null);
 
 	onMount(() => {
-		async function loadHistoryDetails() {
-			isLoadingDetails = true;
-			if (historyId) {
-				detailedHistoryData = await api.getDetailedHistory(historyId);
-				console.log('History ID:', historyId);
-				console.log('History details:', detailedHistoryData);
-			} else {
-				isLoadingDetails = false;
-				console.error('No historyId provided');
-				// Make state to show error
-			}
-			isLoadingDetails = false;
-		}
-		console.log('History ID:', historyId);
-		console.log('History details:', detailedHistoryData);
 		loadHistoryDetails();
 	});
+
+	async function loadHistoryDetails() {
+		isLoadingDetails = true;
+
+		try {
+			if (!historyId) {
+				throw new Error('No historyId provided');
+			}
+
+			detailedHistoryData = await api.getDetailedHistory(historyId);
+		} catch (error) {
+			console.error('Error loading history details:', error);
+			detailedHistoryData = null;
+			// TODO : Show an error message to the user with the dialog
+		} finally {
+			isLoadingDetails = false;
+		}
+	}
 
 	//TODO: FIX THIS SO IT TAKES YOU TO THE EXECUTE PAGE WITH THE DATA
 	function handleCallAgain() {
@@ -52,7 +55,7 @@
 	}
 </script>
 
-<div class="animate-slide-in scroll flex h-full w-full flex-col gap-6 overflow-y-auto p-8">
+<div class="scroll mt-4 flex h-full w-full flex-col gap-6 overflow-y-auto p-8">
 	{#if isLoadingDetails}
 		<div class="flex h-full items-center justify-center">
 			<LoadingSvg />
@@ -120,23 +123,11 @@
 			</Button>
 		</div>
 	{:else}
-		<div class="p-8 text-center text-gray-500">No se pudo cargar el detalle.</div>
+		<div class="flex h-full flex-col items-center justify-center text-center">
+			<p class="text-lg font-semibold" style="color: #af1624">Error al cargar los detalles.</p>
+			<p class="mt-2 text-sm text-gray-500">
+				Intenta de nuevo más tarde o selecciona otra tarjeta.
+			</p>
+		</div>
 	{/if}
 </div>
-
-<style>
-	.animate-slide-in {
-		animation: slide-in 0.3s ease-out;
-	}
-
-	@keyframes slide-in {
-		from {
-			transform: translateX(100%);
-			opacity: 0;
-		}
-		to {
-			transform: translateX(0);
-			opacity: 1;
-		}
-	}
-</style>
