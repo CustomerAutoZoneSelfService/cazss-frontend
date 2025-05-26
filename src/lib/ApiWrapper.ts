@@ -1,4 +1,5 @@
 import type { Service, DetailedService, HistoryService } from './types/ApiWrapper';
+import type { CreateService } from './types/CreateService';
 import type { RequestService } from './types/RequestService';
 import type { ServiceResponse } from './types/ServiceResponse';
 
@@ -57,6 +58,10 @@ export default class ApiWrapper {
 
 	public executeService(id: number, body: RequestService) {
 		return this.post<ServiceResponse>(`/services/executeService/${id}`, body);
+	}
+
+	public createService(service: CreateService) {
+		return this.post<Service>(`/services`, service);
 	}
 
 	public getHistoryAdmin() {
