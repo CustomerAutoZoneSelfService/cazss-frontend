@@ -31,3 +31,25 @@ export type DetailedService = {
 	variables: RequestVariableString[];
 	requestBody: string; // ? This should be the template
 };
+
+export type HistoryService = {
+	historyId: number;
+	email: string;
+	endpointName: string;
+	endpointDescription: string;
+	createdAt: string;
+};
+
+export type DetailedHistoryService = {
+	historyId: number;
+	statusCode: number;
+	endpoint: {
+		endpointId: number;
+		name: string;
+		description: string;
+	};
+	historyData: {
+		request: Record<string, unknown>;
+		response: Record<string, unknown>;
+	};
+};
