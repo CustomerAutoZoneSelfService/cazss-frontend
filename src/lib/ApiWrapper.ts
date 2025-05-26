@@ -4,6 +4,7 @@ import type {
 	HistoryService,
 	DetailedHistoryService
 } from './types/ApiWrapper';
+import type { CreateService } from './types/CreateService';
 import type { RequestService } from './types/RequestService';
 import type { ServiceResponse } from './types/ServiceResponse';
 import type { RequestUserFilterDTO, UserFilterDTO } from './types/Filter';
@@ -119,17 +120,5 @@ export default class ApiWrapper {
 
 	public deleteUserFilter(endpointId: number, patternId: number): Promise<void> {
 		return this.delete<void>(`/responses/${endpointId}/user-filters/${patternId}`);
-	}
-
-	public getHistoryAdmin() {
-		return this.get<HistoryService[]>('/services/history');
-	}
-
-	public getHistoryUser(userId: number) {
-		return this.get<HistoryService[]>(`/services/history?userId=${userId}`);
-	}
-
-	public getAllHistory() {
-		return this.get<HistoryService[]>('/services/history');
 	}
 }

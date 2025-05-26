@@ -73,7 +73,7 @@
 		body: [],
 		inline: [],
 		queryString: [],
-		filters: [],
+		filters: []
 	});
 
 	// This should change when the execute service in backend is ready, and we have the type defined
@@ -175,7 +175,6 @@
 			handleUpdateUserFilters();
 		}
 	};
-	
 
 	// Fetches endpoint data and initializes requestService
 	// If filters exist, checks for user-filters and sets them
@@ -391,18 +390,24 @@
 		<p>Nothing</p>
 	{/if}
 
-<div class="flex justify-between items-center w-full">	<div>
-		<Button type="button" size="md" variant="secondary" onClick={handlePhaseChangeBackward} disabled={disabledBackwards}>
-			Return
-		</Button>
+	<div class="flex w-full items-center justify-between">
+		<div>
+			<Button
+				type="button"
+				size="md"
+				variant="secondary"
+				onClick={handlePhaseChangeBackward}
+				disabled={disabledBackwards}
+			>
+				Return
+			</Button>
+		</div>
+		<div>
+			{#if phase[phaseIndex] === 'filters'}
+				<Button variant="primary" type="submit" size="md" onClick={handleSend}>Send</Button>
+			{:else if phase[phaseIndex] !== 'results'}
+				<Button onClick={handlePhaseChangeForward} disabled={disabledForward}>Next</Button>
+			{/if}
+		</div>
 	</div>
-	<div>
-		{#if phase[phaseIndex] === 'filters'}
-			<Button variant="primary" type="submit" size="md" onClick={handleSend}>Send</Button>
-		{:else if phase[phaseIndex] !== 'results'}
-			<Button onClick={handlePhaseChangeForward} disabled={disabledForward}>Next</Button>
-		{/if}
-	</div>
-</div>
-
 </main>
