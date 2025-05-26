@@ -41,7 +41,7 @@ export function replaceWithMock(mockApi: ApiWrapper): void {
 						pattern: 'PRICE',
 						name: 'price',
 						description: 'Price of the product.'
-					},
+					}
 				],
 				variables: [
 					{

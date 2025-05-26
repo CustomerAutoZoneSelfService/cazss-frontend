@@ -4,6 +4,8 @@ import type { Endpoint } from './Endpoint';
 
 export type HTTPMethod = 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
 
+export type RequestVariableTypes = 'HEADER' | 'QUERY_STRING' | 'BODY' | 'INLINE';
+
 export type KeyValue = {
 	key: string;
 	value: string;

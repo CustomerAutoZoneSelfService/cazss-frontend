@@ -29,13 +29,14 @@
 		{:else}
 			<List type="ul">
 				{#each ExecutionResponse.response as variableResponse}
-					{#each Object.entries(variableResponse) as [key, value]}
-			{#if filters.length === 0 || filters.some(f => f.key === key)}
-				<li><b>{key}:</b> {value.join(', ')}</li>
-			{/if}
+					index (index)
 
-	{/each}
-{/each}
+					{#each Object.entries(variableResponse) as [key, value]}
+						{#if filters.length === 0 || filters.some((f) => f.key === key)}
+							<li><b>{key}:</b> {value.join(', ')}</li>
+						{/if}
+					{/each}
+				{/each}
 			</List>
 			<TextArea
 				disabled={true}
