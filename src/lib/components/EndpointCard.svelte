@@ -1,4 +1,4 @@
-z<script lang="ts">
+<script lang="ts">
 	let {
 		id,
 		title,
@@ -71,7 +71,7 @@ z<script lang="ts">
 		</div>
 	{:else}
 		<button
-			class="text-near-black hover:bg-accent-red-dark ml-auto flex h-7 w-7 items-center justify-center rounded-full group-hover:text-white"
+			class="text-near-black hover:bg-accent-red-dark ml-auto flex h-7 w-7 cursor-pointer items-center justify-center rounded-full group-hover:text-white"
 			onclick={toggleStarred}
 		>
 			{isStarred ? '★' : '☆'}

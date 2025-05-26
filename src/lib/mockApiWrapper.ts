@@ -1,6 +1,6 @@
 import ApiWrapper from '$lib/ApiWrapper';
 import type { Service, DetailedService } from './types/ApiWrapper';
-//import type { HistoryService } from './types/ApiWrapper';
+import type { HistoryService } from './types/ApiWrapper';
 import type { ServiceResponse } from './types/ServiceResponse';
 
 export function replaceWithMock(mockApi: ApiWrapper): void {
@@ -75,13 +75,12 @@ export function replaceWithMock(mockApi: ApiWrapper): void {
 		};
 	};
 
-	/*mockApi.getHistoryAdmin = async function (): Promise<HistoryService[]> {
+	mockApi.getAllHistory = async function (): Promise<HistoryService[]> {
 		return Array.from({ length: 12 }, (_, i) => {
-			const dayOffset = Math.floor(i / 3); // Each 3 elements changes day
+			const dayOffset = Math.floor(i / 3);
 			const date = new Date();
-			date.setDate(date.getDate() - dayOffset); // Subtract days by group
+			date.setDate(date.getDate() - dayOffset);
 
-			// To differentiate them a bit, add some seconds
 			date.setSeconds(date.getSeconds() + (i % 3) * 10);
 
 			return {
@@ -93,5 +92,37 @@ export function replaceWithMock(mockApi: ApiWrapper): void {
 				createdAt: date.toISOString()
 			};
 		});
-	};*/
+	};
+
+	mockApi.getHistoryUser = async function (userId: number): Promise<HistoryService[]> {
+		return Array.from({ length: 5 }, (_, i) => {
+			const date = new Date();
+			date.setDate(date.getDate() - i);
+			return {
+				historyId: i + 100,
+				email: `user${userId}@example.com`,
+				endpointName: 'Get TEST',
+				endpointDescription: 'Historial filtrado por usuario',
+				createdAt: date.toISOString()
+			};
+		});
+	};
+
+	mockApi.getDetailedHistory = async function (
+		id: number
+	): Promise<import('./types/ApiWrapper').DetailedHistoryService> {
+		return {
+			historyId: id,
+			statusCode: 200,
+			endpoint: {
+				endpointId: 1,
+				name: 'getById',
+				description: 'Endpoint de ejemplo para detalles de historial'
+			},
+			historyData: {
+				request: { param1: 'valor1', param2: 'valor2' },
+				response: { result: 'ok', data: { foo: 'bar' } }
+			}
+		};
+	};
 }
