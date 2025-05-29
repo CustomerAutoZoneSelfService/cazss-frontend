@@ -2,6 +2,7 @@ import type { Service, DetailedService, HistoryService } from './types/ApiWrappe
 import type { CreateService } from './types/CreateService';
 import type { RequestService } from './types/RequestService';
 import type { ServiceResponse } from './types/ServiceResponse';
+import type { Categories } from './types/Categories';
 
 const BASE_URL = 'http://localhost:8080';
 
@@ -47,7 +48,7 @@ export default class ApiWrapper {
 		});
 	}
 
-	// Endpoints
+	// GET Methods
 	public getAllServices() {
 		return this.get<Service[]>('/services/getAllServices');
 	}
@@ -56,12 +57,8 @@ export default class ApiWrapper {
 		return this.get<DetailedService>(`/services/getServiceById/${id}`);
 	}
 
-	public executeService(id: number, body: RequestService) {
-		return this.post<ServiceResponse>(`/services/executeService/${id}`, body);
-	}
-
-	public createService(service: CreateService) {
-		return this.post<Service>(`/services`, service);
+	public getCategories() {
+		return this.get<Categories[]>(`/services/categories`);
 	}
 
 	public getHistoryAdmin() {
@@ -74,5 +71,14 @@ export default class ApiWrapper {
 
 	public getAllHistory() {
 		return this.get<HistoryService[]>('/services/history');
+	}
+
+	// POST Methods
+	public executeService(id: number, body: RequestService) {
+		return this.post<ServiceResponse>(`/services/executeService/${id}`, body);
+	}
+
+	public createService(service: CreateService) {
+		return this.post<Service>(`/services`, service);
 	}
 }

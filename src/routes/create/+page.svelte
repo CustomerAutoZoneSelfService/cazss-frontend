@@ -19,6 +19,29 @@
 
 	let api: ApiWrapper = getContext('api');
 
+	// async function getCategories() {
+	// 	try {
+	// 		const apiCategories = await api.getCategories();
+	// 		// Suponiendo que cada categoría tiene un id y un name
+	// 		let categories = apiCategories.map((category) => ({
+	// 			value: category.id, // o category.categoryId según tu backend
+	// 			label: category.name
+	// 		}));
+
+	// 		return categories;
+	// 	} catch (error) {
+	// 		console.error('Error fetching categories:', error);
+	// 	}
+	// }
+
+	// import { onMount } from 'svelte';
+
+	// onMount(() => {
+	// 	getCategories();
+	// });
+
+	// let categories = $state<{ value: number; label: string }[]>([]);
+
 	const methodNames = ['GET', 'POST', 'PUT', 'DELETE'];
 	const methods = methodNames.map((method) => ({ value: method, label: method }));
 
@@ -31,29 +54,67 @@
 	let categoryNames = ['INVOICE', 'CACHE'];
 	let categories = categoryNames.map((category) => ({ value: category, label: category }));
 
-	let statusCodeNames = ['200', '201'];
+	let statusCodeNames = ['200', '201', '202', '204', '400', '401', '403', '404', '500'];
+	let statusDescriptions = [
+		'OK',
+		'Created',
+		'Accepted',
+		'No Content',
+		'Bad Request',
+		'Unauthorized',
+		'Forbidden',
+		'Not Found',
+		'Internal Server Error'
+	];
+
 	let statusCodes = $state(
 		statusCodeNames.map((statusCode) => ({ value: statusCode, label: statusCode }))
 	);
+
 	let newStatusCode = $state('');
+	let newResponseDescription = $state('');
 	let selectedStatusCode1 = $state('');
-	//let selectedStatusCode2 = '';
 
 	function addStatusCode() {
 		const code = newStatusCode.trim();
+		const desc = newResponseDescription;
 		// Validar que sean exactamente 3 dígitos numéricos
 		if (!/^\d{3}$/.test(code)) {
 			alert('El código de estado debe tener exactamente 3 dígitos numéricos.');
 			return;
+		} else if (statusCodeNames.includes(code)) {
+			alert('El código de estado ya existe.');
+			return;
 		}
+		if (!desc || desc.trim() === '') {
+			alert('La descripción de la respuesta no puede estar vacía.');
+			return;
+		} else if (desc.length > 100) {
+			//no se realmente cuantos maximo
+			alert('La descripción de la respuesta no puede exceder los 100 caracteres.');
+			return;
+		}
+
 		// Verificar si ya existe
 		if (!statusCodeNames.includes(code)) {
 			statusCodeNames = [...statusCodeNames, code];
+			statusDescriptions = [...statusDescriptions, desc];
+			// Actualizar el estado de statusCodes
 			statusCodes = statusCodeNames.map((statusCode) => ({ value: statusCode, label: statusCode }));
 		}
+
 		selectedStatusCode1 = code;
+		responseDescription = desc;
 		newStatusCode = '';
+		newResponseDescription = '';
 	}
+
+	$effect(() => {
+		const idx = statusCodeNames.indexOf(selectedStatusCode1);
+		if (idx !== -1) {
+			responseDescription = statusDescriptions[idx];
+		}
+	});
 
 	let step = $state(1);
 	let endpointId = 0;
@@ -61,7 +122,7 @@
 	let responseDescription = $state('');
 
 	$effect(() => {
-		console.log($state.snapshot(step));
+		console.log($inspect('step:' + step));
 	});
 
 	let endpoint: CreateService = $state({
@@ -107,7 +168,6 @@
 
 	function goToNextPage() {
 		if (step === 2) pullValuesFromTables();
-		console.log($state.snapshot(endpoint));
 		step++;
 	}
 
@@ -116,11 +176,17 @@
 		step--;
 	}
 
-	export function registerEndpoint() {
+	let responses = $state<CreateResponse[]>([]);
+
+	function addResponse() {
+		if (selectedStatusCode1 === '' || responseDescription === '') {
+			alert('Please select a status code and provide a response description.');
+			return;
+		}
 		const responsePatternsRaw = responsePatterns!.getVariables() as ResponsePattern[];
 		const createResponse: CreateResponse = {
-			statusCode: 200,
-			description: 'lorem',
+			statusCode: Number(selectedStatusCode1),
+			description: responseDescription,
 			patterns: []
 		};
 		for (let index = 0; index < responsePatternsRaw.length; index++) {
@@ -135,11 +201,12 @@
 			});
 		}
 
-		endpoint.responses.push(createResponse);
-		fetchEndpoint($state.snapshot(endpoint));
-		goto('/');
+		responses = [...responses, createResponse];
+		selectedStatusCode1 = '';
+		responseDescription = '';
+		responsePatterns!.clearVariables();
 	}
-
+	//Get request Variables from input
 	function pullValuesFromTables() {
 		const headersDataRaw = headers!.getVariables() as RequestVariable[];
 		const inlineParamsRaw = inlineParams!.getVariables() as RequestVariable[];
@@ -199,9 +266,28 @@
 		}
 	}
 
+	export function registerEndpoint() {
+		//Response Patterns push
+
+		if (selectedStatusCode1 === '' || responseDescription === '') {
+			alert('Please select a status code and provide a response description.');
+			return;
+		}
+
+		addResponse();
+
+		for (let index = 0; index < responses.length; index++) {
+			const response = responses[index];
+			endpoint.responses.push(response);
+		}
+		fetchEndpoint($state.snapshot(endpoint));
+		goto('/');
+	}
+	//Calling the API to create the endpoint
 	async function fetchEndpoint(endpointData: CreateService) {
 		try {
-			endpointData.categoryId = 59; // The gods have chosen this value
+			console.log('Endpoint Data:', endpointData);
+			endpointData.categoryId = 59;
 			endpointData.authenticationStrategy = null;
 
 			const response: Service = await api.createService(endpointData);
@@ -296,8 +382,13 @@
 
 			<!-- Add new status code -->
 			<div class="flex items-center gap-2 py-2">
-				<TextFormat as="label" variant="muted" size="subtitle">Add New Status Code:</TextFormat>
-				<Input bind:text={newStatusCode} boxSize="sm" />
+				<TextFormat as="label" variant="muted" size="subtitle">Add New Status:</TextFormat>
+				<Input bind:text={newStatusCode} boxSize="sm" placeholder="Enter status code" />
+				<Input
+					bind:text={newResponseDescription}
+					boxSize="sm"
+					placeholder="Enter response description"
+				/>
 				<Button type="button" size="sm" variant="secondary" onClick={addStatusCode}>Add</Button>
 			</div>
 
@@ -327,7 +418,10 @@
 		{#if step < 3}
 			<Button type="button" size="md" variant="primary" onClick={goToNextPage}>NEXT</Button>
 		{:else}
-			<Button type="button" size="md" variant="primary" onClick={registerEndpoint}>REGISTER</Button>
+			<Button type="button" size="md" variant="primary" onClick={addResponse}>ADD RESPONSE</Button>
+			<Button type="button" size="md" variant="primary" onClick={registerEndpoint}
+				>REGISTER ALL</Button
+			>
 		{/if}
 	</div>
 </div>

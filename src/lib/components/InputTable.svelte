@@ -18,6 +18,11 @@
 		}
 	}
 
+	export function clearVariables() {
+		variables = [];
+		addNewRow();
+	}
+
 	$effect(() => {
 		if (variables.length > 0) {
 			const lastItem = variables[variables.length - 1];

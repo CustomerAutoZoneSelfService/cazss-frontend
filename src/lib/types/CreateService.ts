@@ -24,13 +24,15 @@ export type CreateRequestVariables = {
 };
 
 export type CreateResponse = {
+	response_id?: number; // Not needed when creating a new endpoint
+	endpoint_id?: number; // Not needed when creating a new endpoint
 	statusCode: number;
 	description: string;
 	patterns: CreateResponsePattern[];
 };
 
 export type CreateResponsePattern = {
-	parentId?: number;
+	parentId?: number | null;
 	name: string;
 	description: string;
 	isLeaf: boolean;

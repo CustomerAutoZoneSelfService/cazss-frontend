@@ -24,6 +24,7 @@ export type Service = {
 
 export type DetailedService = {
 	id: number; // TODO Check this later
+	//categoryId: number; // Not needed when creating a new endpoint, but required for editing
 	name: string;
 	description: string;
 	active: boolean;
