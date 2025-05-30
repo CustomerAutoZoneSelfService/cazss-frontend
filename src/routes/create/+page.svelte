@@ -16,6 +16,7 @@
 	import type { ResponsePattern } from '$lib/types/ResponsePattern';
 	import type ApiWrapper from '$lib/ApiWrapper';
 	import type { Service } from '$lib/types/ApiWrapper';
+	//import { snapshot } from 'node:test';
 
 	let api: ApiWrapper = getContext('api');
 
@@ -121,9 +122,9 @@
 	let responseId = 0;
 	let responseDescription = $state('');
 
-	$effect(() => {
-		console.log($inspect('step:' + step));
-	});
+	// $effect(() => {
+	// 	console.log($state.snapshot('step:' + step));
+	// });
 
 	let endpoint: CreateService = $state({
 		categoryId: -1,
@@ -166,12 +167,39 @@
 	let bodyVariables: InputTable | undefined = $state();
 	let responsePatterns: InputTable | undefined = $state();
 
+	function validateStep1(): boolean {
+		if (!endpoint.name || endpoint.name.trim() === '') {
+			alert('El título es obligatorio.');
+			return false;
+		}
+		if (!endpoint.url || endpoint.url.trim() === '') {
+			alert('La URL es obligatoria.');
+			return false;
+		}
+		if (!endpoint.categoryId || endpoint.categoryId === -1) {
+			alert('Debes seleccionar una categoría.');
+			return false;
+		}
+		if (endpoint.description === '') {
+			alert('La descripción es obligatoria.');
+			return false;
+		}
+		
+		// Agrega más validaciones si lo necesitas
+		return true;
+	}
+
 	function goToNextPage() {
+		if (step === 1 && !validateStep1()) {
+			return; 
+		}
 		if (step === 2) pullValuesFromTables();
+
 		step++;
 	}
 
 	function goToPreviousPage() {
+		
 		if (step === 2) pullValuesFromTables();
 		step--;
 	}
