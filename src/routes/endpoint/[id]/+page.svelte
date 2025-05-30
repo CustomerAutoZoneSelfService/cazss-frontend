@@ -192,7 +192,7 @@
 
 <main class="space-y-10 p-10">
 	{#if phase[phaseIndex] === 'results'}
-		<DisplayResultSectionInvokeService {ExecutionResponse}  />
+		<DisplayResultSectionInvokeService {ExecutionResponse} />
 	{:else if phase[phaseIndex] == 'variables'}
 		<ParameterSectionInvokeService
 			{endpoint}
