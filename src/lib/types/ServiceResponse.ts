@@ -5,10 +5,10 @@ export type ServiceResponseStatus = {
 
 //this needs to be checked
 export type VariableResponse = {
-	[key: string]: string[];
+	content: string[];
 };
 
 export type ServiceResponse = {
 	status: ServiceResponseStatus;
-	response: VariableResponse[];
+	response: VariableResponse;
 };

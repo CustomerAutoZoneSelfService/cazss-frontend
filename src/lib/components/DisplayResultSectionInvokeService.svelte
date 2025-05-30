@@ -1,13 +1,11 @@
 <script lang="ts">
 	import HeadingFormat from '$lib/components/HeadingFormat.svelte';
 	import Tooltip from '$lib/components/Tooltip.svelte';
-	import List from '$lib/components/List.svelte';
 	import TextArea from '$lib/components/TextArea.svelte';
 	import type { ServiceResponse } from '$lib/types/ServiceResponse';
 	import PdfViewer from './PdfViewer.svelte';
-	import type { KeyValue } from '$lib/types/ApiWrapper';
-	export let filters: KeyValue[] = [];
 	export let ExecutionResponse: ServiceResponse;
+	console.log(ExecutionResponse.response.content[0]);
 </script>
 
 <main>
@@ -21,14 +19,14 @@
 		</HeadingFormat>
 
 		<HeadingFormat as="h4" disabled={true}>Raw body</HeadingFormat>
-		{#if ExecutionResponse.response.some((variable) => 'content' in variable)}
-			<PdfViewer
-				data={`data:application/pdf;base64,` +
-					ExecutionResponse.response.find((v) => 'content' in v)?.content[0]}
-			/>
+		{#if !['<', '>', '{', '}'].every((c) => {
+			return ExecutionResponse.response.content[0].includes(c);
+		}) && ExecutionResponse.response.content[0].length > 3500}
+			<PdfViewer data={`data:application/pdf;base64,` + ExecutionResponse.response.content[0]} />
 		{:else}
-			<List type="ul">
-				{#each ExecutionResponse.response as variableResponse}
+			<!--
+					<List type="ul">
+				{#each ExecutionResponse.response.content as variableResponse}
 					index (index)
 
 					{#each Object.entries(variableResponse) as [key, value]}
@@ -38,6 +36,8 @@
 					{/each}
 				{/each}
 			</List>
+			-->
+
 			<TextArea
 				disabled={true}
 				text={ExecutionResponse.response ? JSON.stringify(ExecutionResponse.response) : ''}

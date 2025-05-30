@@ -83,7 +83,7 @@
 			code: 0,
 			description: ''
 		},
-		response: []
+		response: { content: [] }
 	});
 
 	// Function to find a KeyValue object in the RequestService object based on its type and keyName from the INPUT
@@ -168,7 +168,6 @@
 	const handleSend = async () => {
 		try {
 			await executeEndpoint();
-			console.log('Sending endpoint');
 			console.log(requestService);
 			phaseIndex = 2;
 			disabledForward = true;
@@ -193,7 +192,7 @@
 
 <main class="space-y-10 p-10">
 	{#if phase[phaseIndex] === 'results'}
-		<DisplayResultSectionInvokeService {ExecutionResponse} filters={requestService.filters} />
+		<DisplayResultSectionInvokeService {ExecutionResponse}  />
 	{:else if phase[phaseIndex] == 'variables'}
 		<ParameterSectionInvokeService
 			{endpoint}

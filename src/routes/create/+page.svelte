@@ -127,7 +127,7 @@
 			const responsePattern = responsePatternsRaw[index];
 
 			createResponse.patterns.push({
-				parentId: responsePattern.parentId,
+				parentId: responsePattern.parentId || undefined,
 				name: responsePattern.name,
 				description: responsePattern.description,
 				isLeaf: responsePattern.isLeaf,

@@ -2,6 +2,7 @@ import ApiWrapper from '$lib/ApiWrapper';
 import type { Service, DetailedService } from './types/ApiWrapper';
 import type { HistoryService } from './types/ApiWrapper';
 import type { ServiceResponse } from './types/ServiceResponse';
+import type { CreateService } from './types/CreateService';
 
 export function replaceWithMock(mockApi: ApiWrapper): void {
 	mockApi.getAllServices = async function (): Promise<Service[]> {
@@ -84,29 +85,37 @@ export function replaceWithMock(mockApi: ApiWrapper): void {
 		}
 	};
 
+	/**
+	  "endpointId": 79,
+    "name": "Mi Endpoint de Prueba (Dana)",
+    "description": "Dana creó un endpoint de prueba"
+	 */
 	mockApi.executeService = async function (id: number): Promise<ServiceResponse> {
 		if (id.toString() !== '5') {
 			return {
 				status: {
 					code: 200,
-					description: 'Success'
+					description: 'OK'
 				},
-				response: [
-					{
-						firstName: ['John'],
-						lastName: ['Doe'],
-						age: ['30']
-					},
-					{
-						productName: ['Laptop'],
-						price: ['1200'],
-						features: ['Intel Core i7', '16GB RAM', '512GB SSD']
-					},
-					{
-						city: ['Chihuahua'],
-						country: ['Mexico']
-					}
-				]
+				response: {
+					content: [
+						`
+						<!DOCTYPE html>
+							<html lang="en">
+							<head>
+							<meta charset="UTF-8">
+							<meta name="viewport" content="width=device-width, initial-scale=1.0">
+							<title>My First HTML Page</title>
+							</head>
+							<body>
+							<h1>Hello, World!</h1>
+							<p>This is a basic HTML page.</p>
+							<a href="https://example.com">Visit Example.com</a>
+							</body>
+							</html>
+					`
+					]
+				}
 			};
 		} else {
 			let textContent = '';
@@ -118,16 +127,35 @@ export function replaceWithMock(mockApi: ApiWrapper): void {
 					code: 200,
 					description: 'Success'
 				},
-				response: [
-					{
-						content: [textContent]
-					}
-				]
+				response: {
+					content: [textContent]
+				}
 			};
 		}
 	};
 
-	mockApi.getAllHistory = async function (): Promise<HistoryService[]> {
+
+	/**
+	 * 
+	 {
+		"code": "INTERNAL_ERROR",
+		"message": "Unexpected error occurred",
+		"details": "could not execute statement [Column 'name' cannot be null] [insert into Endpoints (active,category_id,description,method,name,url,user_id) values (?,?,?,?,?,?,?)]; SQL [insert into Endpoints (active,category_id,description,method,name,url,user_id) values (?,?,?,?,?,?,?)]; constraint [null]",
+		"timestamp": "2025-05-29T20:56:45.4040164",
+		"traceId": "1b4d45ff-f96c-42e7-9624-c7f48d96c3e6"
+	}
+	 */
+
+	mockApi.createService = async function (service: CreateService): Promise<Service> {
+		console.log(service);
+		return {
+			endpointId: 79,
+			name: 'Mi Endpoint de Prueba (Dana)',
+			description: 'Dana creó un endpoint de prueba'
+		};
+	};
+
+	/*mockApi.getHistoryAdmin = async function (): Promise<HistoryService[]> {
 		return Array.from({ length: 12 }, (_, i) => {
 			const dayOffset = Math.floor(i / 3);
 			const date = new Date();
