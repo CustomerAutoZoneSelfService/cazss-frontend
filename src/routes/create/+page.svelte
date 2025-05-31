@@ -18,6 +18,9 @@
 	import type { Service } from '$lib/types/ApiWrapper';
 
 	let api: ApiWrapper = getContext('api');
+	
+	let successMessage = $state('');
+	let errorMessage = $state('');
 
 	const methodNames = ['GET', 'POST', 'PUT', 'DELETE'];
 	const methods = methodNames.map((method) => ({ value: method, label: method }));
@@ -137,7 +140,7 @@
 
 		endpoint.responses.push(createResponse);
 		fetchEndpoint($state.snapshot(endpoint));
-		goto('/');
+		
 	}
 
 	function pullValuesFromTables() {
@@ -206,13 +209,32 @@
 
 			const response: Service = await api.createService(endpointData);
 			console.log(response);
+			console.log('Endpoint creado exitosamente', response);
+			successMessage = 'El endpoint fue creado exitosamente.';
+			errorMessage = '';
+			setTimeout(() => goto('/'), 2500);
+
 		} catch (error) {
 			console.log(error);
+			console.error('Error al crear endpoint:', error);
+			successMessage = '';
+			errorMessage = 'Hubo un error al crear el endpoint. Intentalo nuevamente';
+			setTimeout(() => goto('/'), 3500);
 		}
 	}
 </script>
 
 <div class="align-items justify-center">
+	{#if successMessage}
+		<div class="my-4 rounded bg-green-100 p-4 text-green-800 shadow">
+			{successMessage}
+		</div>
+		{/if}
+		{#if errorMessage}
+		<div class="my-4 rounded bg-red-100 p-4 text-red-800 shadow">
+			{errorMessage}
+		</div>
+		{/if}
 	{#if step === 1}
 		<main class="flex-1 bg-white p-8">
 			<div class="mb-6 flex items-center justify-between">
@@ -329,5 +351,6 @@
 		{:else}
 			<Button type="button" size="md" variant="primary" onClick={registerEndpoint}>REGISTER</Button>
 		{/if}
+		
 	</div>
 </div>
