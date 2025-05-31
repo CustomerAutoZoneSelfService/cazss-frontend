@@ -89,6 +89,6 @@ export default class ApiWrapper {
 	}
 
 	public getAllHistory() {
-		return this.get<HistoryService[]>('/history');
+		return this.get<HistoryService[]>('/services/history');
 	}
 }
