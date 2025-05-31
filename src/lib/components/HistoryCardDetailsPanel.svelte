@@ -42,15 +42,12 @@
 	//TODO: FIX THIS SO IT TAKES YOU TO THE EXECUTE PAGE WITH THE DATA
 	function handleCallAgain() {
 		if (detailedHistoryData) {
-			// Store the history data in sessionStorage to be used by the home page
-			sessionStorage.setItem(
-				'prefilledEndpointData',
-				JSON.stringify({
-					endpointName: detailedHistoryData.endpoint.name,
-					inputs: detailedHistoryData.historyData.request
-				})
+			// Convierte el request en un array de objetos { label, value }
+			const prefilledInputs = Object.entries(detailedHistoryData.historyData.request ?? {}).map(
+				([label, value]) => ({ label, value })
 			);
-			goto('/invokeEndpoint');
+			const prefilledParam = encodeURIComponent(JSON.stringify(prefilledInputs));
+			goto(`/endpoint/${detailedHistoryData.endpoint.endpointId}?prefilled=${prefilledParam}`);
 		}
 	}
 </script>
@@ -93,27 +90,20 @@
 		</div>
 
 		<!-- Output Box -->
-		<div class="flex min-h-[280px] flex-col gap-2 rounded-2xl bg-gray-100 p-6 shadow-md">
-			<TextFormat as="div" size="subtitle" variant="primary" className="mb-2">Output</TextFormat>
-
-			{#if !detailedHistoryData.historyData.response}
-				<div class="overflow-auto rounded bg-white p-4 text-sm text-gray-500 shadow-inner">
-					Expected response here: <br /><br />
-					{`{\n  "message": "Lorem ipsum dolor sit amet, consectetur adipiscing elit",\n  "status": 200\n}`}
-				</div>
-			{:else}
-				<div class="mb-1 flex flex-row items-start justify-between">
-					<TextFormat as="span" size="body" variant="muted">Response:</TextFormat>
+		<div class="flex flex-col gap-2 rounded-2xl bg-gray-100 p-6 shadow-md">
+			<TextFormat as="div" size="subtitle" variant="primary" className="mb-2">Inputs</TextFormat>
+			{#each Object.entries(detailedHistoryData.historyData.response ?? {}) as [key, value] (key)}
+				<div class="mb-1 flex flex-row items-center justify-between">
+					<TextFormat as="span" size="body" variant="muted">{key}:</TextFormat>
 					<TextFormat
 						as="span"
 						size="body"
 						variant="primary"
-						className="bg-white rounded px-3 py-1 shadow text-right max-w-[16rem] break-words"
+						className="bg-white rounded px-3 py-1 shadow text-right min-w-[6rem]"
+						>{value}</TextFormat
 					>
-						{JSON.stringify(detailedHistoryData.historyData.response, null, 2)}
-					</TextFormat>
 				</div>
-			{/if}
+			{/each}
 		</div>
 
 		<!-- Call again button -->

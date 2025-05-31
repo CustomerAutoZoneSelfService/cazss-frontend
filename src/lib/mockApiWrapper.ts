@@ -107,7 +107,6 @@ export function replaceWithMock(mockApi: ApiWrapper): void {
 			};
 		});
 	};
-
 	mockApi.getDetailedHistory = async function (
 		id: number
 	): Promise<import('./types/ApiWrapper').DetailedHistoryService> {
@@ -116,12 +115,28 @@ export function replaceWithMock(mockApi: ApiWrapper): void {
 			statusCode: 200,
 			endpoint: {
 				endpointId: 1,
-				name: 'getById',
-				description: 'Endpoint de ejemplo para detalles de historial'
+				name: 'Get PNA by SKU',
+				description: 'This endpoint retrieves the PNA by SKU.'
 			},
 			historyData: {
-				request: { param1: 'valor1', param2: 'valor2' },
-				response: { result: 'ok', data: { foo: 'bar' } }
+				request: {
+					'CLIENT ID': '1235',
+					SKU: '00000',
+					method: 'GET',
+					url: 'https:blabla'
+				},
+				response: {
+					code: 200,
+					description: 'Success',
+					firstName: 'John',
+					lastName: 'Doe',
+					age: '30',
+					productName: 'Laptop',
+					price: '1200',
+					features: ['Intel Core i7', '16GB RAM', '512GB SSD'],
+					city: 'Chihuahua',
+					country: 'Mexico'
+				}
 			}
 		};
 	};
