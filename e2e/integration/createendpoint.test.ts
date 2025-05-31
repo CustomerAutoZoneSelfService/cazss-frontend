@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 import { initE2EMocked } from '../initE2EMocked';
 
-const path = '/'; 
+const path = '/';
 
 test.beforeEach(async ({ page }, testInfo) => {
 	await initE2EMocked(page, testInfo);
