@@ -99,7 +99,7 @@
 						as="span"
 						size="body"
 						variant="primary"
-						className="bg-white rounded px-3 py-1 shadow text-right min-w-[6rem]"
+						className="bg-white rounded px-3 py-1 shadow text-right min-w-[6rem] max-w-[10rem]"
 						>{value}</TextFormat
 					>
 				</div>
