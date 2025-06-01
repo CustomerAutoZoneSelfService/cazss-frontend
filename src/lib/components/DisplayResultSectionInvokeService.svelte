@@ -21,22 +21,21 @@
 		</HeadingFormat>
 
 		<HeadingFormat as="h4" disabled={true}>Raw body</HeadingFormat>
-		{#if ExecutionResponse.response.some((variable) => 'content' in variable)}
+		{#if typeof ExecutionResponse.response === 'object' && ExecutionResponse.response !== null
+			&& 'content' in ExecutionResponse.response}
 			<PdfViewer
-				data={`data:application/pdf;base64,` +
-					ExecutionResponse.response.find((v) => 'content' in v)?.content[0]}
+				data={`data:application/pdf;base64,${(ExecutionResponse.response as any).content[0]}`}			
 			/>
 		{:else}
 			<List type="ul">
-				{#each ExecutionResponse.response as variableResponse}
-					index (index)
-
-					{#each Object.entries(variableResponse) as [key, value]}
-						{#if filters.length === 0 || filters.some((f) => f.key === key)}
-							<li><b>{key}:</b> {value.join(', ')}</li>
-						{/if}
-					{/each}
-				{/each}
+				{#if typeof ExecutionResponse.response === 'object' && ExecutionResponse.response !== null}
+					<!-- index(index) -->
+						{#each Object.entries(ExecutionResponse.response) as [key, value]}
+							{#if filters.length === 0 || filters.some((f) => f.key === key)}
+								<li><b>{key}:</b> {String(value)}</li>
+							{/if}
+						{/each}
+				{/if}
 			</List>
 			<TextArea
 				disabled={true}
