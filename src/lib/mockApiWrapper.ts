@@ -84,11 +84,6 @@ export function replaceWithMock(mockApi: ApiWrapper): void {
 		}
 	};
 
-	/**
-	  "endpointId": 79,
-    "name": "Mi Endpoint de Prueba (Dana)",
-    "description": "Dana creó un endpoint de prueba"
-	 */
 	mockApi.executeService = async function (id: number): Promise<ServiceResponse> {
 		if (id.toString() !== '5') {
 			return {
@@ -133,8 +128,8 @@ export function replaceWithMock(mockApi: ApiWrapper): void {
 		console.log(service);
 		return {
 			endpointId: 79,
-			name: 'Mi Endpoint de Prueba (Dana)',
-			description: 'Dana creó un endpoint de prueba'
+			name: 'test endpoint',
+			description: 'This is a test endpoint'
 		};
 	};
 
