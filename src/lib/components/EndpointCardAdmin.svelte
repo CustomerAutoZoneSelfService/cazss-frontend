@@ -10,7 +10,6 @@
 	} = $props<{
 		id: number;
 		title: string;
-		description: string;
 		historyCard?: boolean;
 		useDate?: string;
 		onClick?: () => void;

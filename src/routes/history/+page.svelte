@@ -18,9 +18,8 @@
 		if (!userId) return;
 
 		const api = new ApiWrapper();
-		api.getHistoryUser(userId);
 
-		const history: HistoryService[] = await ApiWrapper.getHistoryUser();
+		const history: HistoryService[] = await api.getHistoryUser(userId);
 
 		const today = new Date();
 		const yesterday = new Date();
@@ -51,8 +50,8 @@
 			{#each todayCards as card (card.historyId)}
 				<EndpointCard
 					id={card.historyId}
-					title={card.endpoint.name}
-					description={card.endpoint.description}
+					title={card.endpointName}
+					description={card.endpointDescription}
 					useDate={new Date(card.createdAt).toLocaleString('es-MX', {
 						day: '2-digit',
 						month: 'short',
@@ -72,8 +71,8 @@
 			{#each yesterdayCards as card (card.historyId)}
 				<EndpointCard
 					id={card.historyId}
-					title={card.endpoint.name}
-					description={card.endpoint.description}
+					title={card.endpointName}
+					description={card.endpointDescription}
 					useDate={new Date(card.createdAt).toLocaleString('es-MX', {
 						day: '2-digit',
 						month: 'short',
@@ -96,8 +95,8 @@
 			{#each weekCards as card (card.historyId)}
 				<EndpointCard
 					id={card.historyId}
-					title={card.endpoint.name}
-					description={card.endpoint.description}
+					title={card.endpointName}
+					description={card.endpointDescription}
 					useDate={new Date(card.createdAt).toLocaleString('es-MX', {
 						day: '2-digit',
 						month: 'short',

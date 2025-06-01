@@ -1,6 +1,5 @@
 import ApiWrapper from '$lib/ApiWrapper';
 import type { Service, DetailedService } from './types/ApiWrapper';
-import type { HistoryService } from './types/ApiWrapper';
 import type { ServiceResponse } from './types/ServiceResponse';
 import type { CreateService } from './types/CreateService';
 
@@ -98,23 +97,8 @@ export function replaceWithMock(mockApi: ApiWrapper): void {
 					description: 'OK'
 				},
 				response: {
-					content: [
-						`
-						<!DOCTYPE html>
-							<html lang="en">
-							<head>
-							<meta charset="UTF-8">
-							<meta name="viewport" content="width=device-width, initial-scale=1.0">
-							<title>My First HTML Page</title>
-							</head>
-							<body>
-							<h1>Hello, World!</h1>
-							<p>This is a basic HTML page.</p>
-							<a href="https://example.com">Visit Example.com</a>
-							</body>
-							</html>
-					`
-					]
+					0: ['Example response variable'],
+					1: ['Second example response variable']
 				}
 			};
 		} else {
@@ -128,12 +112,11 @@ export function replaceWithMock(mockApi: ApiWrapper): void {
 					description: 'Success'
 				},
 				response: {
-					content: [textContent]
+					0: [textContent]
 				}
 			};
 		}
 	};
-
 
 	/**
 	 * 
@@ -205,4 +188,5 @@ export function replaceWithMock(mockApi: ApiWrapper): void {
 			}
 		};
 	};
+	*/
 }

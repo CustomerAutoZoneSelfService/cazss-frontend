@@ -1,6 +1,5 @@
 import type { RequestVariableString } from './RequestVariable';
 import type { Filter } from './Filter';
-import type { Endpoint } from './Endpoint';
 
 export type HTTPMethod = 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
 
@@ -36,10 +35,6 @@ export type DetailedService = {
 };
 
 export type HistoryService = {
-	endpoint: Endpoint;
-	created: string | number | Date;
-	description: string;
-	name: string;
 	historyId: number;
 	email: string;
 	endpointName: string;

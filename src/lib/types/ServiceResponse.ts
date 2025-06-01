@@ -3,9 +3,19 @@ export type ServiceResponseStatus = {
 	description: string;
 };
 
-//this needs to be checked
+/**
+ * {
+    "status": {
+        "code": 200,
+        "description": "OK"
+    },
+    "response": {
+		-1: [""]
+	}
+}
+ */
 export type VariableResponse = {
-	content: string[];
+	[key: number]: string[];
 };
 
 export type ServiceResponse = {

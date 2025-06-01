@@ -83,7 +83,7 @@
 			code: 0,
 			description: ''
 		},
-		response: { content: [] }
+		response: {}
 	});
 
 	// Function to find a KeyValue object in the RequestService object based on its type and keyName from the INPUT

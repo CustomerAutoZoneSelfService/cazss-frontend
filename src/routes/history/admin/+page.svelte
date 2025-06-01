@@ -1,7 +1,6 @@
 <script lang="ts">
 	import EndpointCardAdmin from '$lib/components/EndpointCardAdmin.svelte';
 	import Button from '$lib/components/Button.svelte';
-	import HistoryCardDetailsPanel from '$lib/components/HistoryCardDetailsPanel.svelte';
 	import { onMount, getContext } from 'svelte';
 	import type ApiWrapper from '$lib/ApiWrapper';
 	import type { HistoryService } from '$lib/types/ApiWrapper';
@@ -31,7 +30,7 @@
 		weekCards = [];
 
 		for (const card of allHistory) {
-			const cardDate = new Date(card.created);
+			const cardDate = new Date(card.createdAt);
 			const cardDateStr = cardDate.toDateString();
 
 			if (cardDateStr === today) {
@@ -85,7 +84,6 @@
 				<EndpointCardAdmin
 					id={card.historyId}
 					title={card.endpointName}
-					description={card.endpointDescription}
 					useDate={formatDate(card.createdAt)}
 					username={card.email?.split('@')[0] || 'Usuario'}
 					userInitial={card.email?.charAt(0).toUpperCase() || 'U'}
@@ -102,7 +100,6 @@
 				<EndpointCardAdmin
 					id={card.historyId}
 					title={card.endpointName}
-					description={card.endpointDescription}
 					useDate={formatDate(card.createdAt)}
 					username={card.email?.split('@')[0] || 'Usuario'}
 					userInitial={card.email?.charAt(0).toUpperCase() || 'U'}
@@ -119,7 +116,6 @@
 				<EndpointCardAdmin
 					id={card.historyId}
 					title={card.endpointName}
-					description={card.endpointDescription}
 					useDate={formatDate(card.createdAt)}
 					username={card.email?.split('@')[0] || 'Usuario'}
 					userInitial={card.email?.charAt(0).toUpperCase() || 'U'}
@@ -134,6 +130,7 @@
 		<!-- HistoryCardDetailsPanel as a side panel, no overlay -->
 		<div class="fixed top-0 right-0 z-50 flex h-full w-[32rem] flex-col bg-white shadow-2xl">
 			<Button class="m-4 self-end" variant="text" size="md" onClick={closePanel}>✕</Button>
+			<!--
 			<HistoryCardDetailsPanel
 				title={selectedCard.endpointName}
 				titleHighlight={selectedCard.endpointName.split(' ').at(-1) || ''}
@@ -142,6 +139,7 @@
 				output={[{ label: 'Date', value: formatDate(selectedCard.createdAt) || 'N/A' }]}
 				historyData={selectedCard}
 			/>
+			-->
 		</div>
 	{/if}
 </div>

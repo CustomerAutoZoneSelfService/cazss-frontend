@@ -6,7 +6,6 @@
 	import type { HistoryService } from '$lib/types/ApiWrapper';
 	import { splitHistoryByDate } from '$lib/utils/splitHistoryByDate';
 	import { formatDateHistoryCards } from '$lib/utils/dates';
-	import HistoryCardDetailsPanel from '$lib/components/HistoryCardDetailsPanel.svelte';
 
 	let api: ApiWrapper = getContext('api');
 
@@ -156,6 +155,7 @@
 	{#if showPanel && selectedCard}
 		<div class="history-details-panel">
 			<Button class="m-4 self-end" variant="text" size="md" on:click={closePanel}>✕</Button>
+			<!--
 			<HistoryCardDetailsPanel
 				title={selectedCard.endpointName}
 				titleHighlight={selectedCard.endpointName.split(' ').at(-1) || ''}
@@ -165,6 +165,7 @@
 				output={[{ label: 'Response', value: JSON.stringify(selectedCard.output, null, 2) }]}
 				historyData={selectedCard}
 			/>
+			-->
 		</div>
 	{/if}
 </div>
@@ -184,4 +185,3 @@
 		flex-direction: column;
 	}
 </style>
-
