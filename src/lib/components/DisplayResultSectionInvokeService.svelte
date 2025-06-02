@@ -28,11 +28,8 @@
 			/>
 		{:else}
 			<List type="ul">
-				{#each ExecutionResponse.response as variableResponse}
-					index (index)
-
-					{#each Object.entries(variableResponse) as [key, value]}
-						index (index)
+				{#each ExecutionResponse.response as variableResponse, index (index)}
+					{#each Object.entries(variableResponse) as [key, value], index (index)}
 						{#if filters.length === 0 || filters.some((f) => f.key === key)}
 							<li><b>{key}:</b> {value.join(', ')}</li>
 						{/if}

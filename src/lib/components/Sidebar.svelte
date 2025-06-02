@@ -68,7 +68,7 @@
 				</div>
 			</a>
 
-			<a href="/create">
+			<a href="/configure">
 				<div
 					class="nav-item flex cursor-pointer items-center space-x-3 rounded-lg p-3 {collapsed
 						? 'justify-center'

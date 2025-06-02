@@ -1,5 +1,5 @@
 import type { Service, DetailedService, HistoryService } from './types/ApiWrapper';
-import type { CreateService } from './types/CreateService';
+import type { ConfigureService } from './types/ConfigureService';
 import type { RequestService } from './types/RequestService';
 import type { ServiceResponse } from './types/ServiceResponse';
 import type { Categories } from './types/Categories';
@@ -48,13 +48,27 @@ export default class ApiWrapper {
 		});
 	}
 
+	private put<T>(path: string, body: object) {
+		return this.request<T>(path, {
+			method: 'PUT',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify(body)
+		});
+	}
+
 	// GET Methods
 	public getAllServices() {
-		return this.get<Service[]>('/services/getAllServices');
+		return this.get<Service[]>('/services');
 	}
 
 	public getServiceById(id: number) {
-		return this.get<DetailedService>(`/services/getServiceById/${id}`);
+		return this.get<DetailedService>(`/services/${id}`);
+	}
+
+	public getServiceByIdForEdit(id: number) {
+		return this.get<ConfigureService>(`/services/${id}/edit`);
 	}
 
 	public getCategories() {
@@ -75,10 +89,15 @@ export default class ApiWrapper {
 
 	// POST Methods
 	public executeService(id: number, body: RequestService) {
-		return this.post<ServiceResponse>(`/services/executeService/${id}`, body);
+		return this.post<ServiceResponse>(`/services/${id}/execute`, body);
 	}
 
-	public createService(service: CreateService) {
-		return this.post<Service>(`/services`, service);
+	public createService(service: ConfigureService) {
+		return this.post<ConfigureService>(`/services`, service);
+	}
+
+	//Put methods
+	public updateService(id: number, service: ConfigureService) {
+		return this.put<ConfigureService>(`/services/${id}`, service);
 	}
 }
