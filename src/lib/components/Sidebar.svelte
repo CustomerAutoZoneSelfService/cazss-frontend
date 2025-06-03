@@ -55,7 +55,8 @@
 					{/if}
 				</div>
 			</a>
-			<a href="/history/user">
+
+			<a href="/history/user?userId=5">
 				<div
 					class="nav-item flex cursor-pointer items-center space-x-3 rounded-lg p-3 {collapsed
 						? 'justify-center'
