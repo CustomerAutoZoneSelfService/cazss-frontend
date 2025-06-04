@@ -229,6 +229,8 @@
 		}
 	};
 
+	// Sends the request and moves to the results page
+	// Saves selected filters if on the initialFilters page
 	const handleSend = async () => {
 		try {
 			if (phase[phaseIndex] === 'initialFilters') {
@@ -257,7 +259,6 @@
 			console.log('Error in handleSend:', error);
 		}
 	};
-
 	// Updates selected filters and applies them to the request
 	const handleFilterChange = (selectedIds: number[]) => {
 		selectedFilterIds = selectedIds;
@@ -320,6 +321,7 @@
 			selected={selectedFilterIds}
 			on:filterChange={(e) => handleFilterChange(e.detail)}
 		/>
+
 	{:else}
 		<p>Nothing</p>
 	{/if}
@@ -397,16 +399,25 @@
 				size="md"
 				variant="secondary"
 				onClick={handlePhaseChangeBackward}
-				disabled={disabledBackwards}
 			>
 				Return
 			</Button>
 		</div>
 		<div>
-			{#if phase[phaseIndex] === 'filters'}
+			{#if phase[phaseIndex] === 'initialFilters'}
 				<Button variant="primary" type="submit" size="md" onClick={handleSend}>Send</Button>
-			{:else if phase[phaseIndex] !== 'results'}
-				<Button onClick={handlePhaseChangeForward} disabled={disabledForward}>Next</Button>
+			{:else if phase[phaseIndex] === 'variables'}
+				{#if endpoint.filters.length > 0}
+					{#if hasUserFilters}
+						<Button variant="primary" type="submit" size="md" onClick={handleSend}>Send</Button>
+					{:else if selectedFilterIds.length === endpoint.filters.length}
+						<Button variant="primary" type="button" size="md" onClick={handlePhaseChangeForward}>Next</Button>
+					{:else}
+						<Button variant="primary" type="submit" size="md" onClick={handleSend}>Send</Button>
+					{/if}
+				{:else}
+					<Button variant="primary" type="submit" size="md" onClick={handleSend}>Send</Button>
+				{/if}
 			{/if}
 		</div>
 	</div>
