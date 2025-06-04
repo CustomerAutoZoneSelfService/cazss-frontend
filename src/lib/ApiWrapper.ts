@@ -6,6 +6,7 @@ import type {
 } from './types/ApiWrapper';
 import type { RequestService } from './types/RequestService';
 import type { ServiceResponse } from './types/ServiceResponse';
+import type { RequestUserFilterDTO, userFilters } from './types/Filter';
 
 const BASE_URL = 'http://localhost:8080';
 
@@ -64,6 +65,14 @@ export default class ApiWrapper {
 		return this.post<ServiceResponse>(`/services/${id}/execute`, body);
 	}
 
+	public createService(service: CreateService) {
+		return this.post<Service>(`/services`, service);
+	}
+
+	public getHistoryAdmin() {
+		return this.get<HistoryService[]>('/services/history');
+	}
+
 	public getHistoryUser(userId: number) {
 		return this.get<HistoryService[]>(`/services/history?userId=${userId}`);
 	}
@@ -74,5 +83,13 @@ export default class ApiWrapper {
 
 	public getDetailedHistory(id: number) {
 		return this.get<DetailedHistoryService>(`/services/history/${id}`);
+	}
+	
+	public getUserFilters(endpointId: number) {
+	return this.get<userFilters>(`/responses/${endpointId}/user-filters`);
+	}
+
+	public createUserFilters(endpointId: number, body: RequestUserFilterDTO) {
+	return this.post<void>(`/responses/${endpointId}/user-filters`, body);
 	}
 }

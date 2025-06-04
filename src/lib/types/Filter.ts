@@ -4,3 +4,13 @@ export type Filter = {
 	name: string;
 	description: string;
 };
+
+export type RequestUserFilterDTO = {
+  endpointId: number;
+  responsePatternIds: number[];
+};
+
+export type userFilters = {
+  endpointId: number;
+  userFilters: Filter[];
+};
