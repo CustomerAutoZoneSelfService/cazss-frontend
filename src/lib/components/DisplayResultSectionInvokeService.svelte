@@ -6,8 +6,12 @@
 	import type { ServiceResponse } from '$lib/types/ServiceResponse';
 	import PdfViewer from './PdfViewer.svelte';
 	import type { KeyValue } from '$lib/types/ApiWrapper';
+	import { createEventDispatcher } from 'svelte';
+	import Button from '$lib/components/Button.svelte';
 	export let filters: KeyValue[] = [];
 	export let ExecutionResponse: ServiceResponse;
+
+	const dispatch = createEventDispatcher();
 </script>
 
 <main>
@@ -20,19 +24,24 @@
 			>
 		</HeadingFormat>
 
+		{#if filters.length > 0}
+		<Button type="button" size="sm" variant="primary" onClick={() => dispatch('openFilters')}>
+			Filters
+		</Button>
+		{/if}
+
 		<HeadingFormat as="h4" disabled={true}>Raw body</HeadingFormat>
 		{#if typeof ExecutionResponse.response === 'object' && ExecutionResponse.response !== null
-			&& 'content' in ExecutionResponse.response}
+			&& '-1' in ExecutionResponse.response}
 			<PdfViewer
-				data={`data:application/pdf;base64,${(ExecutionResponse.response as any).content[0]}`}			
+				data={`data:application/pdf;base64,${(ExecutionResponse.response as any)['-1'][0]}`}			
 			/>
 		{:else}
 			<List type="ul">
 				{#if typeof ExecutionResponse.response === 'object' && ExecutionResponse.response !== null}
-					<!-- index(index) -->
 						{#each Object.entries(ExecutionResponse.response) as [key, value]}
-							{#if filters.length === 0 || filters.some((f) => f.key === key)}
-								<li><b>{key}:</b> {String(value)}</li>
+							{#if filters.length === 0 || filters.some(f => f.value === key)}
+								<li>{String(value)}</li>
 							{/if}
 						{/each}
 				{/if}
