@@ -132,6 +132,4 @@ export function replaceWithMock(mockApi: ApiWrapper): void {
 			description: 'This is a test endpoint'
 		};
 	};
-
-	
 }

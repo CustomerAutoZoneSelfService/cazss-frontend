@@ -1,4 +1,9 @@
-import type { Service, DetailedService, HistoryService, DetailedHistoryService } from './types/ApiWrapper';
+import type {
+	Service,
+	DetailedService,
+	HistoryService,
+	DetailedHistoryService
+} from './types/ApiWrapper';
 import type { ConfigureService } from './types/ConfigureService';
 import type { RequestService } from './types/RequestService';
 import type { ServiceResponse } from './types/ServiceResponse';
@@ -12,8 +17,8 @@ export default class ApiWrapper {
 	}
 
 	constructor(
-		private baseUrl: string = BASE_URL,
-		private headers: Record<string, string> = {}
+		private readonly baseUrl: string = BASE_URL,
+		private readonly headers: Record<string, string> = {}
 	) {}
 
 	// Primitives
@@ -99,7 +104,6 @@ export default class ApiWrapper {
 	public createService(service: ConfigureService) {
 		return this.post<Service>(`/services`, service);
 	}
-
 
 	public updateService(id: number, service: ConfigureService) {
 		return this.put<ConfigureService>(`/services/${id}`, service);

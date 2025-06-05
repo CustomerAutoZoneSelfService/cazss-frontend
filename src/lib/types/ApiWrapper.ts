@@ -23,7 +23,7 @@ export type Service = {
 };
 
 export type DetailedService = {
-	id: number; // TODO Check this later
+	id: number; // to-do Check this later
 	//categoryId: number; // Not needed when creating a new endpoint, but required for editing
 	name: string;
 	description: string;

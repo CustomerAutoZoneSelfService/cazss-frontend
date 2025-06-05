@@ -17,6 +17,7 @@
 		ResponsePattern
 	} from '$lib/types/ConfigureService';
 	import type ApiWrapper from '$lib/ApiWrapper';
+	import type { Service } from '$lib/types/ApiWrapper';
 
 	let api: ApiWrapper = getContext('api');
 	let { data }: { data: Params['params'] } = $props();
@@ -130,7 +131,6 @@
 	});
 
 	let step = $state(1);
-	let responseDescription = $state('');
 
 	let headersPrompt: InputTablePrompt = {
 		requestVariables: [],
@@ -319,7 +319,7 @@
 			console.log('Endpoint Data:', endpointData);
 			endpointData.categoryId = 59;
 			endpointData.authenticationStrategy = null;
-			const response: ConfigureService = await api.createService(endpointData);
+			const response: Service = await api.createService(endpointData);
 			console.log(response);
 			alert('Endpoint created successfully');
 			return true;
