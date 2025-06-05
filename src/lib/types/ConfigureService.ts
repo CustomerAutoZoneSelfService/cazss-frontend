@@ -1,6 +1,6 @@
 import type { HTTPMethod, RequestVariableTypes } from './ApiWrapper';
 
-export type CreateService = {
+export type ConfigureService = {
 	id?: number; // Not needed when creating a new endpoint
 	categoryId: number;
 	active: boolean;
@@ -11,11 +11,11 @@ export type CreateService = {
 	authenticationStrategy: number | null;
 
 	template: string;
-	requestVariables: CreateRequestVariables[];
-	responses: CreateResponse[];
+	requestVariables: RequestVariable[];
+	responses: Response[];
 };
 
-export type CreateRequestVariables = {
+export type RequestVariable = {
 	type: RequestVariableTypes;
 	key: string;
 	defaultValue: string;
@@ -23,14 +23,17 @@ export type CreateRequestVariables = {
 	description: string;
 };
 
-export type CreateResponse = {
+export type Response = {
+	responseId?: number;
+	endpointId?: number;
 	statusCode: number;
 	description: string;
-	patterns: CreateResponsePattern[];
+	patterns: ResponsePattern[];
 };
 
-export type CreateResponsePattern = {
-	parentId?: number;
+export type ResponsePattern = {
+	responsePatternId?: number;
+	parentId?: number | null;
 	name: string;
 	description: string;
 	isLeaf: boolean;

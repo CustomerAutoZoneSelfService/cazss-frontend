@@ -1,7 +1,7 @@
 import ApiWrapper from '$lib/ApiWrapper';
 import type { Service, DetailedService } from './types/ApiWrapper';
 import type { ServiceResponse } from './types/ServiceResponse';
-import type { CreateService } from './types/CreateService';
+import type { ConfigureService } from './types/ConfigureService';
 
 export function replaceWithMock(mockApi: ApiWrapper): void {
 	mockApi.getAllServices = async function (): Promise<Service[]> {
@@ -124,7 +124,7 @@ export function replaceWithMock(mockApi: ApiWrapper): void {
 	}
 	 */
 
-	mockApi.createService = async function (service: CreateService): Promise<Service> {
+	mockApi.createService = async function (service: ConfigureService): Promise<Service> {
 		console.log(service);
 		return {
 			endpointId: 79,

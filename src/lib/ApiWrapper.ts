@@ -1,4 +1,4 @@
-import type { CreateService } from './types/CreateService';
+import type { ConfigureService } from './types/ConfigureService';
 import type {
 	Service,
 	DetailedService,
@@ -48,6 +48,16 @@ export default class ApiWrapper {
 		});
 	}
 
+	private put<T>(path: string, body: object) {
+		return this.request<T>(path, {
+			method: 'PUT',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify(body)
+		});
+	}
+
 	// Endpoints
 	public getAllServices() {
 		return this.get<Service[]>('/services');
@@ -55,6 +65,10 @@ export default class ApiWrapper {
 
 	public getServiceById(id: number) {
 		return this.get<DetailedService>(`/services/${id}`);
+	}
+
+	public getServiceByIdForEdit(id: number) {
+		return this.get<ConfigureService>(`/services/${id}/edit`);
 	}
 
 	public executeService(id: number, body: RequestService) {
@@ -65,7 +79,7 @@ export default class ApiWrapper {
 		return this.get<DetailedHistoryService>(`/services/history/${id}`);
 	}
 
-	public createService(service: CreateService) {
+	public createService(service: ConfigureService) {
 		return this.post<Service>(`/services`, service);
 	}
 
@@ -79,5 +93,9 @@ export default class ApiWrapper {
 
 	public getAllHistory() {
 		return this.get<HistoryService[]>('/services/history');
+	}
+
+	public updateService(id: number, service: ConfigureService) {
+		return this.put<ConfigureService>(`/services/${id}`, service);
 	}
 }
