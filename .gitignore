@@ -33,3 +33,5 @@ vite.config.ts.timestamp-*
 .husky/*
 
 /static/test_pdf.txt
+
+pnpm-lock.yaml

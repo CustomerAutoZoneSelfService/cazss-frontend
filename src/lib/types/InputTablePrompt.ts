@@ -1,6 +1,10 @@
-import type { RequestVariable, VariableType } from './RequestVariable';
-import type { ResponsePattern } from './ResponsePattern';
+import type { RequestVariable, ResponsePattern } from './ConfigureService';
+import type { RequestVariableTypes } from './ApiWrapper';
 
 export type InputTablePrompt =
-	| { endpointId: number; variableType: VariableType; requestVariables?: RequestVariable[] }
-	| { responseId: number; responsePatterns?: ResponsePattern[] };
+	| {
+			requestVariables: RequestVariable[];
+			//This value is only needed when the table receibes request variables
+			requestVariableType: RequestVariableTypes;
+	  }
+	| { responsePatterns: ResponsePattern[] };
