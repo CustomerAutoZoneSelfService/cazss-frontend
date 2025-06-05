@@ -17,7 +17,7 @@
 	style="left: {collapsed ? '4.5rem' : '13.5rem'}"
 >
 	<button on:click={toggleCollapse} aria-label="Expandir o colapsar menú">
-		<PanelRightIcon size={24} color="black" class="cursor-pointer text-inherit" />
+		<PanelRightIcon size={24} color="black" class="text-inherit" />
 	</button>
 </div>
 
@@ -68,8 +68,20 @@
 					{/if}
 				</div>
 			</a>
+			<a href="/history/user?userId=5">
+				<div
+					class="nav-item flex cursor-pointer items-center space-x-3 rounded-lg p-3 {collapsed
+						? 'justify-center'
+						: ''}"
+				>
+					<ClockIcon size={24} color="white" class="shrink-0 text-inherit" />
+					{#if !collapsed}
+						<span class="text-white">HistoryUser</span>
+					{/if}
+				</div>
+			</a>
 
-			<a href="/create">
+			<a href="/configure">
 				<div
 					class="nav-item flex cursor-pointer items-center space-x-3 rounded-lg p-3 {collapsed
 						? 'justify-center'

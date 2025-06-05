@@ -1,5 +1,6 @@
 import type { RequestVariableString } from './RequestVariable';
 import type { Filter } from './Filter';
+import type { Endpoint } from './Endpoint';
 
 export type HTTPMethod = 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
 
@@ -23,6 +24,7 @@ export type Service = {
 
 export type DetailedService = {
 	id: number; // TODO Check this later
+	//categoryId: number; // Not needed when creating a new endpoint, but required for editing
 	name: string;
 	description: string;
 	active: boolean;
@@ -35,11 +37,17 @@ export type DetailedService = {
 };
 
 export type HistoryService = {
+	endpoint: Endpoint;
+	created: string | number | Date;
+	description: string;
+	name: string;
 	historyId: number;
 	email: string;
 	endpointName: string;
 	endpointDescription: string;
 	createdAt: string;
+	inputs?: Array<{ name: string; value: string }>;
+	output?: { status: number; data: Record<string, unknown> };
 };
 
 export type DetailedHistoryService = {
