@@ -15,7 +15,9 @@
 		"lint": "prettier --check . && eslint .",
 		"test:unit": "vitest",
 		"test": "npm run test:unit -- --run && npm run test:e2e",
-		"test:e2e": "playwright test --project=mock"
+		"test:e2e": "playwright test --project=mock",
+		"backend:mock": "node scripts/switch-backend.js mock",
+		"backend:real": "node scripts/switch-backend.js real"
 	},
 	"devDependencies": {
 		"@eslint/compat": "^1.2.5",
