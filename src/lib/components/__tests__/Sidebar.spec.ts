@@ -2,7 +2,7 @@
  * @vitest-environment jsdom
  */
 
-import { render, screen, fireEvent } from '@testing-library/svelte';
+import { render, screen, fireEvent, cleanup } from '@testing-library/svelte';
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import Sidebar from '../Sidebar.svelte';
 import { user, type User } from '$lib/stores/user';
@@ -186,11 +186,11 @@ describe('Sidebar', () => {
 		it('should update username display when user store changes', async () => {
 			// Start with empty store
 			user.set(null);
-			const { unmount } = render(Sidebar);
+			render(Sidebar);
 
 			// Initially shows "User"
 			expect(screen.getByText('User')).toBeInTheDocument();
-			unmount();
+			cleanup();
 
 			// Update user store and re-render
 			const mockUser: User = {
@@ -217,9 +217,9 @@ describe('Sidebar', () => {
 			};
 			user.set(mockUser);
 
-			const { unmount } = render(Sidebar);
+			render(Sidebar);
 			expect(screen.getByText('Test_user')).toBeInTheDocument();
-			unmount();
+			cleanup();
 
 			// Clear user store and re-render
 			user.set(null);
