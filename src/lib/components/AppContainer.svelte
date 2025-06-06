@@ -1,9 +1,8 @@
 <script lang="ts">
 	import { setContext } from 'svelte';
-	import ApiWrapper from '$lib/ApiWrapper';
+	import { api } from '$lib/ApiWrapper';
 	import { replaceWithMock } from '$lib/mockApiWrapper';
 
-	const api = new ApiWrapper();
 	let useMock = false;
 
 	// window
