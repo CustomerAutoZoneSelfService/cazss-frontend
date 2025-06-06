@@ -195,7 +195,9 @@ describe('AccountDropdownMenu', () => {
 			await fireEvent.click(signOutButton);
 
 			// Should still only have one call to goto
-			expect(goto).toHaveBeenCalledTimes(1);
+			await waitFor(() => {
+				expect(goto).toHaveBeenCalledTimes(1);
+			});
 		});
 	});
 

@@ -2,8 +2,13 @@ import { defineConfig } from '@playwright/test';
 
 export default defineConfig({
 	webServer: {
-		command: 'npm run build && npm run preview',
-		port: 4173
+		command: 'npm run dev',
+		port: 5173,
+		reuseExistingServer: !process.env.CI,
+		env: {
+			NODE_ENV: 'development',
+			MODE: 'development'
+		}
 	},
 
 	projects: [
@@ -11,20 +16,17 @@ export default defineConfig({
 			name: 'integration',
 			testDir: './e2e/integration',
 			use: {
-				launchOptions: {
-					env: {
-						E2E_MOCKED: 'false' // Override for this project
-					}
-				}
+				baseURL: 'http://localhost:5173'
 			}
 		},
 		{
 			name: 'mock',
 			testDir: './e2e/mock',
 			use: {
+				baseURL: 'http://localhost:5173',
 				launchOptions: {
 					env: {
-						E2E_MOCKED: 'true' // Override for this project
+						VITE_USE_MOCK: 'true'
 					}
 				}
 			}
