@@ -3,7 +3,7 @@
 	import HomeIcon from 'lucide-svelte/icons/home';
 	import ClockIcon from 'lucide-svelte/icons/clock';
 	import PlusIcon from 'lucide-svelte/icons/plus';
-	import UserIcon from 'lucide-svelte/icons/user';
+	import UsernameButton from '$lib/components/UsernameButton.svelte';
 
 	let collapsed = false;
 
@@ -81,14 +81,9 @@
 				</div>
 			</a>
 		</nav>
-		<!-- Usuario -->
-		<div class="flex items-center p-4 text-white">
-			<div class="flex h-8 w-8 items-center justify-center rounded-full bg-white/20">
-				<UserIcon name="User" size={24} color="white" class="shrink-0 text-inherit" />
-			</div>
-			{#if !collapsed}
-				<span class="ml-3">Username</span>
-			{/if}
+		<!-- User Account Section -->
+		<div class="p-2">
+			<UsernameButton isSidebarCollapsed={collapsed} />
 		</div>
 	</div>
 </div>
