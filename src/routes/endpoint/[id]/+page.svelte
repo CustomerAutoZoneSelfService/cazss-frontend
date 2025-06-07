@@ -12,6 +12,7 @@
 	import { handleInitializeRequestService } from '$lib/handlers/handleInitializeRequestService';
 	import Button from '$lib/components/Button.svelte';
 	import FilterSectionInvokeService from '$lib/components/FilterSectionInvokeService.svelte';
+	import Spinner from '$lib/components/Spinner.svelte';
 
 	let api: ApiWrapper = getContext('api');
 
@@ -24,7 +25,7 @@
 	let disabledBackwards: boolean = $state(false);
 	let selectedFilterIds = $state<number[]>([]);
 
-	let endpoint = $state<DetailedService>({
+	const emptyEndpoint: DetailedService = {
 		id: data.id,
 		name: '',
 		description: '',
@@ -35,7 +36,9 @@
 		filters: [],
 		variables: [],
 		requestBody: ''
-	});
+	};
+
+	let endpoint = $state<DetailedService>(emptyEndpoint);
 
 	// Derived runes that manages the RequestVariableString arrays
 	let headers = $derived<RequestVariableString[]>(
@@ -191,43 +194,47 @@
 </script>
 
 <main class="space-y-10 p-10">
-	{#if phase[phaseIndex] === 'results'}
-		<DisplayResultSectionInvokeService {ExecutionResponse} />
-	{:else if phase[phaseIndex] == 'variables'}
-		<ParameterSectionInvokeService
-			{endpoint}
-			{variableTypes}
-			{variableTypeHeadingMap}
-			{findRequestKeyValue}
-		/>
-	{:else if phase[phaseIndex] == 'filters'}
-		<FilterSectionInvokeService
-			filters={endpoint.filters}
-			selected={selectedFilterIds}
-			on:filterChange={(e) => handleFilterChange(e.detail)}
-		/>
+	{#if endpoint.name === ''}
+		<Spinner variant="dots"></Spinner>
 	{:else}
-		<p>Nothing</p>
-	{/if}
+		{#if phase[phaseIndex] === 'results'}
+			<DisplayResultSectionInvokeService {ExecutionResponse} />
+		{:else if phase[phaseIndex] == 'variables'}
+			<ParameterSectionInvokeService
+				{endpoint}
+				{variableTypes}
+				{variableTypeHeadingMap}
+				{findRequestKeyValue}
+			/>
+		{:else if phase[phaseIndex] == 'filters'}
+			<FilterSectionInvokeService
+				filters={endpoint.filters}
+				selected={selectedFilterIds}
+				on:filterChange={(e) => handleFilterChange(e.detail)}
+			/>
+		{:else}
+			<p>Nothing</p>
+		{/if}
 
-	<div class="flex w-full items-center justify-between">
-		<div>
-			<Button
-				type="button"
-				size="md"
-				variant="secondary"
-				onClick={handlePhaseChangeBackward}
-				disabled={disabledBackwards}
-			>
-				Return
-			</Button>
+		<div class="flex w-full items-center justify-between">
+			<div>
+				<Button
+					type="button"
+					size="md"
+					variant="secondary"
+					onClick={handlePhaseChangeBackward}
+					disabled={disabledBackwards}
+				>
+					Return
+				</Button>
+			</div>
+			<div>
+				{#if phase[phaseIndex] === 'filters'}
+					<Button variant="primary" type="submit" size="md" onClick={handleSend}>Send</Button>
+				{:else if phase[phaseIndex] !== 'results'}
+					<Button onClick={handlePhaseChangeForward} disabled={disabledForward}>Next</Button>
+				{/if}
+			</div>
 		</div>
-		<div>
-			{#if phase[phaseIndex] === 'filters'}
-				<Button variant="primary" type="submit" size="md" onClick={handleSend}>Send</Button>
-			{:else if phase[phaseIndex] !== 'results'}
-				<Button onClick={handlePhaseChangeForward} disabled={disabledForward}>Next</Button>
-			{/if}
-		</div>
-	</div>
+	{/if}
 </main>

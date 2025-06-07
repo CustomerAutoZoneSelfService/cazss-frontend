@@ -6,6 +6,7 @@
 	import type ApiWrapper from '$lib/ApiWrapper'; //Exclusively for syntax.
 	import type { Service } from '$lib/types/ApiWrapper';
 	import { goto } from '$app/navigation';
+	import Spinner from '$lib/components/Spinner.svelte';
 
 	let api: ApiWrapper = getContext('api');
 
@@ -55,7 +56,7 @@
 		<h1 class="py-5 text-lg font-bold text-gray-500">Endpoints</h1>
 		<main class="grid grid-cols-4 gap-12">
 			{#if filteredEndpoints.length === 0}
-				<p class="col-span-4 text-gray-500">No endpoints found</p>
+				<Spinner size="w-12 h-12" color="border-[#af1624]" variant="dots" />
 			{:else}
 				{#each filteredEndpoints as endpoint (endpoint.endpointId)}
 					<EndpointCard
