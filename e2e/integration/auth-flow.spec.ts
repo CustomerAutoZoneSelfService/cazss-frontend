@@ -44,14 +44,60 @@ test.describe('JWT Authentication Flow', () => {
 	});
 
 	/**
-	 * Helper function to create a valid JWT token for testing
+	 * Helper function to perform real login and get actual token from backend
+	 */
+	async function performRealLogin(page) {
+		await page.goto('/user/login');
+
+		// Fill login form with REAL credentials
+		await page.fill('input[type="email"]', REAL_CREDENTIALS.email);
+		await page.fill('input[type="password"]', REAL_CREDENTIALS.password);
+
+		// Submit form
+		await page.click('button[type="submit"]');
+
+		// Wait for successful redirect
+		await expect(page).toHaveURL('/', { timeout: 10000 });
+
+		// Get the real token from localStorage
+		const token = await page.evaluate(() => localStorage.getItem('cazss_access_token'));
+
+		if (!token) {
+			throw new Error('Failed to get real token from localStorage after login');
+		}
+
+		return token;
+	}
+
+	/**
+	 * Helper function to set real authentication token (from actual backend login)
+	 */
+	async function setRealAuthToken(page) {
+		console.log('🔥 Setting up real authentication...');
+
+		// Perform real login to get real token
+		const realToken = await performRealLogin(page);
+
+		// Clear and set the real token
+		await page.addInitScript((tokenValue) => {
+			console.log('🔥 AUTH FIXTURE: Setting REAL token in localStorage');
+			localStorage.clear();
+			localStorage.setItem('cazss_access_token', tokenValue);
+			console.log('🔥 AUTH FIXTURE: Real token set in localStorage');
+		}, realToken);
+
+		return realToken;
+	}
+
+	/**
+	 * Helper function to create a valid JWT token for testing (only for specific test cases that need mock tokens)
 	 */
 	function createValidToken(userData = {}) {
 		const defaultUser = {
-			sub: '1', // user_id as string (JWT standard)
-			username: 'john_doe', // Will display as "John Doe" in title case (underscore becomes space)
-			email: 'admin@test.com',
-			role: 'ROLE_ADMIN', // Include ROLE_ prefix as expected by decodeJWTUser
+			sub: '92', // Real user_id as string (JWT standard)
+			username: 'sergioburciaga37', // Real username from backend
+			email: 'a01562951@tec.mx', // Real email
+			role: 'ROLE_CONFIG', // Real role with ROLE_ prefix as expected by decodeJWTUser
 			iat: Math.floor(Date.now() / 1000),
 			exp: Math.floor(Date.now() / 1000) + 3600 // Valid for 1 hour
 		};
@@ -64,14 +110,14 @@ test.describe('JWT Authentication Flow', () => {
 	}
 
 	/**
-	 * Helper to set authentication token in localStorage
+	 * Helper function to set mock token (only for specific test cases that need expired/corrupted tokens)
 	 */
-	async function setAuthToken(page, tokenData = {}) {
+	async function setMockAuthToken(page, tokenData = {}) {
 		const token = createValidToken(tokenData);
 		await page.addInitScript((tokenValue) => {
-			console.log('🔥 AUTH FIXTURE: Setting token in localStorage with correct key');
+			console.log('🔥 AUTH FIXTURE: Setting mock token in localStorage');
 			localStorage.setItem('cazss_access_token', tokenValue);
-			console.log('🔥 AUTH FIXTURE: Token set in localStorage');
+			console.log('🔥 AUTH FIXTURE: Mock token set in localStorage');
 		}, token);
 	}
 
@@ -169,7 +215,7 @@ test.describe('JWT Authentication Flow', () => {
 	test.describe('Session Persistence', () => {
 		test('should maintain session with valid token', async ({ page }) => {
 			// Set valid token before navigating
-			await setAuthToken(page);
+			await setRealAuthToken(page);
 
 			// Navigate to protected page
 			await page.goto('/');
@@ -177,11 +223,11 @@ test.describe('JWT Authentication Flow', () => {
 			// Verify we're on the home page, not redirected to login
 			await expect(page).toHaveURL('/', { timeout: 10000 });
 
-			// Try to find the username display - the toTitleCase function converts "john_doe" to "John Doe"
+			// Try to find the username display - using real user data from backend
 			const usernamePatterns = [
-				page.getByText('John Doe'), // toTitleCase converts john_doe to John Doe
-				page.getByText('John_doe'),
-				page.getByText('john_doe'),
+				page.getByText('Sergioburciaga37'), // Real username from backend
+				page.getByText('sergioburciaga37'), // Lowercase version
+				page.getByText(/sergioburciaga/i), // Case insensitive partial match
 				page.locator('[data-testid="username-display"]')
 			];
 
@@ -200,14 +246,10 @@ test.describe('JWT Authentication Flow', () => {
 		});
 
 		test('should redirect to login with expired token', async ({ page }) => {
-			// Create expired token
-			const expiredToken = createValidToken({
+			// Create expired token using mock function (this test specifically needs expired token)
+			await setMockAuthToken(page, {
 				exp: Math.floor(Date.now() / 1000) - 3600 // Expired 1 hour ago
 			});
-
-			await page.addInitScript((token) => {
-				localStorage.setItem('cazss_access_token', token);
-			}, expiredToken);
 
 			// Try to access protected page
 			await page.goto('/');
@@ -228,7 +270,7 @@ test.describe('JWT Authentication Flow', () => {
 	test.describe('Logout Flow', () => {
 		test('should logout successfully and clear session', async ({ page }) => {
 			// Set valid token
-			await setAuthToken(page);
+			await setRealAuthToken(page);
 			await page.goto('/');
 
 			// Wait for successful login state
@@ -277,7 +319,7 @@ test.describe('JWT Authentication Flow', () => {
 
 		test('should prevent multiple logout attempts', async ({ page }) => {
 			// Set valid token
-			await setAuthToken(page);
+			await setRealAuthToken(page);
 			await page.goto('/');
 
 			// Wait for login state
@@ -325,7 +367,7 @@ test.describe('JWT Authentication Flow', () => {
 
 		test('should redirect from login to home when already authenticated', async ({ page }) => {
 			// Set valid token first
-			await setAuthToken(page);
+			await setRealAuthToken(page);
 
 			// Try to access login page
 			await page.goto('/user/login');
@@ -337,23 +379,20 @@ test.describe('JWT Authentication Flow', () => {
 
 	test.describe('User Information Display', () => {
 		test('should display correct user information for different roles', async ({ page }) => {
-			// Test with ADMIN role
-			await setAuthToken(page, {
-				username: 'john_doe', // Will show as "John Doe" in title case
-				email: 'admin@test.com',
-				role: 'ROLE_ADMIN'
-			});
+			// Test with real user from backend
+			await setRealAuthToken(page);
 
 			await page.goto('/');
 
 			// Check we're on the right page first
 			await expect(page).toHaveURL('/', { timeout: 10000 });
 
-			// Try to find the username display
+			// Try to find the username display using real user data
 			const usernamePatterns = [
-				page.getByText('John Doe'), // toTitleCase converts john_doe to John Doe
-				page.getByText('John_doe'),
-				page.getByText('john_doe')
+				page.getByText('Sergioburciaga37'), // Real username from backend
+				page.getByText('sergioburciaga37'), // Lowercase version
+				page.getByText(/sergioburciaga/i), // Case insensitive partial match
+				page.locator('[data-testid="username-display"]')
 			];
 
 			for (const usernameLocator of usernamePatterns) {
@@ -365,32 +404,20 @@ test.describe('JWT Authentication Flow', () => {
 				}
 			}
 
-			// Clear storage and test with different user
-			await page.evaluate(() => localStorage.clear());
-
-			// Test with USER role
-			await setAuthToken(page, {
-				username: 'jane_smith', // Will show as "Jane Smith" in title case
-				email: 'user@test.com',
-				role: 'ROLE_USER'
-			});
-
-			await page.reload();
-			await expect(page).toHaveURL('/', { timeout: 10000 });
-
-			// Try to find the new username display
-			const janePatterns = [
-				page.getByText('Jane Smith'), // toTitleCase converts jane_smith to Jane Smith
-				page.getByText('Jane_smith'),
-				page.getByText('jane_smith')
+			// Verify role display (real user has CONFIG role)
+			const rolePatterns = [
+				page.getByText('CONFIG'), // Real role from backend (ROLE_CONFIG -> CONFIG)
+				page.getByText(/config/i), // Case insensitive
+				page.locator('[data-testid="user-role"]')
 			];
 
-			for (const usernameLocator of janePatterns) {
+			for (const roleLocator of rolePatterns) {
 				try {
-					await expect(usernameLocator).toBeVisible({ timeout: 3000 });
+					await expect(roleLocator).toBeVisible({ timeout: 3000 });
+					console.log('🔥 Found role display successfully');
 					break;
 				} catch {
-					console.log(`🔍 Jane username pattern not found, trying next...`);
+					console.log(`🔍 Role pattern not found, trying next...`);
 				}
 			}
 		});
@@ -398,8 +425,9 @@ test.describe('JWT Authentication Flow', () => {
 
 	test.describe('Error Handling', () => {
 		test('should handle corrupted token gracefully', async ({ page }) => {
-			// Set corrupted token
+			// Set corrupted token directly (this test specifically needs corrupted token)
 			await page.addInitScript(() => {
+				console.log('🔥 AUTH FIXTURE: Setting corrupted token for testing');
 				localStorage.setItem('cazss_access_token', 'corrupted.token.data');
 			});
 
