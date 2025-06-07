@@ -12,6 +12,7 @@
 	import { handleInitializeRequestService } from '$lib/handlers/handleInitializeRequestService';
 	import Button from '$lib/components/Button.svelte';
 	import FilterSectionInvokeService from '$lib/components/FilterSectionInvokeService.svelte';
+	import LoadingSvg from '$lib/components/LoadingSVG.svelte';
 
 	let api: ApiWrapper = getContext('api');
 
@@ -23,6 +24,7 @@
 	let disabledForward: boolean = $state(false);
 	let disabledBackwards: boolean = $state(false);
 	let selectedFilterIds = $state<number[]>([]);
+	let isLoading = $state(false);
 
 	let endpoint = $state<DetailedService>({
 		id: data.id,
@@ -166,6 +168,7 @@
 	};
 
 	const handleSend = async () => {
+	    isLoading = true;
 		try {
 			await executeEndpoint();
 			console.log(requestService);
@@ -174,9 +177,10 @@
 			disabledBackwards = false;
 		} catch (error) {
 			if (error) {
-				console.log(`There was an error with the request for the endpoint: ${data.id}`);
-				//add alert when component is pushed
+			console.log(`There was an error with the request for the endpoint: ${data.id}`);
 			}
+		} finally {
+        isLoading = false;
 		}
 	};
 
@@ -191,6 +195,9 @@
 </script>
 
 <main class="space-y-10 p-10">
+	{#if isLoading}
+		<LoadingSvg />
+    {:else}
 	{#if phase[phaseIndex] === 'results'}
 		<DisplayResultSectionInvokeService {ExecutionResponse} />
 	{:else if phase[phaseIndex] == 'variables'}
@@ -209,6 +216,7 @@
 	{:else}
 		<p>Nothing</p>
 	{/if}
+ {/if}
 
 	<div class="flex w-full items-center justify-between">
 		<div>
