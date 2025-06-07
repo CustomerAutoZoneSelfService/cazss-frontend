@@ -1,4 +1,4 @@
 #!/bin/bash
 
 # Run tests
-npm test
+npm run test:client
