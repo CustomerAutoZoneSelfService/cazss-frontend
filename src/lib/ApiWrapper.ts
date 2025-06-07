@@ -1,3 +1,4 @@
+import type { ConfigureService } from './types/ConfigureService';
 import type {
 	Service,
 	DetailedService,
@@ -10,10 +11,6 @@ import type { ServiceResponse } from './types/ServiceResponse';
 const BASE_URL = 'http://localhost:8080';
 
 export default class ApiWrapper {
-	static getHistoryUser(): HistoryService[] | PromiseLike<HistoryService[]> {
-		throw new Error('Method not implemented.');
-	}
-
 	constructor(
 		private baseUrl: string = BASE_URL,
 		private headers: Record<string, string> = {}
@@ -51,6 +48,16 @@ export default class ApiWrapper {
 		});
 	}
 
+	private put<T>(path: string, body: object) {
+		return this.request<T>(path, {
+			method: 'PUT',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify(body)
+		});
+	}
+
 	// Endpoints
 	public getAllServices() {
 		return this.get<Service[]>('/services');
@@ -60,8 +67,24 @@ export default class ApiWrapper {
 		return this.get<DetailedService>(`/services/${id}`);
 	}
 
+	public getServiceByIdForEdit(id: number) {
+		return this.get<ConfigureService>(`/services/${id}/edit`);
+	}
+
 	public executeService(id: number, body: RequestService) {
 		return this.post<ServiceResponse>(`/services/${id}/execute`, body);
+	}
+
+	public getDetailedHistory(id: number) {
+		return this.get<DetailedHistoryService>(`/services/history/${id}`);
+	}
+
+	public createService(service: ConfigureService) {
+		return this.post<Service>(`/services`, service);
+	}
+
+	public getHistoryAdmin() {
+		return this.get<HistoryService[]>('/services/history');
 	}
 
 	public getHistoryUser(userId: number) {
@@ -72,7 +95,7 @@ export default class ApiWrapper {
 		return this.get<HistoryService[]>('/services/history');
 	}
 
-	public getDetailedHistory(id: number) {
-		return this.get<DetailedHistoryService>(`/services/history/${id}`);
+	public updateService(id: number, service: ConfigureService) {
+		return this.put<ConfigureService>(`/services/${id}`, service);
 	}
 }
