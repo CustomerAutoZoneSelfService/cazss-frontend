@@ -44,7 +44,7 @@
 			if ('key' in lastItem) {
 				if (lastItem.key.length > 0) addNewRow();
 			} else {
-				if (lastItem.name.length > 0) addNewRow();
+				if (lastItem.name.length > 0 || lastItem.responsePatternId !== undefined) addNewRow();
 			}
 		}
 	});
