@@ -10,5 +10,5 @@ export type VariableResponse = {
 
 export type ServiceResponse = {
 	status: ServiceResponseStatus;
-	response: VariableResponse[];
+	response: VariableResponse;
 };
