@@ -247,8 +247,6 @@ describe('Sidebar', () => {
 
 			const links = screen.getAllByRole('link');
 			expect(links).toHaveLength(4); // Home, HistoryAdmin, HistoryUser, Create
-
-			
 		});
 	});
 });
