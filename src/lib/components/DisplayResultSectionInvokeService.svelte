@@ -74,8 +74,8 @@
 				<TextArea
 					height={400}
 					disabled={true}
-					text={ExecutionResponse.response
-						? JSON.stringify(ExecutionResponse.response, null, 2)
+					text={ExecutionResponse.response && ExecutionResponse.response['-1']
+						? ExecutionResponse.response['-1'].join('\n')
 						: ''}
 				/>
 			{/if}
