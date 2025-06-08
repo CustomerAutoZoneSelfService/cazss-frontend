@@ -1,6 +1,5 @@
 import ApiWrapper from '$lib/ApiWrapper';
 import type { Service, DetailedService } from './types/ApiWrapper';
-import type { HistoryService } from './types/ApiWrapper';
 import type { ServiceResponse } from './types/ServiceResponse';
 
 export function replaceWithMock(mockApi: ApiWrapper): void {
