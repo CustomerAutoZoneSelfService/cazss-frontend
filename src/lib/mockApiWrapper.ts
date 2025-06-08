@@ -9,7 +9,8 @@ export function replaceWithMock(mockApi: ApiWrapper): void {
 			{ endpointId: 1, name: 'getById', description: 'Example description' },
 			{ endpointId: 2, name: 'getByName', description: 'Example description 2' },
 			{ endpointId: 3, name: 'clearCache', description: 'Example description 3' },
-			{ endpointId: 4, name: 'resetSomething', description: 'Example description 4' }
+			{ endpointId: 4, name: 'resetSomething', description: 'Example description 4' },
+			{ endpointId: 5, name: 'pdfMockData', description: 'Example pdf endpoint' }
 		];
 	};
 
@@ -168,4 +169,24 @@ export function replaceWithMock(mockApi: ApiWrapper): void {
 			}
 		};
 	};
+
+	/*mockApi.getHistoryAdmin = async function (): Promise<HistoryService[]> {
+		return Array.from({ length: 12 }, (_, i) => {
+			const dayOffset = Math.floor(i / 3); // Each 3 elements changes day
+			const date = new Date();
+			date.setDate(date.getDate() - dayOffset); // Subtract days by group
+
+			// To differentiate them a bit, add some seconds
+			date.setSeconds(date.getSeconds() + (i % 3) * 10);
+
+			return {
+				historyId: i + 2,
+				email: `user${i + 1}@example.com`,
+				endpointName: 'Get TEST',
+				endpointDescription:
+					'Descripción de un endpoint para obtener un recurso y así poder ver el resultado',
+				createdAt: date.toISOString()
+			};
+		});
+	};*/
 }

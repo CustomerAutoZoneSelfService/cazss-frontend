@@ -6,7 +6,7 @@
 	const api = new ApiWrapper();
 	let useMock = false;
 
-	// window
+	console.log(window.E2E_MOCKED);
 	if (window.E2E_MOCKED != undefined) {
 		useMock = window.E2E_MOCKED === true;
 	}

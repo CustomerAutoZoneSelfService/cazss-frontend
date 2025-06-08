@@ -14,7 +14,6 @@
 	import FilterSectionInvokeService from '$lib/components/FilterSectionInvokeService.svelte';
 	import type { Filter } from '$lib/types/Filter';
 
-	import List from '$lib/components/List.svelte';
 	let api: ApiWrapper = getContext('api');
 
 	let { data }: { data: Params['params'] } = $props();
@@ -73,7 +72,8 @@
 		headers: [],
 		body: [],
 		inline: [],
-		queryString: []
+		queryString: [],
+		filters: []
 	});
 
 	// This should change when the execute service in backend is ready, and we have the type defined
@@ -85,72 +85,6 @@
 		},
 		response: {}
 	});
-
-	// Mock Response to test UI if the backend is unavailable / the database is empty
-	/*
-	let mockExecutionResponse:ServiceResponse = {
-		status: {
-    code: 200,
-    description: "Success",
-  	},
-		response: [
-			{
-				"firstName": ["John"],
-				"lastName": ["Doe"],
-				"age": ["30"],
-			},
-			{
-				"productName": ["Laptop"],
-				"price": ["1200"],
-				"features": ["Intel Core i7", "16GB RAM", "512GB SSD"],
-			},
-			{
-				"city": ["Chihuahua"],
-				"country": ["Mexico"],
-			},
-		],
-	};
-	*/
-
-	// Function to initialize the RequestService object with the variables from the endpoint and possible default values
-	const initializeRequestService = (variables: RequestVariableString[]) => {
-		const newHeaders: KeyValue[] = [];
-		const newBody: KeyValue[] = [];
-		const newInline: KeyValue[] = [];
-		const newQueryString: KeyValue[] = [];
-
-		// Check for pre-filled data in URL
-		const prefilledData = $page.url.searchParams.get('prefilled');
-		const prefilledInputs: Array<{ label: string; value: string }> = prefilledData
-			? JSON.parse(prefilledData)
-			: [];
-
-		variables.forEach((variable) => {
-			// Try to find pre-filled value first
-			const prefilledInput = prefilledInputs.find((input) => input.label === variable.keyName);
-			const defaultValue = prefilledInput ? prefilledInput.value : (variable.defaultValue ?? '');
-
-			const kv: KeyValue = { key: variable.keyName, value: defaultValue };
-			switch (variable.type) {
-				case 'HEADER':
-					newHeaders.push(kv);
-					break;
-				case 'BODY':
-					newBody.push(kv);
-					break;
-				case 'INLINE_PARAM':
-					newInline.push(kv);
-					break;
-				case 'QUERY_STRING':
-					newQueryString.push(kv);
-					break;
-			}
-		});
-		requestService.headers = newHeaders;
-		requestService.body = newBody;
-		requestService.inline = newInline;
-		requestService.queryString = newQueryString;
-	};
 
 	// Function to find a KeyValue object in the RequestService object based on its type and keyName from the INPUT
 	const findRequestKeyValue = (type: VariableTypeString, keyName: string): KeyValue | undefined => {
@@ -255,42 +189,6 @@
 		}
 	};
 
-	// This is a mock function to simulate the fetchEndpoint function if no backend available
-	/*
-	const fetchEndpoint = async ( id:number ) => {
-		endpoint = {
-			id: id,
-			name: "Get PNA by SKU",
-			description: "This endpoint retrieves the PNA by SKU.",
-			active: true,
-			method: 'GET',
-			url: 'https:blabla',
-			responses: [{
-				status: 20,
-				description: 'OK',
-			}
-			],
-			filters: [],
-			variables: [
-				{requestVariableId: 1,
-				type: 'HEADER',
-				keyName: 'CLIENT ID',
-				defaultValue: '',
-				customizable: true,
-				description: 'The id of the client'},
-				{requestVariableId: 2,
-					type: 'BODY',
-					keyName: 'SKU',
-					defaultValue: '00000',
-					customizable: true,
-					description: 'The SKU of the product'}
-			],
-			requestBody: 'Template'
-		};
-
-		initializeRequestService(endpoint.variables);
-	}
-	*/
 	// Sends the request and moves to the results page
 	// Saves selected filters if on the initialFilters page
 	const handleSend = async () => {
@@ -412,35 +310,6 @@
 					<Button variant="primary" type="submit" size="md" onClick={handleSend}>Send</Button>
 				{/if}
 			{/if}
-		{/each}
-	</div>
-
-	<!-- Send Button -->
-	<Button variant="primary" type="submit" size="lg" onClick={handleSend}>Send</Button>
-
-	<!-- Response Section -->
-	<div class="space-y-4">
-		{#if ExecutionResponse.status.code}
-			<HeadingFormat as="h3"
-				>Response
-				<Tooltip value={ExecutionResponse.status.description}
-					>(Status code: {ExecutionResponse.status.code})</Tooltip
-				>
-			</HeadingFormat>
-
-			<List type="ul">
-				{#each ExecutionResponse.response as variableResponse, index (index)}
-					{#each Object.entries(variableResponse) as [key, value], innerIndex (innerIndex)}
-						<li><b>{key}:</b> {value.join(', ')}</li>
-					{/each}
-				{/each}
-			</List>
-
-			<HeadingFormat as="h4">Raw body</HeadingFormat>
-			<TextArea
-				disabled={true}
-				text={ExecutionResponse.response ? JSON.stringify(ExecutionResponse.response) : ''}
-			/>
-		{/if}
+		</div>
 	</div>
 </main>

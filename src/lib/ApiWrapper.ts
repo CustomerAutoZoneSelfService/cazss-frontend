@@ -4,6 +4,7 @@ import type {
 	HistoryService,
 	DetailedHistoryService
 } from './types/ApiWrapper';
+import type { CreateService } from './types/CreateService';
 import type { RequestService } from './types/RequestService';
 import type { ServiceResponse } from './types/ServiceResponse';
 import type { RequestUserFilterDTO, UserFilterDTO } from './types/Filter';
