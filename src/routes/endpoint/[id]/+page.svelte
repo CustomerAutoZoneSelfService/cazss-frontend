@@ -21,6 +21,12 @@
 	import type { RequestService } from '$lib/types/RequestService';
 	import type { ServiceResponse } from '$lib/types/ServiceResponse';
 	import type ApiWrapper from '$lib/ApiWrapper';
+	import ParameterSectionInvokeService from '$lib/components/ParameterSectionInvokeService.svelte';
+	import DisplayResultSectionInvokeService from '$lib/components/DisplayResultSectionInvokeService.svelte';
+	import { handleInitializeRequestService } from '$lib/handlers/handleInitializeRequestService';
+	import Button from '$lib/components/Button.svelte';
+	import FilterSectionInvokeService from '$lib/components/FilterSectionInvokeService.svelte';
+	import type { Filter } from '$lib/types/Filter';
 
 	import List from '$lib/components/List.svelte';
 	let api: ApiWrapper = getContext('api');
@@ -30,10 +36,7 @@
 	const phase: string[] = ['variables', 'initialFilters', 'results', 'filters'];
 	let phaseIndex: number = $state(0);
 
-	let disabledForward: boolean = $state(false);
-	let disabledBackwards: boolean = $state(false);
 	let selectedFilterIds = $state<number[]>([]);
-	let defaultFilterIds = $state<number[]>([]);
 	let hasUserFilters = $state(false);
 
 	let endpoint = $state<DetailedService>({
@@ -94,7 +97,7 @@
 			code: 0,
 			description: ''
 		},
-		response: []
+		response: {}
 	});
 
 	// Mock Response to test UI if the backend is unavailable / the database is empty
@@ -185,9 +188,6 @@
 
 	// Moves forward in the phase flow based on filters and current page
 	const handlePhaseChangeForward = () => {
-		disabledBackwards = false;
-		disabledForward = false;
-
 		if (phase[phaseIndex] === 'variables') {
 			if (endpoint.filters.length === 0) {
 				phaseIndex = 2;
@@ -198,10 +198,7 @@
 			}
 		} else if (phase[phaseIndex] === 'initialFilters') {
 			phaseIndex = 2;
-		}
-
-		if (phaseIndex === phase.length - 1) {
-			disabledForward = true;
+			handleCreateUserFilters();
 		}
 	};
 
@@ -215,10 +212,8 @@
 			phaseIndex = 0;
 		} else if (phase[phaseIndex] === 'filters') {
 			phaseIndex = 2;
+			handleUpdateUserFilters();
 		}
-
-		disabledBackwards = phaseIndex === 0;
-		disabledForward = phaseIndex === phase.length - 1;
 	};
 
 	// Fetches endpoint data and initializes requestService
@@ -233,28 +228,27 @@
 			requestService.inline = result.inline;
 			requestService.queryString = result.queryString;
 
-			if (endpoint.filters.length === 0) {
-				await executeEndpoint();
-				phaseIndex = 2;
-				return;
-			}
+			const userFilterDTOs = await api.getUserFilters(id);
+			console.log('userFilterDTOs:', userFilterDTOs);
+			hasUserFilters = userFilterDTOs.length > 0;
 
-			const userFilters = await api.getUserFilters(id);
-			hasUserFilters = userFilters.userFilters.length > 0;
-
-			if (userFilters.userFilters.length === 0) {
+			if (!hasUserFilters) {
 				selectedFilterIds = endpoint.filters.map((f) => f.responsePatternId);
 			} else {
-				selectedFilterIds = userFilters.userFilters.map((f) => f.responsePatternId);
-				requestService.filters = userFilters.userFilters
-					.map((f) => {
-						const fullFilter = endpoint.filters.find(
-							(e) => e.responsePatternId === f.responsePatternId
-						);
+				selectedFilterIds = userFilterDTOs.map((f) => f.responsePatternId);
+
+				requestService.filters = selectedFilterIds
+					.map((id) => {
+						const fullFilter = endpoint.filters.find((f) => f.responsePatternId === id);
 						if (!fullFilter) return null;
-						return { key: fullFilter.name, value: String(f.responsePatternId) };
+						return {
+							responsePatternId: fullFilter.responsePatternId,
+							pattern: fullFilter.pattern,
+							name: fullFilter.name,
+							description: fullFilter.description
+						};
 					})
-					.filter(Boolean) as KeyValue[];
+					.filter(Boolean) as Filter[];
 
 				phaseIndex = 0;
 			}
@@ -316,18 +310,20 @@
 	const handleSend = async () => {
 		try {
 			if (phase[phaseIndex] === 'initialFilters') {
-				await api.createUserFilters(endpoint.id, {
-					endpointId: endpoint.id,
-					responsePatternIds: selectedFilterIds
-				});
+				await api.createUserFilters(endpoint.id, selectedFilterIds);
 
 				requestService.filters = selectedFilterIds
 					.map((id) => {
 						const fullFilter = endpoint.filters.find((f) => f.responsePatternId === id);
 						if (!fullFilter) return null;
-						return { key: fullFilter.name, value: String(id) };
+						return {
+							responsePatternId: fullFilter.responsePatternId,
+							pattern: fullFilter.pattern,
+							name: fullFilter.name,
+							description: fullFilter.description
+						};
 					})
-					.filter(Boolean) as KeyValue[];
+					.filter(Boolean) as Filter[];
 
 				await executeEndpoint();
 				phaseIndex = 2;
@@ -335,16 +331,13 @@
 				await executeEndpoint();
 				phaseIndex = 2;
 			}
-
-			disabledForward = true;
-			disabledBackwards = false;
 		} catch (error) {
 			console.log('Error in handleSend:', error);
 		}
 	};
 
-	// Updates selected filters, applies them to the request, and persists to backend
-	const handleFilterChange = async (selectedIds: number[]) => {
+	// Updates selected filters and applies them to the request
+	const handleFilterChange = (selectedIds: number[]) => {
 		selectedFilterIds = selectedIds;
 
 		// Build filter key-value pairs for the current request
@@ -352,19 +345,24 @@
 			.map((id) => {
 				const fullFilter = endpoint.filters.find((f) => f.responsePatternId === id);
 				if (!fullFilter) return null;
-				return { key: fullFilter.name, value: String(id) };
+				return {
+					responsePatternId: fullFilter.responsePatternId,
+					pattern: fullFilter.pattern,
+					name: fullFilter.name,
+					description: fullFilter.description
+				};
 			})
-			.filter(Boolean) as KeyValue[];
+			.filter(Boolean) as Filter[];
+	};
 
-		// Save updated filters to backend
-		try {
-			await api.createUserFilters(endpoint.id, {
-				endpointId: endpoint.id,
-				responsePatternIds: selectedFilterIds
-			});
-		} catch (err) {
-			console.error('Failed to save updated filters:', err);
-		}
+	const handleCreateUserFilters = () => {
+		const filterIds: number[] = requestService.filters.map((f) => f.responsePatternId);
+		api.createUserFilters(endpoint.id, filterIds);
+	};
+
+	const handleUpdateUserFilters = () => {
+		const filterIds: number[] = requestService.filters.map((f) => f.responsePatternId);
+		api.updateUserFilters(endpoint.id, filterIds);
 	};
 
 	fetchEndpoint(data.id);
@@ -376,9 +374,7 @@
 			{ExecutionResponse}
 			filters={requestService.filters}
 			on:openFilters={() => {
-				selectedFilterIds = endpoint.filters
-					.filter((f) => requestService.filters.some((rf) => rf.key === f.name))
-					.map((f) => f.responsePatternId);
+				selectedFilterIds = requestService.filters.map((f) => f.responsePatternId);
 
 				phaseIndex = 3;
 			}}
