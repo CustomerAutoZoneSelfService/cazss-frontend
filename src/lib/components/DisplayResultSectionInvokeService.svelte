@@ -72,6 +72,7 @@
 				<PdfViewer data={`data:application/pdf;base64,${ExecutionResponse.response['-1'][0]}`} />
 			{:else}
 				<TextArea
+					height={400}
 					disabled={true}
 					text={ExecutionResponse.response
 						? JSON.stringify(ExecutionResponse.response, null, 2)

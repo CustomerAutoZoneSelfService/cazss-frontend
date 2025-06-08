@@ -4,6 +4,7 @@
 	export let disabled: boolean = false;
 
 	// New props
+	export let height: number = 200;
 	export let useMonospace: boolean = false;
 	export let transparentBackground: boolean = false;
 	export let margin: boolean = false;
@@ -11,11 +12,11 @@
 </script>
 
 <textarea
-	class={`h-50 w-full resize-none rounded-2xl p-5 shadow-md shadow-gray-300
+	class={`w-full resize-none rounded-2xl p-5 shadow-md shadow-gray-300
 	  ${useMonospace ? 'font-mono' : ''}
 	  ${transparentBackground ? 'bg-transparent' : 'bg-gray-light'}
 	`}
-	style={margin ? `margin: ${marginSize};` : ''}
+	style={`height: ${height}px; ${margin ? `margin: ${marginSize};` : ''}`}
 	bind:value={text}
 	{disabled}
 	{placeholder}
