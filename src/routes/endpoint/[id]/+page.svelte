@@ -393,12 +393,7 @@
 
 	<div class="flex w-full items-center justify-between">
 		<div>
-			<Button
-				type="button"
-				size="md"
-				variant="secondary"
-				onClick={handlePhaseChangeBackward}
-			>
+			<Button type="button" size="md" variant="secondary" onClick={handlePhaseChangeBackward}>
 				Return
 			</Button>
 		</div>
