@@ -27,7 +27,6 @@
 	let defaultFilterIds = $state<number[]>([]);
 	let hasUserFilters = $state(false);
 
-
 	let endpoint = $state<DetailedService>({
 		id: data.id,
 		name: '',
@@ -115,14 +114,14 @@
 		disabledBackwards = false;
 		disabledForward = false;
 
-	if (phase[phaseIndex] === 'variables') {
-		if (endpoint.filters.length === 0) {
-			phaseIndex = 2;
-		} else if (requestService.filters.length > 0) {
-			phaseIndex = 2;
-		} else {
-			phaseIndex = 1;
-		}
+		if (phase[phaseIndex] === 'variables') {
+			if (endpoint.filters.length === 0) {
+				phaseIndex = 2;
+			} else if (requestService.filters.length > 0) {
+				phaseIndex = 2;
+			} else {
+				phaseIndex = 1;
+			}
 		} else if (phase[phaseIndex] === 'initialFilters') {
 			phaseIndex = 2;
 		}
@@ -169,26 +168,26 @@
 			const userFilters = await api.getUserFilters(id);
 			hasUserFilters = userFilters.userFilters.length > 0;
 
-		if (userFilters.userFilters.length === 0) {
-			selectedFilterIds = endpoint.filters.map(f => f.responsePatternId);
-		} else {
-			selectedFilterIds = userFilters.userFilters.map(f => f.responsePatternId);
-			requestService.filters = userFilters.userFilters
-			.map(f => {
-				const fullFilter = endpoint.filters.find(e => e.responsePatternId === f.responsePatternId);
-				if (!fullFilter) return null;
-				return { key: fullFilter.name, value: String(f.responsePatternId) };
-			})
-			.filter(Boolean) as KeyValue[];
+			if (userFilters.userFilters.length === 0) {
+				selectedFilterIds = endpoint.filters.map((f) => f.responsePatternId);
+			} else {
+				selectedFilterIds = userFilters.userFilters.map((f) => f.responsePatternId);
+				requestService.filters = userFilters.userFilters
+					.map((f) => {
+						const fullFilter = endpoint.filters.find(
+							(e) => e.responsePatternId === f.responsePatternId
+						);
+						if (!fullFilter) return null;
+						return { key: fullFilter.name, value: String(f.responsePatternId) };
+					})
+					.filter(Boolean) as KeyValue[];
 
-			phaseIndex = 0;
-		}
-
-			} catch (error) {
-				console.log(error);
+				phaseIndex = 0;
 			}
-		};
-
+		} catch (error) {
+			console.log(error);
+		}
+	};
 
 	// Executes the endpoint using requestService
 	// If filters are present, they are applied to the request
@@ -212,17 +211,16 @@
 					responsePatternIds: selectedFilterIds
 				});
 
-			requestService.filters = selectedFilterIds
-				.map(id => {
-					const fullFilter = endpoint.filters.find(f => f.responsePatternId === id);
-					if (!fullFilter) return null;
-					return { key: fullFilter.name, value: String(id) };
-				})
-				.filter(Boolean) as KeyValue[];
+				requestService.filters = selectedFilterIds
+					.map((id) => {
+						const fullFilter = endpoint.filters.find((f) => f.responsePatternId === id);
+						if (!fullFilter) return null;
+						return { key: fullFilter.name, value: String(id) };
+					})
+					.filter(Boolean) as KeyValue[];
 
-			await executeEndpoint();
-			phaseIndex = 2;
-
+				await executeEndpoint();
+				phaseIndex = 2;
 			} else {
 				await executeEndpoint();
 				phaseIndex = 2;
@@ -234,15 +232,15 @@
 			console.log('Error in handleSend:', error);
 		}
 	};
-	
+
 	// Updates selected filters, applies them to the request, and persists to backend
 	const handleFilterChange = async (selectedIds: number[]) => {
 		selectedFilterIds = selectedIds;
 
 		// Build filter key-value pairs for the current request
 		requestService.filters = selectedFilterIds
-			.map(id => {
-				const fullFilter = endpoint.filters.find(f => f.responsePatternId === id);
+			.map((id) => {
+				const fullFilter = endpoint.filters.find((f) => f.responsePatternId === id);
 				if (!fullFilter) return null;
 				return { key: fullFilter.name, value: String(id) };
 			})
@@ -265,15 +263,15 @@
 <main class="space-y-10 p-10">
 	{#if phase[phaseIndex] === 'results'}
 		<DisplayResultSectionInvokeService
-		{ExecutionResponse} 
-		filters={requestService.filters} 
-		on:openFilters={() => {
-			selectedFilterIds = endpoint.filters
-				.filter(f => requestService.filters.some(rf => rf.key === f.name))
-				.map(f => f.responsePatternId);
+			{ExecutionResponse}
+			filters={requestService.filters}
+			on:openFilters={() => {
+				selectedFilterIds = endpoint.filters
+					.filter((f) => requestService.filters.some((rf) => rf.key === f.name))
+					.map((f) => f.responsePatternId);
 
-			phaseIndex = 3;
-		}}
+				phaseIndex = 3;
+			}}
 		/>
 	{:else if phase[phaseIndex] == 'variables'}
 		<ParameterSectionInvokeService
@@ -294,19 +292,13 @@
 			selected={selectedFilterIds}
 			on:filterChange={(e) => handleFilterChange(e.detail)}
 		/>
-
 	{:else}
 		<p>Nothing</p>
 	{/if}
 
 	<div class="flex w-full items-center justify-between">
 		<div>
-			<Button
-				type="button"
-				size="md"
-				variant="secondary"
-				onClick={handlePhaseChangeBackward}
-			>
+			<Button type="button" size="md" variant="secondary" onClick={handlePhaseChangeBackward}>
 				Return
 			</Button>
 		</div>
@@ -318,7 +310,9 @@
 					{#if hasUserFilters}
 						<Button variant="primary" type="submit" size="md" onClick={handleSend}>Send</Button>
 					{:else if selectedFilterIds.length === endpoint.filters.length}
-						<Button variant="primary" type="button" size="md" onClick={handlePhaseChangeForward}>Next</Button>
+						<Button variant="primary" type="button" size="md" onClick={handlePhaseChangeForward}
+							>Next</Button
+						>
 					{:else}
 						<Button variant="primary" type="submit" size="md" onClick={handleSend}>Send</Button>
 					{/if}

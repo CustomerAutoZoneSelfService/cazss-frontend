@@ -6,7 +6,7 @@
 	import type { ServiceResponse } from '$lib/types/ServiceResponse';
 	import PdfViewer from './PdfViewer.svelte';
 	import type { KeyValue } from '$lib/types/ApiWrapper';
-import { createEventDispatcher } from 'svelte';
+	import { createEventDispatcher } from 'svelte';
 
 	import Button from '$lib/components/Button.svelte';
 	import ApiWrapper from '$lib/ApiWrapper';
@@ -17,15 +17,15 @@ import { createEventDispatcher } from 'svelte';
 	console.log('FILTERS IN COMPONENT:', filters);
 
 	async function updateUserFilters(updatedFilters: KeyValue[]) {
-	  try {
-	    const body = {
-	      endpointId,
-	      responsePatternIds: updatedFilters.map(f => Number(f.value))
-	    };
-	    await api.createUserFilters(endpointId, body);
-	  } catch (err) {
-	    console.error('Failed to update filters:', err);
-	  }
+		try {
+			const body = {
+				endpointId,
+				responsePatternIds: updatedFilters.map((f) => Number(f.value))
+			};
+			await api.createUserFilters(endpointId, body);
+		} catch (err) {
+			console.error('Failed to update filters:', err);
+		}
 	}
 
 	const dispatch = createEventDispatcher();
@@ -42,25 +42,24 @@ import { createEventDispatcher } from 'svelte';
 		</HeadingFormat>
 
 		{#if filters.length > 0}
-		<Button type="button" size="sm" variant="primary" onClick={() => dispatch('openFilters')}>
-			Filters
-		</Button>
+			<Button type="button" size="sm" variant="primary" onClick={() => dispatch('openFilters')}>
+				Filters
+			</Button>
 		{/if}
 
 		<HeadingFormat as="h4" disabled={true}>Raw body</HeadingFormat>
-		{#if typeof ExecutionResponse.response === 'object' && ExecutionResponse.response !== null
-			&& '-1' in ExecutionResponse.response}
+		{#if typeof ExecutionResponse.response === 'object' && ExecutionResponse.response !== null && '-1' in ExecutionResponse.response}
 			<PdfViewer
-				data={`data:application/pdf;base64,${(ExecutionResponse.response as any)['-1'][0]}`}			
+				data={`data:application/pdf;base64,${(ExecutionResponse.response as any)['-1'][0]}`}
 			/>
 		{:else}
 			<List type="ul">
 				{#if typeof ExecutionResponse.response === 'object' && ExecutionResponse.response !== null}
-						{#each Object.entries(ExecutionResponse.response) as [key, value]}
-							{#if filters.length === 0 || filters.some(f => f.value === key)}
-								<li>{String(value)}</li>
-							{/if}
-						{/each}
+					{#each Object.entries(ExecutionResponse.response) as [key, value]}
+						{#if filters.length === 0 || filters.some((f) => f.value === key)}
+							<li>{String(value)}</li>
+						{/if}
+					{/each}
 				{/if}
 			</List>
 			<TextArea
