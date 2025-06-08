@@ -84,12 +84,12 @@ export default class ApiWrapper {
 	public getDetailedHistory(id: number) {
 		return this.get<DetailedHistoryService>(`/services/history/${id}`);
 	}
-	
+
 	public getUserFilters(endpointId: number) {
-	return this.get<userFilters>(`/responses/${endpointId}/user-filters`);
+		return this.get<userFilters>(`/responses/${endpointId}/user-filters`);
 	}
 
 	public createUserFilters(endpointId: number, body: RequestUserFilterDTO) {
-	return this.post<void>(`/responses/${endpointId}/user-filters`, body);
+		return this.post<void>(`/responses/${endpointId}/user-filters`, body);
 	}
 }
