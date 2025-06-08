@@ -6,11 +6,11 @@ export type Filter = {
 };
 
 export type RequestUserFilterDTO = {
-  endpointId: number;
-  responsePatternIds: number[];
+	endpointId: number;
+	responsePatternIds: number[];
 };
 
 export type userFilters = {
-  endpointId: number;
-  userFilters: Filter[];
+	endpointId: number;
+	userFilters: Filter[];
 };
