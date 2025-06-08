@@ -345,18 +345,28 @@
 		}
 	};
 	
-	// Updates selected filters and applies them to the request
-	const handleFilterChange = (selectedIds: number[]) => {
+	// Updates selected filters, applies them to the request, and persists to backend
+	const handleFilterChange = async (selectedIds: number[]) => {
 		selectedFilterIds = selectedIds;
 
+		// Build filter key-value pairs for the current request
 		requestService.filters = selectedFilterIds
-		
 			.map(id => {
 				const fullFilter = endpoint.filters.find(f => f.responsePatternId === id);
 				if (!fullFilter) return null;
-				return { key: fullFilter.name, value: '' };
+				return { key: fullFilter.name, value: String(id) };
 			})
 			.filter(Boolean) as KeyValue[];
+
+		// Save updated filters to backend
+		try {
+			await api.createUserFilters(endpoint.id, {
+				endpointId: endpoint.id,
+				responsePatternIds: selectedFilterIds
+			});
+		} catch (err) {
+			console.error('Failed to save updated filters:', err);
+		}
 	};
 
 	fetchEndpoint(data.id);

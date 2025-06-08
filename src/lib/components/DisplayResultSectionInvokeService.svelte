@@ -6,10 +6,27 @@
 	import type { ServiceResponse } from '$lib/types/ServiceResponse';
 	import PdfViewer from './PdfViewer.svelte';
 	import type { KeyValue } from '$lib/types/ApiWrapper';
-	import { createEventDispatcher } from 'svelte';
+import { createEventDispatcher } from 'svelte';
+
 	import Button from '$lib/components/Button.svelte';
+	import ApiWrapper from '$lib/ApiWrapper';
+	const api = new ApiWrapper();
 	export let filters: KeyValue[] = [];
 	export let ExecutionResponse: ServiceResponse;
+	export let endpointId: number;
+	console.log('FILTERS IN COMPONENT:', filters);
+
+	async function updateUserFilters(updatedFilters: KeyValue[]) {
+	  try {
+	    const body = {
+	      endpointId,
+	      responsePatternIds: updatedFilters.map(f => Number(f.value))
+	    };
+	    await api.createUserFilters(endpointId, body);
+	  } catch (err) {
+	    console.error('Failed to update filters:', err);
+	  }
+	}
 
 	const dispatch = createEventDispatcher();
 </script>
