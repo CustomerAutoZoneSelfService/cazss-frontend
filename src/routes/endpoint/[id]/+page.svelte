@@ -321,7 +321,6 @@
 			selected={selectedFilterIds}
 			on:filterChange={(e) => handleFilterChange(e.detail)}
 		/>
-
 	{:else}
 		<p>Nothing</p>
 	{/if}
@@ -411,7 +410,9 @@
 					{#if hasUserFilters}
 						<Button variant="primary" type="submit" size="md" onClick={handleSend}>Send</Button>
 					{:else if selectedFilterIds.length === endpoint.filters.length}
-						<Button variant="primary" type="button" size="md" onClick={handlePhaseChangeForward}>Next</Button>
+						<Button variant="primary" type="button" size="md" onClick={handlePhaseChangeForward}
+							>Next</Button
+						>
 					{:else}
 						<Button variant="primary" type="submit" size="md" onClick={handleSend}>Send</Button>
 					{/if}
