@@ -1,5 +1,4 @@
 <script lang="ts">
-	//import HeadingFormat from '$lib/components/HeadingFormat.svelte';
 	import { getContext } from 'svelte';
 	import TextArea from '$lib/components/TextArea.svelte';
 	import InputTable from '$lib/components/InputTable.svelte';

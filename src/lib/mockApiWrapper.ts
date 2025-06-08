@@ -91,22 +91,16 @@ export function replaceWithMock(mockApi: ApiWrapper): void {
 					code: 200,
 					description: 'Success'
 				},
-				response: [
-					{
-						firstName: ['John'],
-						lastName: ['Doe'],
-						age: ['30']
-					},
-					{
-						productName: ['Laptop'],
-						price: ['1200'],
-						features: ['Intel Core i7', '16GB RAM', '512GB SSD']
-					},
-					{
-						city: ['Chihuahua'],
-						country: ['Mexico']
-					}
-				]
+				response: {
+					'1': ['John'],
+					'2': ['Doe'],
+					'3': ['30'],
+					'4': ['Laptop'],
+					'5': ['1200'],
+					'6': ['Intel Core i7', '16GB RAM', '512GB SSD'],
+					'7': ['Chihuahua'],
+					'8': ['Mexico']
+				}
 			};
 		} else {
 			let textContent = '';
@@ -118,11 +112,9 @@ export function replaceWithMock(mockApi: ApiWrapper): void {
 					code: 200,
 					description: 'Success'
 				},
-				response: [
-					{
-						content: [textContent]
-					}
-				]
+				response: {
+					'1': [textContent]
+				}
 			};
 		}
 	};

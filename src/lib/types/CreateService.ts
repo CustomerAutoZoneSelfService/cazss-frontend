@@ -30,7 +30,7 @@ export type CreateResponse = {
 };
 
 export type CreateResponsePattern = {
-	parentId?: number;
+	parentId: number | null;
 	name: string;
 	description: string;
 	isLeaf: boolean;
