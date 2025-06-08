@@ -1,3 +1,4 @@
+// Individual filter definition
 export type Filter = {
 	responsePatternId: number;
 	pattern: string;
@@ -5,12 +6,10 @@ export type Filter = {
 	description: string;
 };
 
-export type RequestUserFilterDTO = {
-	endpointId: number;
-	responsePatternIds: number[];
-};
+// Used for creating/updating filters — array of integers
+export type RequestUserFilterDTO = number[];
 
-export type userFilters = {
-	endpointId: number;
-	userFilters: Filter[];
+// What the backend returns from GET /user-filters
+export type UserFilterDTO = {
+	responsePatternId: number;
 };

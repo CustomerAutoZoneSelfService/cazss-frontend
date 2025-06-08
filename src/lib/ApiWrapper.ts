@@ -6,7 +6,7 @@ import type {
 } from './types/ApiWrapper';
 import type { RequestService } from './types/RequestService';
 import type { ServiceResponse } from './types/ServiceResponse';
-import type { RequestUserFilterDTO, userFilters } from './types/Filter';
+import type { RequestUserFilterDTO, UserFilterDTO } from './types/Filter';
 
 const BASE_URL = 'http://localhost:8080';
 
@@ -52,6 +52,20 @@ export default class ApiWrapper {
 		});
 	}
 
+	private put<T>(path: string, body: object) {
+		return this.request<T>(path, {
+			method: 'PUT',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify(body)
+		});
+	}
+
+	private delete<T>(path: string) {
+		return this.request<T>(path, { method: 'DELETE' });
+	}
+
 	// Endpoints
 	public getAllServices() {
 		return this.get<Service[]>('/services');
@@ -84,12 +98,26 @@ export default class ApiWrapper {
 	public getDetailedHistory(id: number) {
 		return this.get<DetailedHistoryService>(`/services/history/${id}`);
 	}
-	
-	public getUserFilters(endpointId: number) {
-		return this.get<userFilters>(`/responses/${endpointId}/user-filters`);
+
+	public getUserFilters(endpointId: number): Promise<UserFilterDTO[]> {
+		return this.get<UserFilterDTO[]>(`/responses/${endpointId}/user-filters`);
 	}
 
-	public createUserFilters(endpointId: number, body: RequestUserFilterDTO) {
-		return this.post<void>(`/responses/${endpointId}/user-filters`, body);
+	public createUserFilters(
+		endpointId: number,
+		body: RequestUserFilterDTO
+	): Promise<UserFilterDTO[]> {
+		return this.post<UserFilterDTO[]>(`/responses/${endpointId}/user-filters`, body);
+	}
+
+	public updateUserFilters(
+		endpointId: number,
+		body: RequestUserFilterDTO
+	): Promise<UserFilterDTO[]> {
+		return this.put<UserFilterDTO[]>(`/responses/${endpointId}/user-filters`, body);
+	}
+
+	public deleteUserFilter(endpointId: number, patternId: number): Promise<void> {
+		return this.delete<void>(`/responses/${endpointId}/user-filters/${patternId}`);
 	}
 }
