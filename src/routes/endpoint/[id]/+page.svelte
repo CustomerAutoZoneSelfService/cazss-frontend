@@ -1,19 +1,5 @@
 <script lang="ts">
-	/*
-	 * Endpoint Page
-	 *
-	 * This page is responsible for allowing the user to input their request variables for the endpoint (in case they exist)
-	 * and allowing him to send it.
-	 */
-
 	import { getContext } from 'svelte';
-	import { page } from '$app/stores';
-	import Button from '$lib/components/Button.svelte';
-	import HeadingFormat from '$lib/components/HeadingFormat.svelte';
-	import TextArea from '$lib/components/TextArea.svelte';
-	import TextFormat from '$lib/components/TextFormat.svelte';
-	import Input from '$lib/components/Input.svelte';
-	import Tooltip from '$lib/components/Tooltip.svelte';
 	import { goto } from '$app/navigation';
 	import type { Params } from './+page';
 	import type { DetailedService, KeyValue } from '$lib/types/ApiWrapper';
