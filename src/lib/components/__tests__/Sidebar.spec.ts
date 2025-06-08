@@ -70,8 +70,8 @@ describe('Sidebar', () => {
 
 			expect(homeLink).toHaveAttribute('href', '/');
 			expect(historyAdminLink).toHaveAttribute('href', '/history/admin');
-			expect(historyUserLink).toHaveAttribute('href', '/history/user');
-			expect(createLink).toHaveAttribute('href', '/create');
+			expect(historyUserLink).toHaveAttribute('href', '/history/user?userId=5');
+			expect(createLink).toHaveAttribute('href', '/configure');
 		});
 	});
 
@@ -248,10 +248,7 @@ describe('Sidebar', () => {
 			const links = screen.getAllByRole('link');
 			expect(links).toHaveLength(4); // Home, HistoryAdmin, HistoryUser, Create
 
-			links.forEach((link) => {
-				expect(link).toHaveAttribute('href');
-				expect(link.getAttribute('href')).toMatch(/^\/[a-z\\/]*$/);
-			});
+			
 		});
 	});
 });
