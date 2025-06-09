@@ -118,39 +118,6 @@ export function replaceWithMock(mockApi: ApiWrapper): void {
 		}
 	};
 
-	// mockApi.getAllHistory = async function (): Promise<HistoryService[]> {
-	// 	return Array.from({ length: 12 }, (_, i) => {
-	// 		const dayOffset = Math.floor(i / 3);
-	// 		const date = new Date();
-	// 		date.setDate(date.getDate() - dayOffset);
-
-	// 		date.setSeconds(date.getSeconds() + (i % 3) * 10);
-
-	// 		return {
-	// 			historyId: i + 2,
-	// 			email: `user${i + 1}@example.com`,
-	// 			endpointName: 'Get TEST',
-	// 			endpointDescription:
-	// 				'Descripción de un endpoint para obtener un recurso y así poder ver el resultado',
-	// 			createdAt: date.toISOString()
-	// 		};
-	// 	});
-	// };
-
-	// mockApi.getHistoryUser = async function (userId: number): Promise<HistoryService[]> {
-	// 	return Array.from({ length: 5 }, (_, i) => {
-	// 		const date = new Date();
-	// 		date.setDate(date.getDate() - i);
-	// 		return {
-	// 			historyId: i + 100,
-	// 			email: `user${userId}@example.com`,
-	// 			endpointName: 'Get TEST',
-	// 			endpointDescription: 'Historial filtrado por usuario',
-	// 			createdAt: date.toISOString()
-	// 		};
-	// 	});
-	// };
-
 	mockApi.getDetailedHistory = async function (
 		id: number
 	): Promise<import('./types/ApiWrapper').DetailedHistoryService> {

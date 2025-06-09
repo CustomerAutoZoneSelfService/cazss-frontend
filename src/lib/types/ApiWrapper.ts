@@ -50,23 +50,15 @@ export type DetailedHistoryService = {
 };
 
 export type HistoryService = {
+	endpoint: Endpoint;
+	created: string | number | Date;
+	description: string;
+	name: string;
 	historyId: number;
 	email: string;
 	endpointName: string;
 	endpointDescription: string;
 	createdAt: string;
-};
-
-export type DetailedHistoryService = {
-	historyId: number;
-	statusCode: number;
-	endpoint: {
-		endpointId: number;
-		name: string;
-		description: string;
-	};
-	historyData: {
-		request: Record<string, unknown>;
-		response: Record<string, unknown>;
-	};
+	inputs?: Array<{ name: string; value: string }>;
+	output?: { status: number; data: Record<string, unknown> };
 };

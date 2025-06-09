@@ -86,46 +86,6 @@
 		response: {}
 	});
 
-	// Function to initialize the RequestService object with the variables from the endpoint and possible default values
-	const initializeRequestService = (variables: RequestVariableString[]) => {
-		const newHeaders: KeyValue[] = [];
-		const newBody: KeyValue[] = [];
-		const newInline: KeyValue[] = [];
-		const newQueryString: KeyValue[] = [];
-
-		// Check for pre-filled data in URL
-		const prefilledData = $page.url.searchParams.get('prefilled');
-		const prefilledInputs: Array<{ label: string; value: string }> = prefilledData
-			? JSON.parse(prefilledData)
-			: [];
-
-		variables.forEach((variable) => {
-			// Try to find pre-filled value first
-			const prefilledInput = prefilledInputs.find((input) => input.label === variable.keyName);
-			const defaultValue = prefilledInput ? prefilledInput.value : (variable.defaultValue ?? '');
-
-			const kv: KeyValue = { key: variable.keyName, value: defaultValue };
-			switch (variable.type) {
-				case 'HEADER':
-					newHeaders.push(kv);
-					break;
-				case 'BODY':
-					newBody.push(kv);
-					break;
-				case 'INLINE_PARAM':
-					newInline.push(kv);
-					break;
-				case 'QUERY_STRING':
-					newQueryString.push(kv);
-					break;
-			}
-		});
-		requestService.headers = newHeaders;
-		requestService.body = newBody;
-		requestService.inline = newInline;
-		requestService.queryString = newQueryString;
-	};
-
 	// Function to find a KeyValue object in the RequestService object based on its type and keyName from the INPUT
 	const findRequestKeyValue = (type: VariableTypeString, keyName: string): KeyValue | undefined => {
 		let targetArray: KeyValue[] | undefined;
@@ -259,6 +219,7 @@
 			console.log('Error in handleSend:', error);
 		}
 	};
+
 	// Updates selected filters and applies them to the request
 	const handleFilterChange = (selectedIds: number[]) => {
 		selectedFilterIds = selectedIds;
@@ -321,72 +282,6 @@
 			selected={selectedFilterIds}
 			on:filterChange={(e) => handleFilterChange(e.detail)}
 		/>
-	{:else}
-		<p>Nothing</p>
-	{/if}
-
-	<div class="flex w-full items-center justify-between">
-		<div>
-			<Button type="button" size="md" variant="secondary" onClick={handlePhaseChangeBackward}>
-				Return
-			</Button>
-		</div>
-		<div>
-			{#if phase[phaseIndex] === 'initialFilters'}
-				<Button variant="primary" type="submit" size="md" onClick={handleSend}>Send</Button>
-			{:else if phase[phaseIndex] === 'variables'}
-				{#if endpoint.filters.length > 0}
-					{#if hasUserFilters}
-						<Button variant="primary" type="submit" size="md" onClick={handleSend}>Send</Button>
-					{:else if selectedFilterIds.length === endpoint.filters.length}
-						<Button variant="primary" type="button" size="md" onClick={handlePhaseChangeForward}
-							>Next</Button
-						>
-					{:else}
-						<Button variant="primary" type="submit" size="md" onClick={handleSend}>Send</Button>
-					{/if}
-				{:else}
-					<Button variant="primary" type="submit" size="md" onClick={handleSend}>Send</Button>
-				{/if}
-			{/if}
-		{/each}
-	</div>
-
-	<!-- Send Button -->
-	<Button variant="primary" type="submit" size="lg" onClick={handleSend}>Send</Button>
-
-	<!-- Response Section -->
-	<div class="space-y-4">
-		{#if ExecutionResponse.status.code}
-			<HeadingFormat as="h3"
-				>Response
-				<Tooltip value={ExecutionResponse.status.description}
-					>(Status code: {ExecutionResponse.status.code})</Tooltip
-				>
-			</HeadingFormat>
-
-			<List type="ul">
-				{#each ExecutionResponse.response as variableResponse, index (index)}
-					{#each Object.entries(variableResponse) as [key, value], innerIndex (innerIndex)}
-						<li><b>{key}:</b> {value.join(', ')}</li>
-					{/each}
-				{/each}
-			</List>
-
-			<HeadingFormat as="h4">Raw body</HeadingFormat>
-			{#if ExecutionResponse.response.some((variable) => 'content' in variable)}
-				
-				<PdfViewer data={`data:application/pdf;base64,` + ExecutionResponse.response.find(v => 'content' in v)?.content[0]} />
-				
-			{:else}
-				<TextArea
-					disabled={true}
-					text={ExecutionResponse.response ? JSON.stringify(ExecutionResponse.response) : ''}
-				/>
-			{/if}
-		{/if}
-		<Button onClick={handlePhaseChangeBackward} disabled={disabledBackwards}>Return</Button>
-
 	{:else}
 		<p>Nothing</p>
 	{/if}
