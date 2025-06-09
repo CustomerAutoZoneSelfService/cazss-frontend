@@ -1,6 +1,7 @@
 import ApiWrapper from '$lib/ApiWrapper';
 import type { Service, DetailedService } from './types/ApiWrapper';
 import type { ServiceResponse } from './types/ServiceResponse';
+import type { RequestUserFilterDTO, UserFilterDTO } from './types/Filter';
 
 export function replaceWithMock(mockApi: ApiWrapper): void {
 	mockApi.getAllServices = async function (): Promise<Service[]> {
@@ -30,13 +31,13 @@ export function replaceWithMock(mockApi: ApiWrapper): void {
 				],
 				filters: [
 					{
-						responsePatternId: 1,
+						responsePatternId: 4,
 						pattern: 'PRODUCT_NAME',
 						name: 'productName',
 						description: 'Name of the product.'
 					},
 					{
-						responsePatternId: 2,
+						responsePatternId: 5,
 						pattern: 'PRICE',
 						name: 'price',
 						description: 'Price of the product.'
@@ -112,10 +113,26 @@ export function replaceWithMock(mockApi: ApiWrapper): void {
 					description: 'Success'
 				},
 				response: {
-					'1': [textContent]
+					'-1': [textContent]
 				}
 			};
 		}
+	};
+
+	const savedFiltersMap: Map<number, number[]> = new Map();
+
+	mockApi.getUserFilters = async function (endpointId: number): Promise<UserFilterDTO[]> {
+		const saved = savedFiltersMap.get(endpointId) ?? [];
+		return saved.map((responsePatternId) => ({ responsePatternId }));
+	};
+
+	mockApi.createUserFilters = async function (
+		endpointId: number,
+		body: RequestUserFilterDTO
+	): Promise<UserFilterDTO[]> {
+		// Guardamos los filtros seleccionados
+		savedFiltersMap.set(endpointId, body);
+		return body.map((responsePatternId) => ({ responsePatternId }));
 	};
 
 	mockApi.getDetailedHistory = async function (
