@@ -15,7 +15,7 @@ export type ServiceResponseStatus = {
 }
  */
 export type VariableResponse = {
-	[key: number]: string[];
+	[key: string]: string[];
 };
 
 export type ServiceResponse = {

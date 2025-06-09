@@ -89,11 +89,18 @@ export function replaceWithMock(mockApi: ApiWrapper): void {
 			return {
 				status: {
 					code: 200,
-					description: 'OK'
+					description: 'Success'
 				},
 				response: {
-					0: ['Example response variable'],
-					1: ['Second example response variable']
+					'0': ['Example response variable'],
+					'1': ['John'],
+					'2': ['Doe'],
+					'3': ['30'],
+					'4': ['Laptop'],
+					'5': ['1200'],
+					'6': ['Intel Core i7', '16GB RAM', '512GB SSD'],
+					'7': ['Chihuahua'],
+					'8': ['Mexico']
 				}
 			};
 		} else {
@@ -107,7 +114,7 @@ export function replaceWithMock(mockApi: ApiWrapper): void {
 					description: 'Success'
 				},
 				response: {
-					0: [textContent]
+					'-1': [textContent]
 				}
 			};
 		}
@@ -133,7 +140,7 @@ export function replaceWithMock(mockApi: ApiWrapper): void {
 		};
 	};
 
-	/*mockApi.getHistoryAdmin = async function (): Promise<HistoryService[]> {
+	/* mockApi.getHistoryAdmin = async function (): Promise<HistoryService[]> {
 		return Array.from({ length: 12 }, (_, i) => {
 			const dayOffset = Math.floor(i / 3);
 			const date = new Date();
@@ -182,6 +189,5 @@ export function replaceWithMock(mockApi: ApiWrapper): void {
 				response: { result: 'ok', data: { foo: 'bar' } }
 			}
 		};
-	};
-	*/
+	};*/
 }

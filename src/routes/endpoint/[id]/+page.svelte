@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { getContext } from 'svelte';
-
+	import { goto } from '$app/navigation';
 	import type { Params } from './+page';
 	import type { DetailedService, KeyValue } from '$lib/types/ApiWrapper';
 	import type { RequestVariableString, VariableTypeString } from '$lib/types/RequestVariable';
@@ -12,17 +12,17 @@
 	import { handleInitializeRequestService } from '$lib/handlers/handleInitializeRequestService';
 	import Button from '$lib/components/Button.svelte';
 	import FilterSectionInvokeService from '$lib/components/FilterSectionInvokeService.svelte';
+	import type { Filter } from '$lib/types/Filter';
 
 	let api: ApiWrapper = getContext('api');
 
 	let { data }: { data: Params['params'] } = $props();
 
-	const phase: string[] = ['variables', 'filters', 'results'];
+	const phase: string[] = ['variables', 'initialFilters', 'results', 'filters'];
 	let phaseIndex: number = $state(0);
 
-	let disabledForward: boolean = $state(false);
-	let disabledBackwards: boolean = $state(false);
 	let selectedFilterIds = $state<number[]>([]);
+	let hasUserFilters = $state(false);
 
 	let endpoint = $state<DetailedService>({
 		id: data.id,
@@ -106,55 +106,79 @@
 		return targetArray?.find((kv) => kv.key === keyName);
 	};
 
+	// Moves forward in the phase flow based on filters and current page
 	const handlePhaseChangeForward = () => {
-		disabledBackwards = false;
-		disabledForward = false;
-
-		if (phaseIndex !== phase.length - 1) {
-			phaseIndex += 1;
-		}
-
-		if (phaseIndex === 0) {
-			disabledBackwards = true;
-		}
-
-		if (phaseIndex === phase.length - 1) {
-			disabledForward = true;
+		if (phase[phaseIndex] === 'variables') {
+			if (endpoint.filters.length === 0) {
+				phaseIndex = 2;
+			} else if (requestService.filters.length > 0) {
+				phaseIndex = 2;
+			} else {
+				phaseIndex = 1;
+			}
+		} else if (phase[phaseIndex] === 'initialFilters') {
+			phaseIndex = 2;
+			handleCreateUserFilters();
 		}
 	};
 
+	// Moves back in the flow or exits to home
 	const handlePhaseChangeBackward = () => {
-		disabledBackwards = false;
-		disabledForward = false;
-
-		if (phaseIndex !== 0) {
-			phaseIndex -= 1;
-		}
-
-		if (phaseIndex === 0) {
-			disabledBackwards = true;
-		}
-
-		if (phaseIndex === phase.length - 1) {
-			disabledForward = true;
+		if (phase[phaseIndex] === 'variables') {
+			goto('/');
+		} else if (phase[phaseIndex] === 'initialFilters') {
+			phaseIndex = 0;
+		} else if (phase[phaseIndex] === 'results') {
+			phaseIndex = 0;
+		} else if (phase[phaseIndex] === 'filters') {
+			phaseIndex = 2;
+			handleUpdateUserFilters();
 		}
 	};
 
+	// Fetches endpoint data and initializes requestService
+	// If filters exist, checks for user-filters and sets them
 	const fetchEndpoint = async (id: number) => {
 		try {
 			endpoint = await api.getServiceById(id);
-			const result = handleInitializeRequestService(endpoint.variables);
 
+			const result = handleInitializeRequestService(endpoint.variables);
 			requestService.headers = result.headers;
 			requestService.body = result.body;
 			requestService.inline = result.inline;
 			requestService.queryString = result.queryString;
+
+			const userFilterDTOs = await api.getUserFilters(id);
+			console.log('userFilterDTOs:', userFilterDTOs);
+			hasUserFilters = userFilterDTOs.length > 0;
+
+			if (!hasUserFilters) {
+				selectedFilterIds = endpoint.filters.map((f) => f.responsePatternId);
+			} else {
+				selectedFilterIds = userFilterDTOs.map((f) => f.responsePatternId);
+
+				requestService.filters = selectedFilterIds
+					.map((id) => {
+						const fullFilter = endpoint.filters.find((f) => f.responsePatternId === id);
+						if (!fullFilter) return null;
+						return {
+							responsePatternId: fullFilter.responsePatternId,
+							pattern: fullFilter.pattern,
+							name: fullFilter.name,
+							description: fullFilter.description
+						};
+					})
+					.filter(Boolean) as Filter[];
+
+				phaseIndex = 0;
+			}
 		} catch (error) {
 			console.log(error);
-			//add alert when component is pushed
 		}
 	};
 
+	// Executes the endpoint using requestService
+	// If filters are present, they are applied to the request
 	const executeEndpoint = async () => {
 		try {
 			ExecutionResponse = await api.executeService(data.id, requestService);
@@ -165,26 +189,64 @@
 		}
 	};
 
+	// Sends the request and moves to the results page
+	// Saves selected filters if on the initialFilters page
 	const handleSend = async () => {
 		try {
-			await executeEndpoint();
-			console.log(requestService);
-			phaseIndex = 2;
-			disabledForward = true;
-			disabledBackwards = false;
-		} catch (error) {
-			if (error) {
-				console.log(`There was an error with the request for the endpoint: ${data.id}`);
-				//add alert when component is pushed
+			if (phase[phaseIndex] === 'initialFilters') {
+				await api.createUserFilters(endpoint.id, selectedFilterIds);
+
+				requestService.filters = selectedFilterIds
+					.map((id) => {
+						const fullFilter = endpoint.filters.find((f) => f.responsePatternId === id);
+						if (!fullFilter) return null;
+						return {
+							responsePatternId: fullFilter.responsePatternId,
+							pattern: fullFilter.pattern,
+							name: fullFilter.name,
+							description: fullFilter.description
+						};
+					})
+					.filter(Boolean) as Filter[];
+
+				await executeEndpoint();
+				phaseIndex = 2;
+			} else {
+				await executeEndpoint();
+				phaseIndex = 2;
 			}
+		} catch (error) {
+			console.log('Error in handleSend:', error);
 		}
 	};
 
+	// Updates selected filters and applies them to the request
 	const handleFilterChange = (selectedIds: number[]) => {
 		selectedFilterIds = selectedIds;
-		requestService.filters = endpoint.filters
-			.filter((f) => selectedIds.includes(f.responsePatternId))
-			.map((f) => ({ key: f.name, value: '' }));
+
+		// Build filter key-value pairs for the current request
+		requestService.filters = selectedFilterIds
+			.map((id) => {
+				const fullFilter = endpoint.filters.find((f) => f.responsePatternId === id);
+				if (!fullFilter) return null;
+				return {
+					responsePatternId: fullFilter.responsePatternId,
+					pattern: fullFilter.pattern,
+					name: fullFilter.name,
+					description: fullFilter.description
+				};
+			})
+			.filter(Boolean) as Filter[];
+	};
+
+	const handleCreateUserFilters = () => {
+		const filterIds: number[] = requestService.filters.map((f) => f.responsePatternId);
+		api.createUserFilters(endpoint.id, filterIds);
+	};
+
+	const handleUpdateUserFilters = () => {
+		const filterIds: number[] = requestService.filters.map((f) => f.responsePatternId);
+		api.updateUserFilters(endpoint.id, filterIds);
 	};
 
 	fetchEndpoint(data.id);
@@ -192,13 +254,27 @@
 
 <main class="space-y-10 p-10">
 	{#if phase[phaseIndex] === 'results'}
-		<DisplayResultSectionInvokeService {ExecutionResponse} />
+		<DisplayResultSectionInvokeService
+			{ExecutionResponse}
+			filters={requestService.filters}
+			on:openFilters={() => {
+				selectedFilterIds = requestService.filters.map((f) => f.responsePatternId);
+
+				phaseIndex = 3;
+			}}
+		/>
 	{:else if phase[phaseIndex] == 'variables'}
 		<ParameterSectionInvokeService
 			{endpoint}
 			{variableTypes}
 			{variableTypeHeadingMap}
 			{findRequestKeyValue}
+		/>
+	{:else if phase[phaseIndex] == 'initialFilters'}
+		<FilterSectionInvokeService
+			filters={endpoint.filters}
+			selected={selectedFilterIds}
+			on:filterChange={(e) => handleFilterChange(e.detail)}
 		/>
 	{:else if phase[phaseIndex] == 'filters'}
 		<FilterSectionInvokeService
@@ -212,21 +288,27 @@
 
 	<div class="flex w-full items-center justify-between">
 		<div>
-			<Button
-				type="button"
-				size="md"
-				variant="secondary"
-				onClick={handlePhaseChangeBackward}
-				disabled={disabledBackwards}
-			>
+			<Button type="button" size="md" variant="secondary" onClick={handlePhaseChangeBackward}>
 				Return
 			</Button>
 		</div>
 		<div>
-			{#if phase[phaseIndex] === 'filters'}
+			{#if phase[phaseIndex] === 'initialFilters'}
 				<Button variant="primary" type="submit" size="md" onClick={handleSend}>Send</Button>
-			{:else if phase[phaseIndex] !== 'results'}
-				<Button onClick={handlePhaseChangeForward} disabled={disabledForward}>Next</Button>
+			{:else if phase[phaseIndex] === 'variables'}
+				{#if endpoint.filters.length > 0}
+					{#if hasUserFilters}
+						<Button variant="primary" type="submit" size="md" onClick={handleSend}>Send</Button>
+					{:else if selectedFilterIds.length === endpoint.filters.length}
+						<Button variant="primary" type="button" size="md" onClick={handlePhaseChangeForward}
+							>Next</Button
+						>
+					{:else}
+						<Button variant="primary" type="submit" size="md" onClick={handleSend}>Send</Button>
+					{/if}
+				{:else}
+					<Button variant="primary" type="submit" size="md" onClick={handleSend}>Send</Button>
+				{/if}
 			{/if}
 		</div>
 	</div>

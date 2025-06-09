@@ -7,6 +7,7 @@ import type {
 } from './types/ApiWrapper';
 import type { RequestService } from './types/RequestService';
 import type { ServiceResponse } from './types/ServiceResponse';
+import type { RequestUserFilterDTO, UserFilterDTO } from './types/Filter';
 
 const BASE_URL = 'http://localhost:8080';
 
@@ -58,6 +59,10 @@ export default class ApiWrapper {
 		});
 	}
 
+	private delete<T>(path: string) {
+		return this.request<T>(path, { method: 'DELETE' });
+	}
+
 	// Endpoints
 	public getAllServices() {
 		return this.get<Service[]>('/services');
@@ -97,5 +102,27 @@ export default class ApiWrapper {
 
 	public updateService(id: number, service: ConfigureService) {
 		return this.put<ConfigureService>(`/services/${id}`, service);
+	}
+
+	public getUserFilters(endpointId: number): Promise<UserFilterDTO[]> {
+		return this.get<UserFilterDTO[]>(`/responses/${endpointId}/user-filters`);
+	}
+
+	public createUserFilters(
+		endpointId: number,
+		body: RequestUserFilterDTO
+	): Promise<UserFilterDTO[]> {
+		return this.post<UserFilterDTO[]>(`/responses/${endpointId}/user-filters`, body);
+	}
+
+	public updateUserFilters(
+		endpointId: number,
+		body: RequestUserFilterDTO
+	): Promise<UserFilterDTO[]> {
+		return this.put<UserFilterDTO[]>(`/responses/${endpointId}/user-filters`, body);
+	}
+
+	public deleteUserFilter(endpointId: number, patternId: number): Promise<void> {
+		return this.delete<void>(`/responses/${endpointId}/user-filters/${patternId}`);
 	}
 }

@@ -84,6 +84,7 @@
 				<EndpointCardAdmin
 					id={card.historyId}
 					title={card.endpointName}
+					description={card.endpointDescription}
 					useDate={formatDate(card.createdAt)}
 					username={card.email?.split('@')[0] || 'Usuario'}
 					userInitial={card.email?.charAt(0).toUpperCase() || 'U'}
@@ -100,6 +101,7 @@
 				<EndpointCardAdmin
 					id={card.historyId}
 					title={card.endpointName}
+					description={card.endpointDescription}
 					useDate={formatDate(card.createdAt)}
 					username={card.email?.split('@')[0] || 'Usuario'}
 					userInitial={card.email?.charAt(0).toUpperCase() || 'U'}
@@ -116,6 +118,7 @@
 				<EndpointCardAdmin
 					id={card.historyId}
 					title={card.endpointName}
+					description={card.endpointDescription}
 					useDate={formatDate(card.createdAt)}
 					username={card.email?.split('@')[0] || 'Usuario'}
 					userInitial={card.email?.charAt(0).toUpperCase() || 'U'}
