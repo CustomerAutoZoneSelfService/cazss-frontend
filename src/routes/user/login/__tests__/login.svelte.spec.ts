@@ -30,8 +30,8 @@ describe('Login Page', () => {
 			render(LoginPage);
 
 			// Check for form elements
-			expect(screen.getByPlaceholderText('Correo electrónico')).toBeInTheDocument();
-			expect(screen.getByPlaceholderText('Contraseña')).toBeInTheDocument();
+			expect(screen.getByPlaceholderText('Email address')).toBeInTheDocument();
+			expect(screen.getByPlaceholderText('Password')).toBeInTheDocument();
 			expect(screen.getByRole('button', { name: /login/i })).toBeInTheDocument();
 
 			// Check for heading and subtitle
@@ -43,8 +43,8 @@ describe('Login Page', () => {
 		it('should have proper input attributes', () => {
 			render(LoginPage);
 
-			const emailInput = screen.getByPlaceholderText('Correo electrónico');
-			const passwordInput = screen.getByPlaceholderText('Contraseña');
+			const emailInput = screen.getByPlaceholderText('Email address');
+			const passwordInput = screen.getByPlaceholderText('Password');
 
 			expect(emailInput).toHaveAttribute('type', 'email');
 			expect(passwordInput).toHaveAttribute('type', 'password');
@@ -62,8 +62,8 @@ describe('Login Page', () => {
 		it('should enable login button when both fields are filled', async () => {
 			render(LoginPage);
 
-			const emailInput = screen.getByPlaceholderText('Correo electrónico');
-			const passwordInput = screen.getByPlaceholderText('Contraseña');
+			const emailInput = screen.getByPlaceholderText('Email address');
+			const passwordInput = screen.getByPlaceholderText('Password');
 			const loginButton = screen.getByRole('button', { name: /login/i });
 
 			await fireEvent.input(emailInput, { target: { value: 'user@example.com' } });
@@ -86,8 +86,8 @@ describe('Login Page', () => {
 		it('should show error message for invalid email credentials', async () => {
 			render(LoginPage);
 
-			const emailInput = screen.getByPlaceholderText('Correo electrónico');
-			const passwordInput = screen.getByPlaceholderText('Contraseña');
+			const emailInput = screen.getByPlaceholderText('Email address');
+			const passwordInput = screen.getByPlaceholderText('Password');
 			const loginButton = screen.getByRole('button', { name: /login/i });
 
 			// Track initial call count
@@ -103,7 +103,7 @@ describe('Login Page', () => {
 			// Wait for error message to appear
 			await waitFor(
 				() => {
-					expect(screen.getByText('Credenciales inválidas')).toBeInTheDocument();
+					expect(screen.getByText('Invalid credentials')).toBeInTheDocument();
 				},
 				{ timeout: 1000 }
 			);
@@ -115,8 +115,8 @@ describe('Login Page', () => {
 		it('should show error message for wrong password', async () => {
 			render(LoginPage);
 
-			const emailInput = screen.getByPlaceholderText('Correo electrónico');
-			const passwordInput = screen.getByPlaceholderText('Contraseña');
+			const emailInput = screen.getByPlaceholderText('Email address');
+			const passwordInput = screen.getByPlaceholderText('Password');
 			const loginButton = screen.getByRole('button', { name: /login/i });
 
 			// Track initial call count
@@ -132,7 +132,7 @@ describe('Login Page', () => {
 			// Wait for error message to appear
 			await waitFor(
 				() => {
-					expect(screen.getByText('Credenciales inválidas')).toBeInTheDocument();
+					expect(screen.getByText('Invalid credentials')).toBeInTheDocument();
 				},
 				{ timeout: 1000 }
 			);
@@ -144,8 +144,8 @@ describe('Login Page', () => {
 		it('should show error message for test fail email', async () => {
 			render(LoginPage);
 
-			const emailInput = screen.getByPlaceholderText('Correo electrónico');
-			const passwordInput = screen.getByPlaceholderText('Contraseña');
+			const emailInput = screen.getByPlaceholderText('Email address');
+			const passwordInput = screen.getByPlaceholderText('Password');
 			const loginButton = screen.getByRole('button', { name: /login/i });
 
 			// Track initial call count
@@ -161,7 +161,7 @@ describe('Login Page', () => {
 			// Wait for error message to appear
 			await waitFor(
 				() => {
-					expect(screen.getByText('Credenciales inválidas')).toBeInTheDocument();
+					expect(screen.getByText('Invalid credentials')).toBeInTheDocument();
 				},
 				{ timeout: 1000 }
 			);
@@ -173,8 +173,8 @@ describe('Login Page', () => {
 		it('should show error message for admin with wrong password', async () => {
 			render(LoginPage);
 
-			const emailInput = screen.getByPlaceholderText('Correo electrónico');
-			const passwordInput = screen.getByPlaceholderText('Contraseña');
+			const emailInput = screen.getByPlaceholderText('Email address');
+			const passwordInput = screen.getByPlaceholderText('Password');
 			const loginButton = screen.getByRole('button', { name: /login/i });
 
 			// Track initial call count
@@ -190,7 +190,7 @@ describe('Login Page', () => {
 			// Wait for error message to appear
 			await waitFor(
 				() => {
-					expect(screen.getByText('Credenciales inválidas')).toBeInTheDocument();
+					expect(screen.getByText('Invalid credentials')).toBeInTheDocument();
 				},
 				{ timeout: 1000 }
 			);
@@ -202,8 +202,8 @@ describe('Login Page', () => {
 		it('should clear error message on new login attempt', async () => {
 			render(LoginPage);
 
-			const emailInput = screen.getByPlaceholderText('Correo electrónico');
-			const passwordInput = screen.getByPlaceholderText('Contraseña');
+			const emailInput = screen.getByPlaceholderText('Email address');
+			const passwordInput = screen.getByPlaceholderText('Password');
 			const loginButton = screen.getByRole('button', { name: /login/i });
 
 			// First attempt with invalid credentials
@@ -213,7 +213,7 @@ describe('Login Page', () => {
 
 			// Wait for error to appear
 			await waitFor(() => {
-				expect(screen.getByText('Credenciales inválidas')).toBeInTheDocument();
+				expect(screen.getByText('Invalid credentials')).toBeInTheDocument();
 			});
 
 			// Second attempt with valid credentials
@@ -223,7 +223,7 @@ describe('Login Page', () => {
 
 			// Error message should disappear during new attempt
 			await waitFor(() => {
-				expect(screen.queryByText('Credenciales inválidas')).not.toBeInTheDocument();
+				expect(screen.queryByText('Invalid credentials')).not.toBeInTheDocument();
 			});
 		});
 	});
@@ -232,8 +232,8 @@ describe('Login Page', () => {
 		it('should successfully login with valid credentials and redirect', async () => {
 			render(LoginPage);
 
-			const emailInput = screen.getByPlaceholderText('Correo electrónico');
-			const passwordInput = screen.getByPlaceholderText('Contraseña');
+			const emailInput = screen.getByPlaceholderText('Email address');
+			const passwordInput = screen.getByPlaceholderText('Password');
 			const loginButton = screen.getByRole('button', { name: /login/i });
 
 			// Fill in valid credentials
@@ -255,8 +255,8 @@ describe('Login Page', () => {
 		it('should show loading state during login process', async () => {
 			render(LoginPage);
 
-			const emailInput = screen.getByPlaceholderText('Correo electrónico');
-			const passwordInput = screen.getByPlaceholderText('Contraseña');
+			const emailInput = screen.getByPlaceholderText('Email address');
+			const passwordInput = screen.getByPlaceholderText('Password');
 			const loginButton = screen.getByRole('button', { name: /login/i });
 
 			// Fill in valid credentials
@@ -267,15 +267,15 @@ describe('Login Page', () => {
 			await fireEvent.click(loginButton);
 
 			// Check for loading state
-			expect(screen.getByText('Iniciando sesión...')).toBeInTheDocument();
+			expect(screen.getByText('Logging in...')).toBeInTheDocument();
 			expect(loginButton).toBeDisabled();
 		});
 
 		it('should successfully login admin with correct password', async () => {
 			render(LoginPage);
 
-			const emailInput = screen.getByPlaceholderText('Correo electrónico');
-			const passwordInput = screen.getByPlaceholderText('Contraseña');
+			const emailInput = screen.getByPlaceholderText('Email address');
+			const passwordInput = screen.getByPlaceholderText('Password');
 			const loginButton = screen.getByRole('button', { name: /login/i });
 
 			// Fill in admin credentials correctly
@@ -304,7 +304,7 @@ describe('Login Page', () => {
 			expect(container).toBeInTheDocument();
 
 			// Check for input styling classes
-			const emailInput = screen.getByPlaceholderText('Correo electrónico');
+			const emailInput = screen.getByPlaceholderText('Email address');
 			expect(emailInput).toHaveClass('login-input');
 		});
 
@@ -318,8 +318,8 @@ describe('Login Page', () => {
 		it('should display error message with proper styling', async () => {
 			render(LoginPage);
 
-			const emailInput = screen.getByPlaceholderText('Correo electrónico');
-			const passwordInput = screen.getByPlaceholderText('Contraseña');
+			const emailInput = screen.getByPlaceholderText('Email address');
+			const passwordInput = screen.getByPlaceholderText('Password');
 			const loginButton = screen.getByRole('button', { name: /login/i });
 
 			// Trigger an error
@@ -329,7 +329,7 @@ describe('Login Page', () => {
 
 			// Wait for error and check its styling
 			await waitFor(() => {
-				const errorDiv = screen.getByText('Credenciales inválidas').closest('div');
+				const errorDiv = screen.getByText('Invalid credentials').closest('div');
 				expect(errorDiv).toHaveClass(
 					'rounded-lg',
 					'border',
@@ -359,8 +359,8 @@ describe('Login Page', () => {
 			const form = document.querySelector('form');
 			expect(form).toBeInTheDocument();
 
-			const emailInput = screen.getByPlaceholderText('Correo electrónico');
-			const passwordInput = screen.getByPlaceholderText('Contraseña');
+			const emailInput = screen.getByPlaceholderText('Email address');
+			const passwordInput = screen.getByPlaceholderText('Password');
 
 			expect(emailInput).toHaveAttribute('name', 'email');
 			expect(passwordInput).toHaveAttribute('name', 'password');

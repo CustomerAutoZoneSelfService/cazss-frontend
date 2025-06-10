@@ -79,8 +79,8 @@ describe('Login Page Component', () => {
 			expect(screen.getByText('Make it simple')).toBeInTheDocument();
 
 			// Check form elements
-			expect(screen.getByPlaceholderText('Correo electrónico')).toBeInTheDocument();
-			expect(screen.getByPlaceholderText('Contraseña')).toBeInTheDocument();
+			expect(screen.getByPlaceholderText('Email address')).toBeInTheDocument();
+			expect(screen.getByPlaceholderText('Password')).toBeInTheDocument();
 			expect(screen.getByRole('button', { name: 'LOGIN' })).toBeInTheDocument();
 
 			// Check footer
@@ -96,8 +96,8 @@ describe('Login Page Component', () => {
 		it('should enable submit button when both fields are filled', async () => {
 			render(LoginPage);
 
-			const emailInput = screen.getByPlaceholderText('Correo electrónico');
-			const passwordInput = screen.getByPlaceholderText('Contraseña');
+			const emailInput = screen.getByPlaceholderText('Email address');
+			const passwordInput = screen.getByPlaceholderText('Password');
 			const submitButton = screen.getByRole('button', { name: 'LOGIN' });
 
 			await fireEvent.input(emailInput, { target: { value: 'test@example.com' } });
@@ -116,8 +116,8 @@ describe('Login Page Component', () => {
 
 			render(LoginPage);
 
-			const emailInput = screen.getByPlaceholderText('Correo electrónico');
-			const passwordInput = screen.getByPlaceholderText('Contraseña');
+			const emailInput = screen.getByPlaceholderText('Email address');
+			const passwordInput = screen.getByPlaceholderText('Password');
 			const submitButton = screen.getByRole('button', { name: 'LOGIN' });
 
 			await fireEvent.input(emailInput, { target: { value: 'admin@test.com' } });
@@ -140,8 +140,8 @@ describe('Login Page Component', () => {
 
 			render(LoginPage);
 
-			const emailInput = screen.getByPlaceholderText('Correo electrónico');
-			const passwordInput = screen.getByPlaceholderText('Contraseña');
+			const emailInput = screen.getByPlaceholderText('Email address');
+			const passwordInput = screen.getByPlaceholderText('Password');
 			const submitButton = screen.getByRole('button', { name: 'LOGIN' });
 
 			await fireEvent.input(emailInput, { target: { value: 'test@example.com' } });
@@ -149,7 +149,7 @@ describe('Login Page Component', () => {
 			await fireEvent.click(submitButton);
 
 			// Should show loading text and disable button
-			expect(screen.getByText('Iniciando sesión...')).toBeInTheDocument();
+			expect(screen.getByText('Logging in...')).toBeInTheDocument();
 			expect(submitButton).toBeDisabled();
 
 			// Resolve the promise
@@ -165,8 +165,8 @@ describe('Login Page Component', () => {
 
 			render(LoginPage);
 
-			const emailInput = screen.getByPlaceholderText('Correo electrónico');
-			const passwordInput = screen.getByPlaceholderText('Contraseña');
+			const emailInput = screen.getByPlaceholderText('Email address');
+			const passwordInput = screen.getByPlaceholderText('Password');
 			const submitButton = screen.getByRole('button', { name: 'LOGIN' });
 
 			await fireEvent.input(emailInput, { target: { value: 'invalid@example.com' } });
@@ -174,7 +174,7 @@ describe('Login Page Component', () => {
 			await fireEvent.click(submitButton);
 
 			await waitFor(() => {
-				expect(screen.getByText('Credenciales inválidas')).toBeInTheDocument();
+				expect(screen.getByText('Invalid credentials')).toBeInTheDocument();
 			});
 		});
 
@@ -184,8 +184,8 @@ describe('Login Page Component', () => {
 
 			render(LoginPage);
 
-			const emailInput = screen.getByPlaceholderText('Correo electrónico');
-			const passwordInput = screen.getByPlaceholderText('Contraseña');
+			const emailInput = screen.getByPlaceholderText('Email address');
+			const passwordInput = screen.getByPlaceholderText('Password');
 			const submitButton = screen.getByRole('button', { name: 'LOGIN' });
 
 			await fireEvent.input(emailInput, { target: { value: 'test@example.com' } });
@@ -193,7 +193,7 @@ describe('Login Page Component', () => {
 			await fireEvent.click(submitButton);
 
 			await waitFor(() => {
-				expect(screen.getByText('Error de conexión. Inténtalo de nuevo.')).toBeInTheDocument();
+				expect(screen.getByText('Connection error. Please try again later.')).toBeInTheDocument();
 			});
 		});
 
@@ -203,8 +203,8 @@ describe('Login Page Component', () => {
 
 			render(LoginPage);
 
-			const emailInput = screen.getByPlaceholderText('Correo electrónico');
-			const passwordInput = screen.getByPlaceholderText('Contraseña');
+			const emailInput = screen.getByPlaceholderText('Email address');
+			const passwordInput = screen.getByPlaceholderText('Password');
 			const submitButton = screen.getByRole('button', { name: 'LOGIN' });
 
 			// First login attempt (fails)
@@ -213,7 +213,7 @@ describe('Login Page Component', () => {
 			await fireEvent.click(submitButton);
 
 			await waitFor(() => {
-				expect(screen.getByText('Error de conexión. Inténtalo de nuevo.')).toBeInTheDocument();
+				expect(screen.getByText('Connection error. Please try again later.')).toBeInTheDocument();
 			});
 
 			// Second login succeeds
@@ -226,7 +226,7 @@ describe('Login Page Component', () => {
 
 			await waitFor(() => {
 				expect(
-					screen.queryByText('Error de conexión. Inténtalo de nuevo.')
+					screen.queryByText('Connection error. Please try again later.')
 				).not.toBeInTheDocument();
 				expect(goto).toHaveBeenCalledWith('/');
 			});
@@ -237,7 +237,7 @@ describe('Login Page Component', () => {
 		it('should keep submit button disabled with empty email', async () => {
 			render(LoginPage);
 
-			const passwordInput = screen.getByPlaceholderText('Contraseña');
+			const passwordInput = screen.getByPlaceholderText('Password');
 			const submitButton = screen.getByRole('button', { name: 'LOGIN' });
 
 			await fireEvent.input(passwordInput, { target: { value: 'password123' } });
@@ -249,7 +249,7 @@ describe('Login Page Component', () => {
 		it('should keep submit button disabled with empty password', async () => {
 			render(LoginPage);
 
-			const emailInput = screen.getByPlaceholderText('Correo electrónico');
+			const emailInput = screen.getByPlaceholderText('Email address');
 			const submitButton = screen.getByRole('button', { name: 'LOGIN' });
 
 			await fireEvent.input(emailInput, { target: { value: 'test@example.com' } });
@@ -275,8 +275,8 @@ describe('Login Page Component', () => {
 
 			render(LoginPage);
 
-			const emailInput = screen.getByPlaceholderText('Correo electrónico') as HTMLInputElement;
-			const passwordInput = screen.getByPlaceholderText('Contraseña') as HTMLInputElement;
+			const emailInput = screen.getByPlaceholderText('Email address') as HTMLInputElement;
+			const passwordInput = screen.getByPlaceholderText('Password') as HTMLInputElement;
 			const submitButton = screen.getByRole('button', { name: 'LOGIN' });
 
 			await fireEvent.input(emailInput, { target: { value: 'admin@company.com' } });
