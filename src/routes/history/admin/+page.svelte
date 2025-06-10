@@ -80,9 +80,9 @@
 		<!-- TODAY -->
 		<p class="text-bold my-4">Today</p>
 		<div id="today" class="flex flex-col gap-4">
-		{#each todayCards as card (card.historyId)}
-		<EndpointCardAdmin
-		id={card.historyId}
+			{#each todayCards as card (card.historyId)}
+				<EndpointCardAdmin
+					id={card.historyId}
 					title={card.endpointName}
 					useDate={formatDate(card.createdAt)}
 					username={card.email?.split('@')[0] || 'Usuario'}
