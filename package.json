@@ -14,7 +14,7 @@
 		"format": "prettier --write .",
 		"lint": "prettier --check . && eslint .",
 		"test:unit": "vitest --pass-with-no-tests",
-		"test:client": "vitest run --pass-with-no-tests --project client && playwright test --project=mock",
+		"test:client": "vitest run --pass-with-no-tests --project client --environment=jsdom && playwright test --project=mock",
 		"test": "npm run test:unit -- --run && npm run test:e2e",
 		"test:e2e": "playwright test"
 	},
