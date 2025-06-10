@@ -8,6 +8,7 @@ export type Props = {
 	placeholder?: string;
 	handleInput?: (event: Event) => void;
 	handleChange?: (event: Event) => void;
+	isAlert?: boolean;
 };
 
 export type InputBoxSize = 'sm' | 'md' | 'full';
