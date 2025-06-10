@@ -20,7 +20,8 @@
 		let variantClasses = '';
 		switch (variant) {
 			case 'primary':
-				variantClasses = 'bg-accent-red text-white hover:bg-accent-red-dark hover:shadow-md';
+				variantClasses = `bg-accent-red text-white hover:bg-accent-red-dark
+                                   hover:shadow-md cursor-pointer`;
 				break;
 			case 'secondary':
 				variantClasses = 'bg-gray-200 text-black hover:bg-gray-300 active:bg-gray-400';

@@ -13,9 +13,7 @@
 		muted: 'text-gray-medium font-semibold'
 	}[variant];
 
-	$: disabledStyles = disabled
-		? 'opacity-50 cursor-not-allowed pointer-events-none'
-		: 'hover:text-blue-500 active:text-blue-700 cursor-pointer';
+	$: disabledStyles = disabled ? 'opacity-50 cursor-not-allowed pointer-events-none' : '';
 
 	//Different size options
 	$: sizeStyles = {
