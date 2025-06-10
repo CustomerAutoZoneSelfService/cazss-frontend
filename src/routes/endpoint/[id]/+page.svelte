@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { getContext } from 'svelte';
+	import { page } from '$app/stores';
 	import { goto } from '$app/navigation';
 
 	import type { Params } from './+page';
@@ -10,11 +11,11 @@
 	import type ApiWrapper from '$lib/ApiWrapper';
 	import ParameterSectionInvokeService from '$lib/components/ParameterSectionInvokeService.svelte';
 	import DisplayResultSectionInvokeService from '$lib/components/DisplayResultSectionInvokeService.svelte';
-	import { handleInitializeRequestService } from '$lib/handlers/handleInitializeRequestService';
 	import Button from '$lib/components/Button.svelte';
 	import FilterSectionInvokeService from '$lib/components/FilterSectionInvokeService.svelte';
 	import type { Filter } from '$lib/types/Filter';
 	import Spinner from '$lib/components/Spinner.svelte';
+	import { handleInitializeRequestService } from '../../../handlers/handleInitializeRequestService';
 
 	let api: ApiWrapper = getContext('api');
 
@@ -92,6 +93,20 @@
 		response: {}
 	});
 
+	// Function to initialize the RequestService object with the variables from the endpoint and possible default values
+	const prefilledHook = (original: KeyValue[]): KeyValue[] => {
+		const searchParam = $page.url.searchParams.get('prefilled');
+		if (!searchParam) return original;
+
+		const modified: { label: string; value: string }[] = JSON.parse(searchParam);
+		for (let i = 0; i < original.length; i++) {
+			for (let j = 0; j < modified.length; j++) {
+				if (original[i].key === modified[j].label) original[j].value = modified[i].value;
+			}
+		}
+		return original;
+	};
+
 	// Function to find a KeyValue object in the RequestService object based on its type and keyName from the INPUT
 	const findRequestKeyValue = (type: VariableTypeString, keyName: string): KeyValue | undefined => {
 		let targetArray: KeyValue[] | undefined;
@@ -150,7 +165,7 @@
 
 			const result = handleInitializeRequestService(endpoint.variables);
 			requestService.headers = result.headers;
-			requestService.body = result.body;
+			requestService.body = prefilledHook(result.body);
 			requestService.inline = result.inline;
 			requestService.queryString = result.queryString;
 

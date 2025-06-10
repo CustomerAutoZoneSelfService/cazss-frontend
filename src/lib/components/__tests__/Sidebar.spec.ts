@@ -70,7 +70,7 @@ describe('Sidebar', () => {
 
 			expect(homeLink).toHaveAttribute('href', '/');
 			expect(historyAdminLink).toHaveAttribute('href', '/history/admin');
-			expect(historyUserLink).toHaveAttribute('href', '/history/user?userId=5');
+			expect(historyUserLink).toHaveAttribute('href', '/history/user');
 			expect(createLink).toHaveAttribute('href', '/configure');
 		});
 	});
