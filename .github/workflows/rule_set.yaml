@@ -117,8 +117,8 @@ jobs:
         if: steps.playwright-cache.outputs.cache-hit != 'true'
         run: npx playwright install --with-deps
 
-      - name: Run tests
-        run: npm test
+      - name: Run client tests
+        run: npm run test:client
 
   validate_pr_title:
     name: validate_pr_title

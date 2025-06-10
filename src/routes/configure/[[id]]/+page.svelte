@@ -18,6 +18,7 @@
 	} from '$lib/types/ConfigureService';
 	import type ApiWrapper from '$lib/ApiWrapper';
 	import type { Service } from '$lib/types/ApiWrapper';
+	import Spinner from '$lib/components/Spinner.svelte';
 
 	let api: ApiWrapper = getContext('api');
 	let { data }: { data: Params['params'] } = $props();
@@ -35,6 +36,12 @@
 		requestVariables: [],
 		responses: []
 	});
+
+	//title, description, url
+	let titleAlert = $state(false);
+	let urlAlert = $state(false);
+
+	let isPageLoading = $state(false);
 
 	if (!endpointCreationMode) {
 		console.log('Edit mode');
@@ -162,10 +169,13 @@
 	function validateStep1(): boolean {
 		if (!endpoint.name || endpoint.name.trim() === '') {
 			alert('Title is mandatory');
+			titleAlert = true;
+			console.log(titleAlert);
 			return false;
 		}
 		if (!endpoint.url || endpoint.url.trim() === '') {
 			alert('URL is mandatory');
+			urlAlert = true;
 			return false;
 		}
 		// if (!endpoint.categoryId || endpoint.categoryId === -1) {
@@ -177,6 +187,8 @@
 			return false;
 		}
 		// Add more functions if needed
+		titleAlert = false;
+		urlAlert = false;
 		return true;
 	}
 
@@ -317,12 +329,14 @@
 	//Calling the API to create the endpoint
 	async function createEndpoint(endpointData: ConfigureService): Promise<boolean> {
 		try {
+			isPageLoading = true;
 			console.log('Endpoint Data:', endpointData);
 			endpointData.categoryId = 59;
 			endpointData.authenticationStrategy = null;
 			const response: Service = await api.createService(endpointData);
 			console.log(response);
 			alert('Endpoint created successfully');
+			isPageLoading = false;
 			return true;
 		} catch (error) {
 			console.log(error);
@@ -336,10 +350,12 @@
 		endpointData: ConfigureService
 	): Promise<boolean> {
 		try {
+			isPageLoading = true;
 			endpointData.categoryId = 59;
 			endpointData.authenticationStrategy = null;
 			const response: ConfigureService = await api.updateService(endpointId, endpointData);
 			console.log(response);
+			isPageLoading = false;
 			alert('Endpoint updated successfully');
 			return true;
 		} catch (error) {
@@ -362,137 +378,167 @@
 </script>
 
 <div class="align-items justify-center">
-	{#if step === 1}
-		<main class="flex-1 bg-white p-8">
-			<div class="mb-6 flex items-center justify-between">
-				<div>
-					<h1 class="text-2xl font-bold">
-						{endpointCreationMode ? 'New Endpoint' : 'Edit Endpoint'}
-					</h1>
-					<TextFormat as="p" variant="muted"
-						>{endpointCreationMode
-							? 'Create a new endpoint'
-							: 'Edit an existing endpoint'}</TextFormat
-					>
-				</div>
-			</div>
-
-			<form class="space-y-6">
-				<div class="flex items-center space-x-4">
-					<TextFormat as="label" variant="muted" size="subtitle">Title:</TextFormat>
-					<Input bind:text={endpoint.name} boxSize="md" />
-					<TextFormat as="label" variant="muted" size="subtitle">Enabled:</TextFormat>
-					<CheckBox bind:checked={endpoint.active} />
-				</div>
-
-				<div>
-					<TextFormat as="label" variant="muted" size="subtitle">Description:</TextFormat>
-					<TextArea bind:text={endpoint.description} />
-				</div>
-
-				<div class="flex items-center space-x-8">
-					<div class="flex items-center space-x-2">
-						<TextFormat as="label" variant="muted" size="subtitle">Method:</TextFormat>
-						<Select options={methods} bind:selected={endpoint.method} />
-					</div>
-					<div class="flex flex-1 items-center space-x-2">
-						<TextFormat as="label" variant="muted" size="subtitle">URL:</TextFormat>
-						<Input bind:text={endpoint.url} boxSize="full" />
+	{#if isPageLoading}
+		<Spinner variant="dots"></Spinner>
+	{:else}
+		{#if step === 1}
+			<main class="flex-1 bg-white p-8">
+				<div class="mb-6 flex items-center justify-between">
+					<div>
+						<h1 class="text-2xl font-bold">
+							{#if endpoint.name != ''}
+								{endpoint.name}
+							{:else if endpointCreationMode}
+								New Endpoint
+							{:else}
+								Edit Endpoint
+							{/if}
+						</h1>
+						<TextFormat as="p" variant="muted">
+							{#if endpointCreationMode}
+								Create a new endpoint: {endpoint.name}
+							{:else}
+								Edit an existing endpoint: {endpoint.name}
+							{/if}
+						</TextFormat>
 					</div>
 				</div>
 
-				<div class="flex items-center space-x-8">
-					<div class="flex flex-1 items-center space-x-2">
-						<TextFormat as="label" variant="muted" size="subtitle"
-							>Authentication Strategy:</TextFormat
-						>
-						<Select options={authStrategies} bind:selected={endpoint.authenticationStrategy!} />
+				<form class="space-y-6">
+					<div class="flex items-center space-x-4">
+						<TextFormat as="label" variant="muted" size="subtitle">Title:</TextFormat>
+						<Input bind:text={endpoint.name} boxSize="md" isAlert={titleAlert} />
+						<TextFormat as="label" variant="muted" size="subtitle">Enabled:</TextFormat>
+						<CheckBox bind:checked={endpoint.active} />
 					</div>
-					<div class="flex flex-1 items-center space-x-2">
-						<TextFormat as="label" variant="muted" size="subtitle">Category:</TextFormat>
-						<Select options={categories} bind:selected={endpoint.categoryId} />
+
+					<div>
+						<TextFormat as="label" variant="muted" size="subtitle">Description:</TextFormat>
+						<TextArea bind:text={endpoint.description} />
 					</div>
-				</div>
-			</form>
-		</main>
-	{/if}
 
-	{#if step === 2}
-		<main class="flex-1 bg-white p-8">
-			<h1 class="text-2xl font-bold">{endpointCreationMode ? 'New Endpoint' : 'Edit Endpoint'}</h1>
-			<div class="flex flex-col">
-				<div class="py-2">
-					<TextFormat as="label" variant="muted" size="subtitle">Headers:</TextFormat>
-					<InputTable prompt={headersPrompt} bind:this={headersTable} />
-				</div>
-				<div class="py-2">
-					<TextFormat as="label" variant="muted" size="subtitle">In Line Params:</TextFormat>
-					<InputTable prompt={inlineParamPrompt} bind:this={inlineParamsTable} />
-				</div>
-				<div class="py-2">
-					<TextFormat as="label" variant="muted" size="subtitle">Query String:</TextFormat>
-					<InputTable prompt={queryStringPrompt} bind:this={queryStringTable} />
-				</div>
-				<div class="py-2">
-					<TextFormat as="label" variant="muted" size="subtitle">Body Template:</TextFormat>
-					<TextArea bind:text={endpoint.template} />
-				</div>
-				<div class="py-2">
-					<TextFormat as="label" variant="muted" size="subtitle">Body Variables:</TextFormat>
-					<InputTable prompt={bodyVariablesPrompt} bind:this={bodyVariablesTable} />
-				</div>
-			</div>
-		</main>
-	{/if}
+					<div class="flex items-center space-x-8">
+						<div class="flex items-center space-x-2">
+							<TextFormat as="label" variant="muted" size="subtitle">Method:</TextFormat>
+							<Select options={methods} bind:selected={endpoint.method} />
+						</div>
+						<div class="flex flex-1 items-center space-x-2">
+							<TextFormat as="label" variant="muted" size="subtitle">URL:</TextFormat>
+							<Input bind:text={endpoint.url} boxSize="full" isAlert={urlAlert} />
+						</div>
+					</div>
 
-	{#if step === 3}
-		<main class="flex-1 bg-white p-8">
-			<h1 class="text-2xl font-bold">{endpointCreationMode ? 'New Endpoint' : 'Edit Endpoint'}</h1>
-			<TextFormat as="p" variant="muted">How to handle an endpoint's possible responses</TextFormat>
-			<!-- Add new status code -->
-			<div class="flex items-center gap-2 py-2">
-				<TextFormat as="label" variant="muted" size="subtitle">Add New Status:</TextFormat>
-				<Input bind:text={newStatusCode} boxSize="sm" placeholder="Enter status code" />
-				<Button type="button" size="sm" variant="secondary" onClick={addStatusCode}>Add</Button>
-			</div>
-
-			<!-- Select an existing status code -->
-			<TextFormat as="p" variant="muted"
-				>Select a status code to add a description and response patterns</TextFormat
-			>
-			<div class="flex items-center gap-2 py-2">
-				<TextFormat as="label" variant="muted" size="subtitle">Status Code:</TextFormat>
-				<Select options={statusCodes} bind:selected={selectedStatusCode} />
-			</div>
-			<TextFormat as="p" variant="muted"
-				>Save your response patterns and description before changing the status code</TextFormat
-			>
-			<div class="py-2">
-				<TextFormat as="label" variant="muted" size="subtitle">Response Description:</TextFormat>
-				<TextArea bind:text={selectedResponseDescription} />
-			</div>
-
-			<div class="py-2">
-				<TextFormat as="label" variant="muted" size="subtitle">Response Patterns:</TextFormat>
-				<InputTable prompt={responsesPatternsPrompt} bind:this={responsePatternsTable} />
-			</div>
-		</main>
-	{/if}
-
-	<!-- Navigation Buttons -->
-	<div class="flex justify-end gap-x-20 py-8">
-		{#if step > 1}
-			<Button type="button" size="md" variant="secondary" onClick={goToPreviousPage}>BACK</Button>
+					<div class="flex items-center space-x-8">
+						<div class="flex flex-1 items-center space-x-2">
+							<TextFormat as="label" variant="muted" size="subtitle"
+								>Authentication Strategy:</TextFormat
+							>
+							<Select options={authStrategies} bind:selected={endpoint.authenticationStrategy!} />
+						</div>
+						<div class="flex flex-1 items-center space-x-2">
+							<TextFormat as="label" variant="muted" size="subtitle">Category:</TextFormat>
+							<Select options={categories} bind:selected={endpoint.categoryId} />
+						</div>
+					</div>
+				</form>
+			</main>
 		{/if}
-		{#if step < 3}
-			<Button type="button" size="md" variant="primary" onClick={goToNextPage}>NEXT</Button>
-		{:else}
-			<Button type="button" size="md" variant="primary" onClick={saveResponseData}
-				>Save Response Information</Button
-			>
-			<Button type="button" size="md" variant="primary" onClick={configureEndpoint}
-				>{endpointCreationMode ? 'Register Endpoint' : 'Update Endpoint'}</Button
-			>
+
+		{#if step === 2}
+			<main class="flex-1 bg-white p-8">
+				<h1 class="text-2xl font-bold">
+					{#if endpoint.name != ''}
+						{endpoint.name}
+					{:else if endpointCreationMode}
+						New Endpoint
+					{:else}
+						Edit Endpoint
+					{/if}
+				</h1>
+				<div class="flex flex-col">
+					<div class="py-2">
+						<TextFormat as="label" variant="muted" size="subtitle">Headers:</TextFormat>
+						<InputTable prompt={headersPrompt} bind:this={headersTable} />
+					</div>
+					<div class="py-2">
+						<TextFormat as="label" variant="muted" size="subtitle">In Line Params:</TextFormat>
+						<InputTable prompt={inlineParamPrompt} bind:this={inlineParamsTable} />
+					</div>
+					<div class="py-2">
+						<TextFormat as="label" variant="muted" size="subtitle">Query String:</TextFormat>
+						<InputTable prompt={queryStringPrompt} bind:this={queryStringTable} />
+					</div>
+					<div class="py-2">
+						<TextFormat as="label" variant="muted" size="subtitle">Body Template:</TextFormat>
+						<TextArea bind:text={endpoint.template} />
+					</div>
+					<div class="py-2">
+						<TextFormat as="label" variant="muted" size="subtitle">Body Variables:</TextFormat>
+						<InputTable prompt={bodyVariablesPrompt} bind:this={bodyVariablesTable} />
+					</div>
+				</div>
+			</main>
 		{/if}
-	</div>
+
+		{#if step === 3}
+			<main class="flex-1 bg-white p-8">
+				<h1 class="text-2xl font-bold">
+					{#if endpoint.name != ''}
+						{endpoint.name}
+					{:else if endpointCreationMode}
+						New Endpoint
+					{:else}
+						Edit Endpoint
+					{/if}
+				</h1>
+				<TextFormat as="p" variant="muted"
+					>How to handle an endpoint's possible responses</TextFormat
+				>
+				<!-- Add new status code -->
+				<div class="flex items-center gap-2 py-2">
+					<TextFormat as="label" variant="muted" size="subtitle">Add New Status:</TextFormat>
+					<Input bind:text={newStatusCode} boxSize="sm" placeholder="Enter status code" />
+					<Button type="button" size="sm" variant="secondary" onClick={addStatusCode}>Add</Button>
+				</div>
+
+				<!-- Select an existing status code -->
+				<TextFormat as="p" variant="muted"
+					>Select a status code to add a description and response patterns</TextFormat
+				>
+				<div class="flex items-center gap-2 py-2">
+					<TextFormat as="label" variant="muted" size="subtitle">Status Code:</TextFormat>
+					<Select options={statusCodes} bind:selected={selectedStatusCode} />
+				</div>
+				<TextFormat as="p" variant="muted"
+					>Save your response patterns and description before changing the status code</TextFormat
+				>
+				<div class="py-2">
+					<TextFormat as="label" variant="muted" size="subtitle">Response Description:</TextFormat>
+					<TextArea bind:text={selectedResponseDescription} />
+				</div>
+
+				<div class="py-2">
+					<TextFormat as="label" variant="muted" size="subtitle">Response Patterns:</TextFormat>
+					<InputTable prompt={responsesPatternsPrompt} bind:this={responsePatternsTable} />
+				</div>
+			</main>
+		{/if}
+
+		<!-- Navigation Buttons -->
+		<div class="flex justify-end gap-x-20 py-8">
+			{#if step > 1}
+				<Button type="button" size="md" variant="secondary" onClick={goToPreviousPage}>BACK</Button>
+			{/if}
+			{#if step < 3}
+				<Button type="button" size="md" variant="primary" onClick={goToNextPage}>NEXT</Button>
+			{:else}
+				<Button type="button" size="md" variant="primary" onClick={saveResponseData}
+					>Save Response Information</Button
+				>
+				<Button type="button" size="md" variant="primary" onClick={configureEndpoint}
+					>{endpointCreationMode ? 'Register Endpoint' : 'Update Endpoint'}</Button
+				>
+			{/if}
+		</div>
+	{/if}
 </div>
