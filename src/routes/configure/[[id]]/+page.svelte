@@ -394,12 +394,10 @@
 							{/if}
 						</h1>
 						<TextFormat as="p" variant="muted">
-							{#if endpoint.description != ''}
-								{endpoint.description}
-							{:else if endpointCreationMode}
-								Create a new endpoint
+							{#if endpointCreationMode}
+								Create a new endpoint: {endpoint.name}
 							{:else}
-								Edit an existing endpoint
+								Edit an existing endpoint: {endpoint.name}
 							{/if}
 						</TextFormat>
 					</div>
