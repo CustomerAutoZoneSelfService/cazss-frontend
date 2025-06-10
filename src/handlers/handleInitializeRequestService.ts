@@ -17,7 +17,7 @@ export const handleInitializeRequestService = (variables: RequestVariableString[
 			case 'BODY':
 				newBody.push(kv);
 				break;
-			case 'INLINE_PARAM':
+			case 'INLINE':
 				newInline.push(kv);
 				break;
 			case 'QUERY_STRING':

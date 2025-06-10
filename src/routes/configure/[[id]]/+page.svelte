@@ -26,7 +26,7 @@
 	let { data }: { data: Params['params'] } = $props();
 	const endpointCreationMode: boolean = data.id ? false : true;
 	let endpoint: ConfigureService = $state({
-		categoryId: -1,
+		categoryId: 0,
 		active: true,
 		name: '',
 		description: '',
@@ -285,9 +285,6 @@
 		}
 	}
 
-	function sleep(ms: number) {
-		return new Promise((resolve) => setTimeout(resolve, ms));
-	}
 	async function configureEndpoint() {
 		if ($state.snapshot(selectedStatusCode) != '') saveResponseData();
 		let operationSucceeded: boolean = false;
@@ -423,7 +420,7 @@
 							<TextFormat as="label" variant="muted" size="subtitle"
 								>Authentication Strategy:</TextFormat
 							>
-							<Select options={authStrategies} bind:selected={endpoint.authenticationStrategy!} />
+							<Select options={authStrategies} bind:selected={endpoint.authenticationStrategy} />
 						</div>
 						<div class="flex flex-1 items-center space-x-2">
 							<TextFormat as="label" variant="muted" size="subtitle">Category:</TextFormat>

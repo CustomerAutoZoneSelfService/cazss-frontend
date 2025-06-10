@@ -24,4 +24,4 @@ export enum VariableType {
 	body
 }
 
-export type VariableTypeString = 'HEADER' | 'QUERY_STRING' | 'INLINE_PARAM' | 'BODY';
+export type VariableTypeString = 'HEADER' | 'QUERY_STRING' | 'INLINE' | 'BODY';

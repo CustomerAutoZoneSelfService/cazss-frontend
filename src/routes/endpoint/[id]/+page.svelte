@@ -52,7 +52,7 @@
 		endpoint.variables.filter((variable) => variable.type === 'BODY')
 	);
 	let inline_params = $derived<RequestVariableString[]>(
-		endpoint.variables.filter((variable) => variable.type === 'INLINE_PARAM')
+		endpoint.variables.filter((variable) => variable.type === 'INLINE')
 	);
 	let query_strings = $derived<RequestVariableString[]>(
 		endpoint.variables.filter((variable) => variable.type === 'QUERY_STRING')
@@ -70,7 +70,7 @@
 	let variableTypeHeadingMap = new Map<string, string>();
 	variableTypeHeadingMap.set('HEADER', 'Headers');
 	variableTypeHeadingMap.set('BODY', 'Body Variables');
-	variableTypeHeadingMap.set('INLINE_PARAM', 'Inline Parameters');
+	variableTypeHeadingMap.set('INLINE', 'Inline Parameters');
 	variableTypeHeadingMap.set('QUERY_STRING', 'Query Strings');
 
 	// State that manages the RequestService object
@@ -117,7 +117,7 @@
 			case 'BODY':
 				targetArray = requestService.body;
 				break;
-			case 'INLINE_PARAM':
+			case 'INLINE':
 				targetArray = requestService.inline;
 				break;
 			case 'QUERY_STRING':
