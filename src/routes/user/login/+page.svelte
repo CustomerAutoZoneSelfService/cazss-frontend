@@ -3,65 +3,46 @@
 	import HeadingFormat from '$lib/components/HeadingFormat.svelte';
 	import { user, decodeJWTUser } from '$lib/stores/user';
 
-	console.log('🔥 LOGIN PAGE SCRIPT LOADED!');
-
 	let email: string = '';
 	let password: string = '';
 	let isLoading: boolean = false;
 	let errorMessage: string = '';
 
-	console.log('🔥 State variables initialized');
-
 	async function handleLogin() {
-		console.log('🔥 handleLogin called with:', { email, password });
-
 		if (!email || !password) {
-			errorMessage = 'Por favor, completa todos los campos';
-			console.log('🔥 Validation failed: missing email or password');
+			errorMessage = 'Please complete all fields';
 			return;
 		}
 
 		isLoading = true;
 		errorMessage = '';
-		console.log('🔥 Starting login process...');
 
 		try {
 			// Use direct import instead of dynamic import
-			console.log('🔥 Importing ApiWrapper...');
 			const { api } = await import('$lib/ApiWrapper');
-			console.log('🔥 ApiWrapper imported successfully');
-
-			console.log('🔥 Calling api.login...');
 			await api.login(email, password);
-			console.log('🔥 Login successful!');
 
 			// Immediately update user store with the new token
 			const token = api.getToken();
-			console.log('🔥 Got token:', token ? 'yes' : 'no');
 			if (token) {
 				const userData = decodeJWTUser(token);
-				console.log('🔥 Decoded user data:', userData);
 				if (userData) {
 					user.set(userData);
 				}
 			}
 
-			console.log('🔥 Redirecting to home...');
 			goto('/');
 		} catch (error) {
 			console.error('🔥 Login error:', error);
 			if (error instanceof Error && error.message.includes('401')) {
-				errorMessage = 'Credenciales inválidas';
+				errorMessage = 'Invalid credentials';
 			} else {
-				errorMessage = 'Error de conexión. Inténtalo de nuevo.';
+				errorMessage = 'Connection error. Please try again later.';
 			}
 		} finally {
 			isLoading = false;
-			console.log('🔥 Login process finished');
 		}
 	}
-
-	console.log('🔥 handleLogin function defined:', typeof handleLogin);
 
 	function handleSubmit(event: Event) {
 		event.preventDefault();
@@ -71,10 +52,7 @@
 	// Define a global function for testing
 	if (typeof window !== 'undefined') {
 		(window as typeof window & { testLogin?: typeof handleLogin }).testLogin = handleLogin;
-		console.log('🔥 testLogin function exposed to window');
 	}
-
-	console.log('🔥 All functions defined, script execution complete');
 </script>
 
 <svelte:head>
@@ -99,7 +77,7 @@
 				<input
 					type="email"
 					bind:value={email}
-					placeholder="Correo electrónico"
+					placeholder="Email address"
 					disabled={isLoading}
 					name="email"
 					class="login-input"
@@ -111,7 +89,7 @@
 				<input
 					type="password"
 					bind:value={password}
-					placeholder="Contraseña"
+					placeholder="Password"
 					disabled={isLoading}
 					name="password"
 					class="login-input"
@@ -150,7 +128,7 @@
 									d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
 								></path>
 							</svg>
-							Iniciando sesión...
+							Logging in...
 						</span>
 					{:else}
 						LOGIN

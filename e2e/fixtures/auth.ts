@@ -136,11 +136,11 @@ export const test = base.extend<{
 	authenticatedPage: async ({ page }, use) => {
 		// Set up logging
 		page.on('console', (msg) => {
-			console.log(`🖥️ AUTH PAGE LOG [${msg.type()}]:`, msg.text());
+			console.log(`Authentication page log. Type: ${msg.type()}, message: ${msg.text()}`);
 		});
 
 		page.on('pageerror', (error) => {
-			console.log('🖥️ AUTH PAGE ERROR:', error.message);
+			console.error(`Authentication page error: ${error.message}`);
 		});
 
 		// Clear any existing localStorage first
@@ -170,13 +170,9 @@ export const test = base.extend<{
 		// Inject both tokens into localStorage
 		await page.addInitScript(
 			(tokens) => {
-				console.log('🔥 AUTH FIXTURE: Setting tokens in localStorage with correct keys');
-
 				// Set both tokens that ApiWrapper uses
 				localStorage.setItem('cazss_access_token', tokens.access);
 				localStorage.setItem('cazss_refresh_token', tokens.refresh);
-
-				console.log('🔥 AUTH FIXTURE: Both tokens set in localStorage');
 			},
 			{ access: validToken, refresh: validRefreshToken }
 		);
