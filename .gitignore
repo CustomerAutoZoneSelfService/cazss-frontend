@@ -32,10 +32,6 @@ vite.config.ts.timestamp-*
 .github/*
 .husky/*
 
-<<<<<<< HEAD
-/static/test_pdf.txt
-=======
 /static/test_pdf.txt
 
 pnpm-lock.yaml
->>>>>>> general-integration
