@@ -1,6 +1,6 @@
 <script lang="ts">
-	export let options: { value: string; label: string }[] = [];
-	export let selected: string = '';
+	export let options: { value: string | number; label: string }[] = [];
+	export let selected: string | number = '';
 	export let disabled: boolean = false;
 </script>
 

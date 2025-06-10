@@ -78,7 +78,7 @@
 						{/if}
 
 						<List type="ul">
-							{#each ExecutionResponse.response[filter.responsePatternId.toString()] ?? [] as value, index (index)}
+							{#each ExecutionResponse.response[filter.responsePatternId] ?? [] as value, index (index)}
 								<li class="ml-3">{value}</li>
 							{/each}
 						</List>

@@ -10,7 +10,7 @@
 	type TextTag = 'p' | 'span' | 'div' | 'label' | 'h1';
 
 	// Define the color variant for the text
-	type TextVariant = 'primary' | 'secondary' | 'muted' | 'none';
+	type TextVariant = 'primary' | 'secondary' | 'muted' | 'none' | 'alert';
 
 	// Define the size options for the text
 	type TextSize = 'subtitle' | 'body' | 'caption' | 'label';
@@ -27,7 +27,8 @@
 		primary: 'text-gray-900',
 		secondary: 'text-white',
 		muted: 'text-gray-500',
-		none: ''
+		none: '',
+		alert: 'text-red-100'
 	}[variant];
 
 	// Size styles (subtitle overrides variant color and adds custom spacing)

@@ -1,4 +1,7 @@
 <script lang="ts">
+	import Pencil from 'lucide-svelte/icons/pencil';
+	import { goto } from '$app/navigation';
+
 	let {
 		id,
 		title,
@@ -19,9 +22,17 @@
 
 	let isStarred = $state(starred);
 
+	//Hardcoded role in the meantime
+	let role = $state('ADMIN');
+
 	function toggleStarred(event: MouseEvent) {
 		event.stopPropagation();
 		isStarred = !isStarred;
+	}
+
+	function handleConfigureEndpoint(event: MouseEvent) {
+		event.stopPropagation();
+		goto(`/configure/${id}`);
 	}
 
 	function handleKeydown(event: KeyboardEvent) {
@@ -42,16 +53,26 @@
 	data-endpoint-id={id}
 >
 	<div class="h-full w-full rounded-3xl">
-		<div
-			class="text-near-black text-2xl font-bold group-hover:text-white"
-			style="
-			display: -webkit-box;
-			-webkit-line-clamp: 2;
-			-webkit-box-orient: vertical;
-			overflow: hidden;
-			text-overflow: ellipsis;"
-		>
-			{title}
+		<div class="flex items-start justify-between gap-4">
+			<div
+				class="text-near-black text-2xl font-bold group-hover:text-white"
+				style="
+				display: -webkit-box;
+				-webkit-line-clamp: 2;
+				-webkit-box-orient: vertical;
+				overflow: hidden;
+				text-overflow: ellipsis;"
+			>
+				{title}
+			</div>
+			{#if (role === 'ADMIN' || role === 'CONFIGURATOR') && !historyCard}
+				<button
+					class="hover:bg-accent-red-dark ml-auto w-8 items-center justify-center rounded-full group-hover:text-white"
+					onclick={handleConfigureEndpoint}
+				>
+					<Pencil />
+				</button>
+			{/if}
 		</div>
 		<p
 			class="text-near-black mt-2 text-base group-hover:text-white"

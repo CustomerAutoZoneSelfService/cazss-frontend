@@ -1,42 +1,58 @@
 <script lang="ts">
-	import type { RequestVariable } from '../types/RequestVariable';
-	import type { ResponsePattern } from '../types/ResponsePattern';
 	import type { InputTablePrompt } from '../types/InputTablePrompt';
+	import type { RequestVariable, ResponsePattern } from '$lib/types/ConfigureService';
 	import Trash2Icon from 'lucide-svelte/icons/trash-2';
 
 	let { prompt }: { prompt: InputTablePrompt } = $props();
 
 	let variables: RequestVariable[] | ResponsePattern[] = $state(
-		'endpointId' in prompt ? (prompt.requestVariables ?? []) : (prompt.responsePatterns ?? [])
+		'requestVariableType' in prompt
+			? (prompt.requestVariables ?? [])
+			: (prompt.responsePatterns ?? [])
 	);
 
 	export function getVariables() {
-		if ('endpointId' in prompt) {
-			return (variables as RequestVariable[]).filter((variable) => variable.key !== '');
+		if ('requestVariableType' in prompt) {
+			return ($state.snapshot(variables) as RequestVariable[]).filter(
+				(variable) => variable.key !== ''
+			);
 		} else {
-			return (variables as ResponsePattern[]).filter((variable) => variable.name !== '');
+			return ($state.snapshot(variables) as ResponsePattern[]).filter(
+				(variable) => variable.name !== ''
+			);
+		}
+	}
+
+	export function clearVariables() {
+		variables = [];
+	}
+
+	export function setNewVariables(newVariables: RequestVariable[] | ResponsePattern[]) {
+		if ('key' in newVariables) {
+			variables = newVariables as RequestVariable[];
+		} else {
+			variables = newVariables as ResponsePattern[];
 		}
 	}
 
 	$effect(() => {
+		if (variables.length === 0) {
+			addNewRow();
+		}
 		if (variables.length > 0) {
 			const lastItem = variables[variables.length - 1];
 			if ('key' in lastItem) {
 				if (lastItem.key.length > 0) addNewRow();
 			} else {
-				if (lastItem.name.length > 0) addNewRow();
+				if (lastItem.name.length > 0 || lastItem.responsePatternId !== undefined) addNewRow();
 			}
 		}
 	});
 
-	addNewRow();
-
 	function addNewRow() {
-		if ('endpointId' in prompt) {
+		if ('requestVariableType' in prompt) {
 			(variables as RequestVariable[]).push({
-				requestVariableId: 0,
-				endpointId: prompt.endpointId,
-				type: prompt.variableType,
+				type: prompt.requestVariableType,
 				key: '',
 				defaultValue: '',
 				customizable: false,
@@ -44,8 +60,6 @@
 			});
 		} else {
 			(variables as ResponsePattern[]).push({
-				responsePatternId: 0,
-				responseId: prompt.responseId,
 				parentId: null,
 				pattern: '',
 				name: '',
@@ -108,16 +122,20 @@
 <table data-testid="variable-table" class="w-full table-auto border-collapse">
 	<thead>
 		<tr class="bg-gray-100">
-			<th class="border border-gray-300 p-2 text-left">{'endpointId' in prompt ? 'Key' : 'Name'}</th
+			{#if !('requestVariableType' in prompt)}
+				<th class="border border-gray-300 p-2 text-left">ID</th>
+			{/if}
+			<th class="border border-gray-300 p-2 text-left"
+				>{'requestVariableType' in prompt ? 'Key' : 'Name'}</th
 			>
-			{#if !('endpointId' in prompt)}
+			{#if !('requestVariableType' in prompt)}
 				<th class="border border-gray-300 p-2 text-left">Parent ID</th>
 			{/if}
 			<th class="border border-gray-300 p-2 text-left"
-				>{'endpointId' in prompt ? 'Value' : 'Pattern'}</th
+				>{'requestVariableType' in prompt ? 'Value' : 'Pattern'}</th
 			>
 			<th class="border border-gray-300 p-2 text-left whitespace-nowrap"
-				>{'endpointId' in prompt ? 'Customizable' : 'Is Leaf'}</th
+				>{'requestVariableType' in prompt ? 'Customizable' : 'Is Leaf'}</th
 			>
 			<th class="w-[300px] border border-gray-300 p-2 text-left">Description</th>
 		</tr>
@@ -142,7 +160,7 @@
 						<input onkeydown={onKeyDown} bind:value={variable.description} class="w-full p-1" />
 						<div
 							data-testid={'delete-row-' + index}
-							class="fixed-icon-width invisible ml-2 transition-opacity duration-200 group-hover:visible"
+							class="invisible ml-2 w-[1.5rem] transition-opacity duration-200 group-hover:visible"
 						>
 							<button onclick={() => deleteRow(index)}>
 								<Trash2Icon class="h-4 w-4 text-red-500 hover:text-red-700" />
@@ -153,25 +171,32 @@
 			{:else}
 				<tr class="hover:bg-gray-50">
 					<th data-testid={generateTestId(index, 0)} class="border border-gray-300 p-2">
-						<input onkeydown={onKeyDown} bind:value={variable.name} class="w-full p-1" />
+						<input
+							onkeydown={onKeyDown}
+							bind:value={variable.responsePatternId}
+							class="w-full p-1"
+						/>
 					</th>
 					<th data-testid={generateTestId(index, 1)} class="border border-gray-300 p-2">
-						<input onkeydown={onKeyDown} bind:value={variable.parentId} class="w-full p-1" />
+						<input onkeydown={onKeyDown} bind:value={variable.name} class="w-full p-1" />
 					</th>
 					<th data-testid={generateTestId(index, 2)} class="border border-gray-300 p-2">
+						<input onkeydown={onKeyDown} bind:value={variable.parentId} class="w-full p-1" />
+					</th>
+					<th data-testid={generateTestId(index, 3)} class="border border-gray-300 p-2">
 						<input onkeydown={onKeyDown} bind:value={variable.pattern} class="w-full p-1" />
 					</th>
-					<th data-testid={generateTestId(index, 3)} class="border border-gray-300 p-2 text-center">
+					<th data-testid={generateTestId(index, 4)} class="border border-gray-300 p-2 text-center">
 						<input type="checkbox" onkeydown={onKeyDown} bind:checked={variable.isLeaf} />
 					</th>
 					<th
-						data-testid={generateTestId(index, 4)}
+						data-testid={generateTestId(index, 5)}
 						class="group flex w-lg items-center border border-gray-300 p-2"
 					>
 						<input onkeydown={onKeyDown} bind:value={variable.description} class="w-full p-1" />
 						<div
 							data-testid={'delete-row-' + index}
-							class="fixed-icon-width invisible ml-2 transition-opacity duration-200 group-hover:visible"
+							class="invisible ml-2 w-[1.5rem] transition-opacity duration-200 group-hover:visible"
 						>
 							<button onclick={() => deleteRow(index)}>
 								<Trash2Icon class="h-4 w-4 text-red-500 hover:text-red-700" />
@@ -183,10 +208,3 @@
 		{/each}
 	</tbody>
 </table>
-
-<style>
-	.fixed-icon-width {
-		width: 1.5rem;
-		min-width: 1.5rem;
-	}
-</style>

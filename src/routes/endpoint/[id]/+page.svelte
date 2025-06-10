@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { getContext } from 'svelte';
 	import { goto } from '$app/navigation';
+
 	import type { Params } from './+page';
 	import type { DetailedService, KeyValue } from '$lib/types/ApiWrapper';
 	import type { RequestVariableString, VariableTypeString } from '$lib/types/RequestVariable';
@@ -13,6 +14,7 @@
 	import Button from '$lib/components/Button.svelte';
 	import FilterSectionInvokeService from '$lib/components/FilterSectionInvokeService.svelte';
 	import type { Filter } from '$lib/types/Filter';
+	import Spinner from '$lib/components/Spinner.svelte';
 
 	let api: ApiWrapper = getContext('api');
 
@@ -24,7 +26,9 @@
 	let selectedFilterIds = $state<number[]>([]);
 	let hasUserFilters = $state(false);
 
-	let endpoint = $state<DetailedService>({
+	let isExecuting = $state(false);
+
+	const emptyEndpoint: DetailedService = {
 		id: data.id,
 		name: '',
 		description: '',
@@ -35,7 +39,9 @@
 		filters: [],
 		variables: [],
 		requestBody: ''
-	});
+	};
+
+	let endpoint = $state<DetailedService>(emptyEndpoint);
 
 	// Derived runes that manages the RequestVariableString arrays
 	let headers = $derived<RequestVariableString[]>(
@@ -253,63 +259,69 @@
 </script>
 
 <main class="space-y-10 p-10">
-	{#if phase[phaseIndex] === 'results'}
-		<DisplayResultSectionInvokeService
-			{ExecutionResponse}
-			filters={requestService.filters}
-			on:openFilters={() => {
-				selectedFilterIds = requestService.filters.map((f) => f.responsePatternId);
-
-				phaseIndex = 3;
-			}}
-		/>
-	{:else if phase[phaseIndex] == 'variables'}
-		<ParameterSectionInvokeService
-			{endpoint}
-			{variableTypes}
-			{variableTypeHeadingMap}
-			{findRequestKeyValue}
-		/>
-	{:else if phase[phaseIndex] == 'initialFilters'}
-		<FilterSectionInvokeService
-			filters={endpoint.filters}
-			selected={selectedFilterIds}
-			on:filterChange={(e) => handleFilterChange(e.detail)}
-		/>
-	{:else if phase[phaseIndex] == 'filters'}
-		<FilterSectionInvokeService
-			filters={endpoint.filters}
-			selected={selectedFilterIds}
-			on:filterChange={(e) => handleFilterChange(e.detail)}
-		/>
+	{#if isExecuting}
+		<Spinner variant="dots"></Spinner>
+	{:else if endpoint.name === ''}
+		<Spinner variant="dots"></Spinner>
 	{:else}
-		<p>Nothing</p>
-	{/if}
+		{#if phase[phaseIndex] === 'results'}
+			<DisplayResultSectionInvokeService
+				{ExecutionResponse}
+				filters={requestService.filters}
+				on:openFilters={() => {
+					selectedFilterIds = requestService.filters.map((f) => f.responsePatternId);
 
-	<div class="flex w-full items-center justify-between">
-		<div>
-			<Button type="button" size="md" variant="secondary" onClick={handlePhaseChangeBackward}>
-				Return
-			</Button>
-		</div>
-		<div>
-			{#if phase[phaseIndex] === 'initialFilters'}
-				<Button variant="primary" type="submit" size="md" onClick={handleSend}>Send</Button>
-			{:else if phase[phaseIndex] === 'variables'}
-				{#if endpoint.filters.length > 0}
-					{#if hasUserFilters}
-						<Button variant="primary" type="submit" size="md" onClick={handleSend}>Send</Button>
-					{:else if selectedFilterIds.length === endpoint.filters.length}
-						<Button variant="primary" type="button" size="md" onClick={handlePhaseChangeForward}
-							>Next</Button
-						>
+					phaseIndex = 3;
+				}}
+			/>
+		{:else if phase[phaseIndex] == 'variables'}
+			<ParameterSectionInvokeService
+				{endpoint}
+				{variableTypes}
+				{variableTypeHeadingMap}
+				{findRequestKeyValue}
+			/>
+		{:else if phase[phaseIndex] == 'initialFilters'}
+			<FilterSectionInvokeService
+				filters={endpoint.filters}
+				selected={selectedFilterIds}
+				on:filterChange={(e) => handleFilterChange(e.detail)}
+			/>
+		{:else if phase[phaseIndex] == 'filters'}
+			<FilterSectionInvokeService
+				filters={endpoint.filters}
+				selected={selectedFilterIds}
+				on:filterChange={(e) => handleFilterChange(e.detail)}
+			/>
+		{:else}
+			<p>Nothing</p>
+		{/if}
+
+		<div class="flex w-full items-center justify-between">
+			<div>
+				<Button type="button" size="md" variant="secondary" onClick={handlePhaseChangeBackward}>
+					Return
+				</Button>
+			</div>
+			<div>
+				{#if phase[phaseIndex] === 'initialFilters'}
+					<Button variant="primary" type="submit" size="md" onClick={handleSend}>Send</Button>
+				{:else if phase[phaseIndex] === 'variables'}
+					{#if endpoint.filters.length > 0}
+						{#if hasUserFilters}
+							<Button variant="primary" type="submit" size="md" onClick={handleSend}>Send</Button>
+						{:else if selectedFilterIds.length === endpoint.filters.length}
+							<Button variant="primary" type="button" size="md" onClick={handlePhaseChangeForward}
+								>Next</Button
+							>
+						{:else}
+							<Button variant="primary" type="submit" size="md" onClick={handleSend}>Send</Button>
+						{/if}
 					{:else}
 						<Button variant="primary" type="submit" size="md" onClick={handleSend}>Send</Button>
 					{/if}
-				{:else}
-					<Button variant="primary" type="submit" size="md" onClick={handleSend}>Send</Button>
 				{/if}
-			{/if}
+			</div>
 		</div>
-	</div>
+	{/if}
 </main>
