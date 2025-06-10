@@ -461,8 +461,8 @@ export class ApiWrapper {
 	 * @param path - API endpoint path
 	 * @returns Promise resolving to parsed response
 	 */
-	public delete<T>(path: string): Promise<T> {
-		return this.request<T>(path, { method: 'DELETE' });
+	public deleteService(path: string): Promise<void> {
+		return this.request(path, { method: 'DELETE' });
 	}
 
 	// Legacy API endpoints (maintaining backward compatibility)
