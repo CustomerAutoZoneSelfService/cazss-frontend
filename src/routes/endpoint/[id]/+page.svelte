@@ -199,6 +199,7 @@
 	// Saves selected filters if on the initialFilters page
 	const handleSend = async () => {
 		try {
+			isExecuting = true;
 			if (phase[phaseIndex] === 'initialFilters') {
 				await api.createUserFilters(endpoint.id, selectedFilterIds);
 
@@ -221,6 +222,7 @@
 				await executeEndpoint();
 				phaseIndex = 2;
 			}
+			isExecuting = false;
 		} catch (error) {
 			console.log('Error in handleSend:', error);
 		}
