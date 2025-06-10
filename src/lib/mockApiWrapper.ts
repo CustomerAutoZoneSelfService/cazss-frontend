@@ -1,7 +1,7 @@
 import ApiWrapper from '$lib/ApiWrapper';
 import type { Service, DetailedService } from './types/ApiWrapper';
 import type { ServiceResponse } from './types/ServiceResponse';
-import type { ConfigureService } from './types/ConfigureService';
+import type { RequestUserFilterDTO, UserFilterDTO } from './types/Filter';
 
 /**
  * JWT Login mock functionality with accessToken + refreshToken support
@@ -316,11 +316,17 @@ export function replaceWithMock(mockApi: ApiWrapper): void {
 			return {
 				status: {
 					code: 200,
-					description: 'OK'
+					description: 'Success'
 				},
 				response: {
-					0: ['Example response variable'],
-					1: ['Second example response variable']
+					'1': ['John'],
+					'2': ['Doe'],
+					'3': ['30'],
+					'4': ['Laptop'],
+					'5': ['1200'],
+					'6': ['Intel Core i7', '16GB RAM', '512GB SSD'],
+					'7': ['Chihuahua'],
+					'8': ['Mexico']
 				}
 			};
 		} else {
@@ -334,63 +340,26 @@ export function replaceWithMock(mockApi: ApiWrapper): void {
 					description: 'Success'
 				},
 				response: {
-					0: [textContent]
+					'-1': [textContent]
 				}
 			};
 		}
 	};
 
-	/**
-	 * 
-	 {
-		"code": "INTERNAL_ERROR",
-		"message": "Unexpected error occurred",
-		"details": "could not execute statement [Column 'name' cannot be null] [insert into Endpoints (active,category_id,description,method,name,url,user_id) values (?,?,?,?,?,?,?)]; SQL [insert into Endpoints (active,category_id,description,method,name,url,user_id) values (?,?,?,?,?,?,?)]; constraint [null]",
-		"timestamp": "2025-05-29T20:56:45.4040164",
-		"traceId": "1b4d45ff-f96c-42e7-9624-c7f48d96c3e6"
-	}
-	 */
+	const savedFiltersMap: Map<number, number[]> = new Map();
 
-	mockApi.createService = async function (service: ConfigureService): Promise<Service> {
-		console.log(service);
-		return {
-			endpointId: 79,
-			name: 'test endpoint',
-			description: 'This is a test endpoint'
-		};
+	mockApi.getUserFilters = async function (endpointId: number): Promise<UserFilterDTO[]> {
+		const saved = savedFiltersMap.get(endpointId) ?? [];
+		return saved.map((responsePatternId) => ({ responsePatternId }));
 	};
 
-	/*mockApi.getHistoryAdmin = async function (): Promise<HistoryService[]> {
-		return Array.from({ length: 12 }, (_, i) => {
-			const dayOffset = Math.floor(i / 3);
-			const date = new Date();
-			date.setDate(date.getDate() - dayOffset);
-			date.setSeconds(date.getSeconds() + (i % 3) * 10);
-
-			return {
-				historyId: i + 2,
-				email: `user${i + 1}@example.com`,
-				endpointName: 'Get TEST',
-				endpointDescription:
-					'Descripción de un endpoint para obtener un recurso y así poder ver el resultado',
-				createdAt: date.toISOString()
-			};
-		});
-
-	};
-
-	mockApi.getHistoryUser = async function (userId: number): Promise<HistoryService[]> {
-		return Array.from({ length: 5 }, (_, i) => {
-			const date = new Date();
-			date.setDate(date.getDate() - i);
-			return {
-				historyId: i + 100,
-				email: `user${userId}@example.com`,
-				endpointName: 'Get TEST',
-				endpointDescription: 'Historial filtrado por usuario',
-				createdAt: date.toISOString()
-			};
-		});
+	mockApi.createUserFilters = async function (
+		endpointId: number,
+		body: RequestUserFilterDTO
+	): Promise<UserFilterDTO[]> {
+		// Guardamos los filtros seleccionados
+		savedFiltersMap.set(endpointId, body);
+		return body.map((responsePatternId) => ({ responsePatternId }));
 	};
 	mockApi.getDetailedHistory = async function (
 		id: number
@@ -425,37 +394,4 @@ export function replaceWithMock(mockApi: ApiWrapper): void {
 			}
 		};
 	};
-}
-
-// Auto-initialize mocks in development mode (only if VITE_USE_MOCK is true)
-// Check window.ENV first (for E2E tests), then fall back to import.meta.env
-function shouldUseMock(): boolean {
-	// @ts-expect-error - window.ENV is set by E2E tests for dynamic configuration
-	if (typeof window !== 'undefined' && window.ENV) {
-		// @ts-expect-error - window.ENV.VITE_USE_MOCK is dynamically set by E2E test configuration
-		return window.ENV.VITE_USE_MOCK !== 'false';
-	}
-	return import.meta.env.VITE_USE_MOCK !== 'false';
-}
-
-function getApiUrl(): string {
-	// @ts-expect-error - window.ENV is set by E2E tests for dynamic configuration
-	if (typeof window !== 'undefined' && window.ENV) {
-		// @ts-expect-error - window.ENV.VITE_API_URL is dynamically set by E2E test configuration
-		return window.ENV.VITE_API_URL || import.meta.env.VITE_API_URL;
-	}
-	return import.meta.env.VITE_API_URL;
-}
-
-if (browser && import.meta.env.MODE === 'development' && shouldUseMock()) {
-	// Import and setup mocks automatically
-	import('./ApiWrapper').then(({ api }) => {
-		addJWTMockToApiWrapper(api);
-		replaceWithMock(api);
-		console.log('🔧 Development mocks enabled for ApiWrapper');
-	});
-} else if (browser && !shouldUseMock()) {
-	console.log('🌐 Using REAL backend:', getApiUrl());
-}
-	*/
 }

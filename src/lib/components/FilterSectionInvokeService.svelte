@@ -9,9 +9,14 @@
 	const selectedFilters = new Set<number>(selected);
 	const dispatch = createEventDispatcher();
 
-	function toggleFilter(id: number) {
+	function toggleFilter(id: number, event: Event) {
 		if (selectedFilters.has(id)) {
-			selectedFilters.delete(id);
+			if (selectedFilters.size === 1) {
+				event.preventDefault();
+				alert('At least one filter must be selected.');
+			} else {
+				selectedFilters.delete(id);
+			}
 		} else {
 			selectedFilters.add(id);
 		}
@@ -24,7 +29,7 @@
 	}
 </script>
 
-<main class="flex flex-1 flex-col gap-6">
+<main>
 	<div>
 		<HeadingFormat variant="primary">Edit filters</HeadingFormat>
 		<TextFormat size="body">
@@ -32,18 +37,20 @@
 		</TextFormat>
 	</div>
 
-	<div class="mt-6 flex flex-col gap-4">
+	<div class="mt-6 ml-7 flex flex-col gap-4">
 		{#each filters as filter (filter.responsePatternId)}
-			<label class="flex cursor-pointer items-start gap-3">
-				<CheckBox
-					checked={isChecked(filter.responsePatternId)}
-					on:click={() => toggleFilter(filter.responsePatternId)}
-				/>
-				<div>
-					<TextFormat as="span" variant="primary" size="subtitle">{filter.name}</TextFormat>
-					<TextFormat as="p" size="body">{filter.description}</TextFormat>
+			<div>
+				<div class="inline-flex items-center gap-2">
+					<CheckBox
+						checked={isChecked(filter.responsePatternId)}
+						on:click={(event: Event) => toggleFilter(filter.responsePatternId, event)}
+					/>
+					<h1 class="text-lg font-bold text-gray-900">
+						{filter.name}
+					</h1>
 				</div>
-			</label>
+				<div class="text-md text-gray-500">{filter.description}</div>
+			</div>
 		{/each}
 	</div>
 </main>

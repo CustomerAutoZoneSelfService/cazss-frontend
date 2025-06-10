@@ -89,6 +89,7 @@
 					userInitial={card.email?.charAt(0).toUpperCase() || 'U'}
 					historyCard={true}
 					onClick={() => handleCardClick(card)}
+					description={card.description}
 				/>
 			{/each}
 		</div>
@@ -105,6 +106,7 @@
 					userInitial={card.email?.charAt(0).toUpperCase() || 'U'}
 					historyCard={true}
 					onClick={() => handleCardClick(card)}
+					description={card.description}
 				/>
 			{/each}
 		</div>
@@ -121,6 +123,7 @@
 					userInitial={card.email?.charAt(0).toUpperCase() || 'U'}
 					historyCard={true}
 					onClick={() => handleCardClick(card)}
+					description={card.description}
 				/>
 			{/each}
 		</div>
