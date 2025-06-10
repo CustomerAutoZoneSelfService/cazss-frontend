@@ -44,7 +44,7 @@
 			if ('key' in lastItem) {
 				if (lastItem.key.length > 0) addNewRow();
 			} else {
-				if (lastItem.name.length > 0) addNewRow();
+				if (lastItem.name.length > 0 || lastItem.responsePatternId !== undefined) addNewRow();
 			}
 		}
 	});
@@ -122,6 +122,9 @@
 <table data-testid="variable-table" class="w-full table-auto border-collapse">
 	<thead>
 		<tr class="bg-gray-100">
+			{#if !('requestVariableType' in prompt)}
+				<th class="border border-gray-300 p-2 text-left">ID</th>
+			{/if}
 			<th class="border border-gray-300 p-2 text-left"
 				>{'requestVariableType' in prompt ? 'Key' : 'Name'}</th
 			>
@@ -168,19 +171,26 @@
 			{:else}
 				<tr class="hover:bg-gray-50">
 					<th data-testid={generateTestId(index, 0)} class="border border-gray-300 p-2">
-						<input onkeydown={onKeyDown} bind:value={variable.name} class="w-full p-1" />
+						<input
+							onkeydown={onKeyDown}
+							bind:value={variable.responsePatternId}
+							class="w-full p-1"
+						/>
 					</th>
 					<th data-testid={generateTestId(index, 1)} class="border border-gray-300 p-2">
-						<input onkeydown={onKeyDown} bind:value={variable.parentId} class="w-full p-1" />
+						<input onkeydown={onKeyDown} bind:value={variable.name} class="w-full p-1" />
 					</th>
 					<th data-testid={generateTestId(index, 2)} class="border border-gray-300 p-2">
+						<input onkeydown={onKeyDown} bind:value={variable.parentId} class="w-full p-1" />
+					</th>
+					<th data-testid={generateTestId(index, 3)} class="border border-gray-300 p-2">
 						<input onkeydown={onKeyDown} bind:value={variable.pattern} class="w-full p-1" />
 					</th>
-					<th data-testid={generateTestId(index, 3)} class="border border-gray-300 p-2 text-center">
+					<th data-testid={generateTestId(index, 4)} class="border border-gray-300 p-2 text-center">
 						<input type="checkbox" onkeydown={onKeyDown} bind:checked={variable.isLeaf} />
 					</th>
 					<th
-						data-testid={generateTestId(index, 4)}
+						data-testid={generateTestId(index, 5)}
 						class="group flex w-lg items-center border border-gray-300 p-2"
 					>
 						<input onkeydown={onKeyDown} bind:value={variable.description} class="w-full p-1" />

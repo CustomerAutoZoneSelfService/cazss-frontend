@@ -293,16 +293,17 @@
 	}
 
 	function saveResponseData() {
-		console.log($state.snapshot(selectedResponseDescription));
 		const responsePatternsData = responsePatternsTable?.getVariables() as ResponsePattern[];
 		const statusCodeIndex = $state
 			.snapshot(endpoint.responses)
 			.findIndex((response) => response.statusCode === $state.snapshot(selectedStatusCode));
 		if (statusCodeIndex !== -1) {
+			//Existing Status Code
 			endpoint.responses[statusCodeIndex].patterns = responsePatternsData ?? [];
 			endpoint.responses[statusCodeIndex].description =
 				$state.snapshot(selectedResponseDescription) ?? '';
 		} else {
+			//New Status Code
 			endpoint.responses.push({
 				statusCode: $state.snapshot(selectedStatusCode) as number,
 				description: $state.snapshot(selectedResponseDescription) ?? '',
@@ -359,7 +360,7 @@
 			return true;
 		} catch (error) {
 			console.log(error);
-			alert('There was an error cupdating the endpoint');
+			alert('There was an error updating the endpoint');
 			return false;
 		}
 	}
