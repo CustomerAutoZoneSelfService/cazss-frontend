@@ -1,7 +1,7 @@
 <script lang="ts">
 	//import HeadingFormat from '$lib/components/HeadingFormat.svelte';
 	import type { Params } from './+page';
-	import { getContext } from 'svelte';
+	import { getContext, onMount } from 'svelte';
 	import TextArea from '$lib/components/TextArea.svelte';
 	import InputTable from '$lib/components/InputTable.svelte';
 	import Button from '$lib/components/Button.svelte';
@@ -19,6 +19,8 @@
 	import type ApiWrapper from '$lib/ApiWrapper';
 	import type { Service } from '$lib/types/ApiWrapper';
 	import Spinner from '$lib/components/Spinner.svelte';
+	import type { Category } from '$lib/types/Category';
+	import type { AuthenticationStrategy } from '$lib/types/AuthenticationStrategy';
 
 	let api: ApiWrapper = getContext('api');
 	let { data }: { data: Params['params'] } = $props();
@@ -43,63 +45,32 @@
 
 	let isPageLoading = $state(false);
 
-	if (!endpointCreationMode) {
-		console.log('Edit mode');
-		fetchEndpoint(data.id!);
-	} else {
-		console.log('Create mode');
-	}
-	// async function getCategories() {
-	// 	try {
-	// 		const apiCategories = await api.getCategories();
-	// 		// Suponiendo que cada categoría tiene un id y un name
-	// 		let categories = apiCategories.map((category) => ({
-	// 			value: category.id, // o category.categoryId según tu backend
-	// 			label: category.name
-	// 		}));
-
-	// 		return categories;
-	// 	} catch (error) {
-	// 		console.error('Error fetching categories:', error);
-	// 	}
-	// }
-
-	// import { onMount } from 'svelte';
-
-	// onMount(() => {
-	// 	getCategories();
-	// });
-
-	// let categories = $state<{ value: number; label: string }[]>([]);
+	onMount(async () => {
+		isPageLoading = true;
+		if (!endpointCreationMode) {
+			console.log('Edit mode');
+			fetchEndpoint(data.id!);
+		} else {
+			console.log('Create mode');
+		}
+		fetchCategories();
+		await fetchAuthStrategies();
+		isPageLoading = false;
+	});
 
 	const methodNames = ['GET', 'POST', 'PUT', 'DELETE'];
 	const methods = methodNames.map((method) => ({ value: method, label: method }));
 
-	let authNames = ['BEARER_TOKEN_1', 'BEARER_TOKEN_2'];
-	let authStrategies = authNames.map((authStrategy, index) => ({
-		value: index,
-		label: authStrategy
-	}));
+	let authStrategies = $state<{ value: number | null; label: string }[]>([
+		{
+			value: null,
+			label: 'NULL'
+		}
+	]);
 
-	let categoryNames = ['INVOICE', 'CACHE'];
-	let categories = categoryNames.map((category, index) => ({ value: index, label: category }));
-
-	// let statusCodeNames = ['200', '201', '202', '204', '400', '401', '403', '404', '500'];
-	// let statusDescriptions = [
-	// 	'OK',
-	// 	'Created',
-	// 	'Accepted',
-	// 	'No Content',
-	// 	'Bad Request',
-	// 	'Unauthorized',
-	// 	'Forbidden',
-	// 	'Not Found',
-	// 	'Internal Server Error'
-	// ];
+	let categories = $state<{ value: number; label: string }[]>([]);
 
 	let statusCodes = $state<{ value: number; label: string }[]>([]);
-	// 	statusCodeNames.map((statusCode) => ({ value: statusCode, label: statusCode }))
-	// );
 
 	let newStatusCode = $state('');
 	let selectedStatusCode = $state<number | ''>('');
@@ -134,6 +105,8 @@
 	$effect(() => {
 		if (selectedStatusCode !== '' && selectedStatusCode !== null) {
 			pushResponseInfo();
+		} else if (statusCodes != null && statusCodes.length > 0) {
+			selectedStatusCode = statusCodes[0].value;
 		}
 	});
 
@@ -312,6 +285,9 @@
 		}
 	}
 
+	function sleep(ms: number) {
+		return new Promise((resolve) => setTimeout(resolve, ms));
+	}
 	async function configureEndpoint() {
 		if ($state.snapshot(selectedStatusCode) != '') saveResponseData();
 		let operationSucceeded: boolean = false;
@@ -329,18 +305,14 @@
 	//Calling the API to create the endpoint
 	async function createEndpoint(endpointData: ConfigureService): Promise<boolean> {
 		try {
-			isPageLoading = true;
 			console.log('Endpoint Data:', endpointData);
-			endpointData.categoryId = 59;
-			endpointData.authenticationStrategy = null;
 			const response: Service = await api.createService(endpointData);
 			console.log(response);
 			alert('Endpoint created successfully');
-			isPageLoading = false;
 			return true;
 		} catch (error) {
 			console.log(error);
-			alert('There was an error creating the endpoint');
+			alert(`There was an error creating the endpoint: ${error}`);
 			return false;
 		}
 	}
@@ -350,17 +322,13 @@
 		endpointData: ConfigureService
 	): Promise<boolean> {
 		try {
-			isPageLoading = true;
-			endpointData.categoryId = 59;
-			endpointData.authenticationStrategy = null;
 			const response: ConfigureService = await api.updateService(endpointId, endpointData);
 			console.log(response);
-			isPageLoading = false;
 			alert('Endpoint updated successfully');
 			return true;
 		} catch (error) {
 			console.log(error);
-			alert('There was an error updating the endpoint');
+			alert(`There was an error updating the endpoint: ${error}`);
 			return false;
 		}
 	}
@@ -371,6 +339,28 @@
 			const response: ConfigureService = await api.getServiceByIdForEdit(endpointId);
 			endpoint = response;
 			console.log($state.snapshot(endpoint));
+		} catch (error) {
+			console.log(error);
+		}
+	}
+
+	async function fetchCategories() {
+		try {
+			const categoriesData: Category[] = await api.getAllCategories();
+			for (const category of categoriesData) {
+				categories.push({ value: category.categoryId, label: category.name });
+			}
+		} catch (error) {
+			console.log(error);
+		}
+	}
+
+	async function fetchAuthStrategies() {
+		try {
+			const authStrategyData: AuthenticationStrategy[] = await api.getAllAuthenticationStrategies();
+			for (const authStrategy of authStrategyData) {
+				authStrategies.push({ value: authStrategy.authStrategyId, label: authStrategy.name });
+			}
 		} catch (error) {
 			console.log(error);
 		}

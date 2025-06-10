@@ -9,6 +9,8 @@ import type { RequestService } from './types/RequestService';
 import type { ServiceResponse } from './types/ServiceResponse';
 import type { RequestUserFilterDTO, UserFilterDTO } from './types/Filter';
 import { browser } from '$app/environment';
+import type { Category } from './types/Category';
+import type { AuthenticationStrategy } from './types/AuthenticationStrategy';
 
 // Use environment variable for base URL, fallback to localhost for development
 const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080';
@@ -466,8 +468,6 @@ export class ApiWrapper {
 		return this.request(path, { method: 'DELETE' });
 	}
 
-	// Legacy API endpoints (maintaining backward compatibility)
-
 	static getHistoryUser(): HistoryService[] | PromiseLike<HistoryService[]> {
 		throw new Error('Method not implemented.');
 	}
@@ -528,6 +528,14 @@ export class ApiWrapper {
 		body: RequestUserFilterDTO
 	): Promise<UserFilterDTO[]> {
 		return this.put<UserFilterDTO[]>(`/responses/${endpointId}/user-filters`, body);
+	}
+
+	public getAllCategories() {
+		return this.get<Category[]>('/categories');
+	}
+
+	public getAllAuthenticationStrategies() {
+		return this.get<AuthenticationStrategy[]>('/authentication-strategies');
 	}
 
 	/**
