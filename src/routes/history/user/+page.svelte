@@ -8,6 +8,8 @@
 	import { formatDateHistoryCards } from '$lib/utils/dates';
 	import HistoryCardDetailsPanel from '$lib/components/HistoryCardDetailsPanel.svelte';
 	import LoadingSVG from '$lib/components/LoadingSVG.svelte';
+	import { user } from '$lib/stores/user';
+	import { get } from 'svelte/store';
 
 	let api: ApiWrapper = getContext('api');
 
@@ -38,8 +40,13 @@
 		async function loadHistory() {
 			isLoading = true;
 			try {
-				// TODO: CHANGE SO IT GETS THE USER ID FROM THE URL OR SESSION OR CONTEXT OR SOMETHING
-				historyEndpoints = await api.getHistoryUser(90);
+				const currentUser = get(user);
+				if (!currentUser) {
+					return;
+				}
+
+				const userId = parseInt(currentUser.user_id);
+				historyEndpoints = await api.getHistoryUser(userId);
 				const splitHistory = splitHistoryByDate(historyEndpoints);
 				todayHistoryCards = splitHistory.today;
 				yesterdayHistoryCards = splitHistory.yesterday;

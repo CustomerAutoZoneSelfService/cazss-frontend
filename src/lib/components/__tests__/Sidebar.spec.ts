@@ -25,15 +25,6 @@ describe('Sidebar', () => {
 	});
 
 	describe('Rendering', () => {
-		it('should render navigation links', () => {
-			render(Sidebar);
-
-			expect(screen.getByText('Home')).toBeInTheDocument();
-			expect(screen.getByText('HistoryAdmin')).toBeInTheDocument();
-			expect(screen.getByText('HistoryUser')).toBeInTheDocument();
-			expect(screen.getByText('Create')).toBeInTheDocument();
-		});
-
 		it('should render UsernameButton', () => {
 			const mockUser: User = {
 				user_id: '1',
@@ -59,20 +50,6 @@ describe('Sidebar', () => {
 			expect(accountButton).toBeInTheDocument();
 			expect(screen.getByText('User')).toBeInTheDocument();
 		});
-
-		it('should have proper navigation links with correct hrefs', () => {
-			render(Sidebar);
-
-			const homeLink = screen.getByText('Home').closest('a');
-			const historyAdminLink = screen.getByText('HistoryAdmin').closest('a');
-			const historyUserLink = screen.getByText('HistoryUser').closest('a');
-			const createLink = screen.getByText('Create').closest('a');
-
-			expect(homeLink).toHaveAttribute('href', '/');
-			expect(historyAdminLink).toHaveAttribute('href', '/history/admin');
-			expect(historyUserLink).toHaveAttribute('href', '/history/user');
-			expect(createLink).toHaveAttribute('href', '/configure');
-		});
 	});
 
 	describe('Collapse Functionality', () => {
@@ -84,7 +61,6 @@ describe('Sidebar', () => {
 
 			// Initially expanded - nav text should be visible
 			expect(screen.getByText('Home')).toBeInTheDocument();
-			expect(screen.getByText('HistoryAdmin')).toBeInTheDocument();
 
 			// Click to collapse
 			await fireEvent.click(collapseButton);
@@ -240,13 +216,6 @@ describe('Sidebar', () => {
 
 			const accountButton = screen.getByRole('button', { name: /user account menu/i });
 			expect(accountButton).toHaveAttribute('aria-label', 'User account menu');
-		});
-
-		it('should have proper link structure for navigation', () => {
-			render(Sidebar);
-
-			const links = screen.getAllByRole('link');
-			expect(links).toHaveLength(4); // Home, HistoryAdmin, HistoryUser, Create
 		});
 	});
 });

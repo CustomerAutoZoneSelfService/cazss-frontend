@@ -36,6 +36,7 @@
 		active: false,
 		method: 'GET',
 		url: '',
+		category: undefined,
 		responses: [],
 		filters: [],
 		variables: [],

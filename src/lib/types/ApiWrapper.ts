@@ -29,6 +29,11 @@ export type DetailedService = {
 	active: boolean;
 	method: HTTPMethod;
 	url: string;
+	category?: {
+		categoryId: number;
+		name: string;
+		color: string;
+	};
 	responses: ResponseStatus[];
 	filters: Filter[];
 	variables: RequestVariableString[];

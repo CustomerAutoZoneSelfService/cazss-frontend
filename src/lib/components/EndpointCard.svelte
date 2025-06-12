@@ -1,6 +1,7 @@
 <script lang="ts">
 	import Pencil from 'lucide-svelte/icons/pencil';
 	import { goto } from '$app/navigation';
+	import { user } from '$lib/stores/user';
 
 	let {
 		id,
@@ -22,8 +23,7 @@
 
 	let isStarred = $state(starred);
 
-	//Hardcoded role in the meantime
-	let role = $state('ADMIN');
+	let role = $state($user?.role ?? '');
 
 	function toggleStarred(event: MouseEvent) {
 		event.stopPropagation();
@@ -65,7 +65,7 @@
 			>
 				{title}
 			</div>
-			{#if (role === 'ADMIN' || role === 'CONFIGURATOR') && !historyCard}
+			{#if (role === 'ADMIN' || role === 'CONFIG') && !historyCard}
 				<button
 					class="hover:bg-accent-red-dark ml-auto w-8 items-center justify-center rounded-full group-hover:text-white"
 					onclick={handleConfigureEndpoint}
