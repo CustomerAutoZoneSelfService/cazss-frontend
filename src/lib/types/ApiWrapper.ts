@@ -22,6 +22,13 @@ export type Service = {
 	description: string;
 };
 
+export type CategoryWithServices = {
+	categoryId: number,
+	name: string,
+	color: string
+	endpoints: Service[]
+}
+
 export type DetailedService = {
 	id: number; // TODO Check this later
 	name: string;

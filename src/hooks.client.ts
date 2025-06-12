@@ -22,6 +22,7 @@ export async function handleClientError() {
 		// Use dynamic import to avoid hot module reloading issues
 		const { api } = await import('$lib/ApiWrapper');
 
+
 		// Check if access token exists and is valid
 		const currentToken = api.getToken();
 		const hasValidToken = currentToken && !api.isTokenExpired();

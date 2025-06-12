@@ -3,7 +3,8 @@ import type {
 	Service,
 	DetailedService,
 	HistoryService,
-	DetailedHistoryService
+	DetailedHistoryService,
+	CategoryWithServices
 } from './types/ApiWrapper';
 import type { RequestService } from './types/RequestService';
 import type { ServiceResponse } from './types/ServiceResponse';
@@ -473,7 +474,7 @@ export class ApiWrapper {
 	}
 
 	public getAllServices() {
-		return this.get<Service[]>('/services');
+		return this.get<CategoryWithServices[]>('/services');
 	}
 
 	public getServiceById(id: number) {
