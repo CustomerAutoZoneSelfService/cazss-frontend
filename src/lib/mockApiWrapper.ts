@@ -1,5 +1,5 @@
 import ApiWrapper from '$lib/ApiWrapper';
-import type { Service, DetailedService, CategoryWithServices } from './types/ApiWrapper';
+import type { DetailedService, CategoryWithServices } from './types/ApiWrapper';
 import type { ServiceResponse } from './types/ServiceResponse';
 import type { RequestUserFilterDTO, UserFilterDTO } from './types/Filter';
 
@@ -231,40 +231,40 @@ export function addJWTMockToApiWrapper(mockApi: ApiWrapper): void {
 }
 
 export function replaceWithMock(mockApi: ApiWrapper): void {
-	addJWTMockToApiWrapper(mockApi)
+	addJWTMockToApiWrapper(mockApi);
 	mockApi.getAllServices = async function (): Promise<CategoryWithServices[]> {
 		return [
 			{
 				categoryId: 797,
-				name: "chango",
-				color: "#425af5",
+				name: 'chango',
+				color: '#425af5',
 				endpoints: [
 					{
 						endpointId: 52,
-						name: "Test Service Uno Hola",
-						description: "AAAAAA"
+						name: 'Test Service Uno Hola',
+						description: 'AAAAAA'
 					},
 					{
 						endpointId: 66,
-						name: "Test Service Dos",
-						description: "AAAAAA"
+						name: 'Test Service Dos',
+						description: 'AAAAAA'
 					}
 				]
 			},
 			{
 				categoryId: 888,
-				name: "chango DOS",
-				color: "#425af5",
+				name: 'chango DOS',
+				color: '#425af5',
 				endpoints: [
 					{
 						endpointId: 52,
-						name: "Hola",
-						description: "AAAAAA"
+						name: 'Hola',
+						description: 'AAAAAA'
 					},
 					{
 						endpointId: 66,
-						name: "Test Uno Dos",
-						description: "AAAAAA"
+						name: 'Test Uno Dos',
+						description: 'AAAAAA'
 					}
 				]
 			}

@@ -17,7 +17,7 @@
 
 	onMount(async () => {
 		endpoints = await api.getAllServices();
-		console.log(endpoints)
+		console.log(endpoints);
 		filteredEndpoints = [...endpoints];
 
 		// Check for pre-filled data from history
@@ -27,7 +27,7 @@
 			// Find the endpoint that matches the name from history
 
 			endpoints.forEach((c) => {
-				selectedEndpoint = c.endpoints.find((ep: Service) => ep.name === data.endpointName) || null;
+				selectedEndpoint = c.services.find((ep: Service) => ep.name === data.endpointName) || null;
 			});
 
 			prefilledInputs = data.inputs || [];
@@ -44,8 +44,11 @@
 	});
 
 	function handleFilter(allData: string[]) {
+		console.log(endpoints)
 		const normalizedSearchStrings = allData.map((str) => str.toLowerCase().trim());
 		let tempCategories = [];
+
+		console.log(allData)
 
 		const matchesAnySearchString = (text: string): boolean => {
 			const normalizedText = text.toLowerCase();
@@ -55,7 +58,7 @@
 		for (const category of filteredEndpoints) {
 			const categoryMatches = matchesAnySearchString(category.name);
 
-			const matchingEndpoints = category.endpoints.filter(
+			const matchingEndpoints = category.services.filter(
 				(endpoint: Service) =>
 					matchesAnySearchString(endpoint.name) || matchesAnySearchString(endpoint.description)
 			);
@@ -87,11 +90,15 @@
 				<Spinner size="w-12 h-12" color="border-[#af1624]" variant="dots" />
 			{:else}
 				<div class="flex w-full flex-col">
-					{#each filteredEndpoints as category (category.categoryId)}
+					{#each endpoints as category (category.categoryId)}
 						<div class="flex w-full flex-col">
-							<h1>{category.name}</h1>
+							<h1
+								style="color: {category.color};"
+							>
+								{category.name}
+							</h1>
 							<div class="flex h-full w-full justify-around">
-								{#each category.endpoints as endpoint (endpoint.endpointId)}
+								{#each category.services as endpoint (endpoint.endpointId)}
 									<EndpointCard
 										id={endpoint.endpointId}
 										title={endpoint.name}

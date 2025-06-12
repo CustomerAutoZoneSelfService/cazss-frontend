@@ -23,11 +23,11 @@ export type Service = {
 };
 
 export type CategoryWithServices = {
-	categoryId: number,
-	name: string,
-	color: string
-	endpoints: Service[]
-}
+	categoryId: number;
+	name: string;
+	color: string;
+	services: Service[];
+};
 
 export type DetailedService = {
 	id: number; // TODO Check this later
