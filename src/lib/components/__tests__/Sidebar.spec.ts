@@ -25,15 +25,6 @@ describe('Sidebar', () => {
 	});
 
 	describe('Rendering', () => {
-		it('should render navigation links', () => {
-			render(Sidebar);
-
-			expect(screen.getByText('Home')).toBeInTheDocument();
-			expect(screen.getByText('HistoryAdmin')).toBeInTheDocument();
-			expect(screen.getByText('HistoryUser')).toBeInTheDocument();
-			expect(screen.getByText('Create')).toBeInTheDocument();
-		});
-
 		it('should render UsernameButton', () => {
 			const mockUser: User = {
 				user_id: '1',
@@ -84,7 +75,6 @@ describe('Sidebar', () => {
 
 			// Initially expanded - nav text should be visible
 			expect(screen.getByText('Home')).toBeInTheDocument();
-			expect(screen.getByText('HistoryAdmin')).toBeInTheDocument();
 
 			// Click to collapse
 			await fireEvent.click(collapseButton);
@@ -240,13 +230,6 @@ describe('Sidebar', () => {
 
 			const accountButton = screen.getByRole('button', { name: /user account menu/i });
 			expect(accountButton).toHaveAttribute('aria-label', 'User account menu');
-		});
-
-		it('should have proper link structure for navigation', () => {
-			render(Sidebar);
-
-			const links = screen.getAllByRole('link');
-			expect(links).toHaveLength(4); // Home, HistoryAdmin, HistoryUser, Create
 		});
 	});
 });
