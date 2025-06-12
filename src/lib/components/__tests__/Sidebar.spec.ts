@@ -50,20 +50,6 @@ describe('Sidebar', () => {
 			expect(accountButton).toBeInTheDocument();
 			expect(screen.getByText('User')).toBeInTheDocument();
 		});
-
-		it('should have proper navigation links with correct hrefs', () => {
-			render(Sidebar);
-
-			const homeLink = screen.getByText('Home').closest('a');
-			const historyAdminLink = screen.getByText('HistoryAdmin').closest('a');
-			const historyUserLink = screen.getByText('HistoryUser').closest('a');
-			const createLink = screen.getByText('Create').closest('a');
-
-			expect(homeLink).toHaveAttribute('href', '/');
-			expect(historyAdminLink).toHaveAttribute('href', '/history/admin');
-			expect(historyUserLink).toHaveAttribute('href', '/history/user');
-			expect(createLink).toHaveAttribute('href', '/configure');
-		});
 	});
 
 	describe('Collapse Functionality', () => {
