@@ -4,8 +4,11 @@
 	import ClockIcon from 'lucide-svelte/icons/clock';
 	import PlusIcon from 'lucide-svelte/icons/plus';
 	import UsernameButton from '$lib/components/UsernameButton.svelte';
+	import { user } from '$lib/stores/user';
 
-	let collapsed = false;
+	let collapsed = $state(false);
+
+	let role = $derived($user?.role ?? '');
 
 	function toggleCollapse() {
 		collapsed = !collapsed;
@@ -16,7 +19,7 @@
 	class="fixed top-4 z-50 transition-all duration-300"
 	style="left: {collapsed ? '4.5rem' : '13.5rem'}"
 >
-	<button on:click={toggleCollapse} aria-label="Expandir o colapsar menú">
+	<button onclick={toggleCollapse} aria-label="Expandir o colapsar menú">
 		<PanelRightIcon size={24} color="black" class="cursor-pointer text-inherit" />
 	</button>
 </div>
@@ -42,20 +45,20 @@
 					{/if}
 				</div>
 			</a>
-
-			<a href="/history/admin">
-				<div
-					class="nav-item flex cursor-pointer items-center space-x-3 rounded-lg p-3 {collapsed
-						? 'justify-center'
-						: ''}"
-				>
-					<ClockIcon size={24} color="white" class="shrink-0 text-inherit" />
-					{#if !collapsed}
-						<span class="text-white">HistoryAdmin</span>
-					{/if}
-				</div>
-			</a>
-
+			{#if role === 'ADMIN' || role === 'AUDITOR'}
+				<a href="/history/admin">
+					<div
+						class="nav-item flex cursor-pointer items-center space-x-3 rounded-lg p-3 {collapsed
+							? 'justify-center'
+							: ''}"
+					>
+						<ClockIcon size={24} color="white" class="shrink-0 text-inherit" />
+						{#if !collapsed}
+							<span class="text-white">HistoryAdmin</span>
+						{/if}
+					</div>
+				</a>
+			{/if}
 			<a href="/history/user">
 				<div
 					class="nav-item flex cursor-pointer items-center space-x-3 rounded-lg p-3 {collapsed
@@ -68,19 +71,20 @@
 					{/if}
 				</div>
 			</a>
-
-			<a href="/configure">
-				<div
-					class="nav-item flex cursor-pointer items-center space-x-3 rounded-lg p-3 {collapsed
-						? 'justify-center'
-						: ''}"
-				>
-					<PlusIcon name="Plus" size={24} color="white" class="shrink-0 text-inherit" />
-					{#if !collapsed}
-						<span class="text-white">Create</span>
-					{/if}
-				</div>
-			</a>
+			{#if role === 'ADMIN' || role === 'CONFIG'}
+				<a href="/configure">
+					<div
+						class="nav-item flex cursor-pointer items-center space-x-3 rounded-lg p-3 {collapsed
+							? 'justify-center'
+							: ''}"
+					>
+						<PlusIcon name="Plus" size={24} color="white" class="shrink-0 text-inherit" />
+						{#if !collapsed}
+							<span class="text-white">Create</span>
+						{/if}
+					</div>
+				</a>
+			{/if}
 		</nav>
 		<!-- User Account Section -->
 		<div class="p-2">
