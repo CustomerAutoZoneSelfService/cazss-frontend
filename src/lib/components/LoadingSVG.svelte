@@ -1,9 +1,9 @@
 <svg
-	class="mr-3 -ml-1 h-10 w-10 animate-spin text-white"
+	class="mr-3 -ml-1 h-10 w-10 animate-spin"
 	xmlns="http://www.w3.org/2000/svg"
 	fill="none"
 	viewBox="0 0 24 24"
-	style="display: inline; vertical-align: -0.05em"
+	style="display: inline; vertical-align: -0.05em; color: #af1624"
 >
 	<circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
 	<path

@@ -7,10 +7,10 @@
 	 */
 
 	// Define the available HTML tags for text
-	type TextTag = 'p' | 'span' | 'div' | 'label';
+	type TextTag = 'p' | 'span' | 'div' | 'label' | 'h1';
 
 	// Define the color variant for the text
-	type TextVariant = 'primary' | 'secondary' | 'muted' | 'none';
+	type TextVariant = 'primary' | 'secondary' | 'muted' | 'none' | 'alert';
 
 	// Define the size options for the text
 	type TextSize = 'subtitle' | 'body' | 'caption' | 'label';
@@ -22,23 +22,24 @@
 
 	let baseFont = 'font-inter';
 
-	// Different variants (color themes)
+	// Color styles
 	$: variantStyles = {
 		primary: 'text-gray-900',
 		secondary: 'text-white',
-		muted: 'text-gray-400',
-		none: ''
+		muted: 'text-gray-500',
+		none: '',
+		alert: 'text-red-100'
 	}[variant];
 
-	// Different sizes/importance levels with their specific styles
+	// Size styles (subtitle overrides variant color and adds custom spacing)
 	$: sizeStyles = {
-		subtitle: 'text-lg font-medium leading-normal',
+		subtitle: 'py-5 text-lg font-bold text-gray-500',
 		body: 'text-base font-normal leading-relaxed',
 		caption: 'text-sm font-normal leading-normal',
 		label: 'text-sm font-medium leading-tight'
 	}[size];
 
-	// Form final Tailwind Class with all the arguments
+	// Combine all classes
 	$: combinedClasses = `${baseFont} ${variantStyles} ${sizeStyles} ${className}`.trim();
 </script>
 

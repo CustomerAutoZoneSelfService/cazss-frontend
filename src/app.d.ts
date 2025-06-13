@@ -8,6 +8,9 @@ declare global {
 		// interface PageState {}
 		// interface Platform {}
 	}
+	interface Window {
+		E2E_MOCKED?: boolean; // DON'T MOVE THIS INTO APP. IT REDECLARES IT AS A SEPARATE INTERFACE
+	}
 }
 
 export {};

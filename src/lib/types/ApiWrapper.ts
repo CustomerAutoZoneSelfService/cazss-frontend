@@ -1,7 +1,10 @@
 import type { RequestVariableString } from './RequestVariable';
 import type { Filter } from './Filter';
+import type { Endpoint } from './Endpoint';
 
 export type HTTPMethod = 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
+
+export type RequestVariableTypes = 'HEADER' | 'QUERY_STRING' | 'BODY' | 'INLINE';
 
 export type KeyValue = {
 	key: string;
@@ -26,8 +29,41 @@ export type DetailedService = {
 	active: boolean;
 	method: HTTPMethod;
 	url: string;
+	category?: {
+		categoryId: number;
+		name: string;
+		color: string;
+	};
 	responses: ResponseStatus[];
 	filters: Filter[];
 	variables: RequestVariableString[];
 	requestBody: string; // ? This should be the template
+};
+
+export type DetailedHistoryService = {
+	historyId: number;
+	statusCode: number;
+	endpoint: {
+		endpointId: number;
+		name: string;
+		description: string;
+	};
+	historyData: {
+		request: Record<string, unknown>;
+		response: Record<string, unknown>;
+	};
+};
+
+export type HistoryService = {
+	endpoint: Endpoint;
+	created: string | number | Date;
+	description: string;
+	name: string;
+	historyId: number;
+	email: string;
+	endpointName: string;
+	endpointDescription: string;
+	createdAt: string;
+	inputs?: Array<{ name: string; value: string }>;
+	output?: { status: number; data: Record<string, unknown> };
 };

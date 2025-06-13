@@ -1,18 +1,59 @@
 <script lang="ts">
-	export let id: number;
-	export let title: string;
-	export let description: string;
-	export let starred: boolean = false;
+	import Pencil from 'lucide-svelte/icons/pencil';
+	import { goto } from '$app/navigation';
+	import { user } from '$lib/stores/user';
 
-	let toggleStarred = () => {
-		starred = !starred;
-	};
+	let {
+		id,
+		title,
+		description,
+		starred = false,
+		historyCard = false,
+		useDate = '',
+		onClick = () => {}
+	} = $props<{
+		id: number;
+		title: string;
+		description: string;
+		starred?: boolean;
+		historyCard?: boolean;
+		useDate?: string;
+		onClick?: () => void;
+	}>();
+
+	let isStarred = $state(starred);
+
+	let role = $state($user?.role ?? '');
+
+	function toggleStarred(event: MouseEvent) {
+		event.stopPropagation();
+		isStarred = !isStarred;
+	}
+
+	function handleConfigureEndpoint(event: MouseEvent) {
+		event.stopPropagation();
+		goto(`/configure/${id}`);
+	}
+
+	function handleKeydown(event: KeyboardEvent) {
+		if (event.key === 'Enter' || event.key === ' ') {
+			event.preventDefault(); // Prevent scrolling on Space
+			onClick();
+		}
+	}
 </script>
 
-<!-- Agregamos `group` acá -->
-<div class="group bg-gray-light hover:bg-accent-red relative h-40 rounded-3xl shadow-lg">
-	<a href="/endpoint/{id}">
-		<div class="h-full w-full rounded-3xl p-6">
+<!-- Make the card clickable and accessible -->
+<div
+	class="group bg-gray-light hover:bg-accent-red relative flex h-fit min-h-[8rem] cursor-pointer flex-col rounded-3xl p-6 shadow-lg"
+	onclick={onClick}
+	onkeydown={handleKeydown}
+	tabindex="0"
+	role="button"
+	data-endpoint-id={id}
+>
+	<div class="h-full w-full rounded-3xl">
+		<div class="flex items-start justify-between gap-4">
 			<div
 				class="text-near-black text-2xl font-bold group-hover:text-white"
 				style="
@@ -24,23 +65,37 @@
 			>
 				{title}
 			</div>
-			<p
-				class="text-near-black mt-2 text-base group-hover:text-white"
-				style="
-				display: -webkit-box;
-				-webkit-line-clamp: 3;
-				-webkit-box-orient: vertical;
-				overflow: hidden;
-				text-overflow: ellipsis;"
-			>
-				{description}
-			</p>
+			{#if (role === 'ADMIN' || role === 'CONFIG') && !historyCard}
+				<button
+					class="hover:bg-accent-red-dark ml-auto w-8 items-center justify-center rounded-full group-hover:text-white"
+					onclick={handleConfigureEndpoint}
+				>
+					<Pencil />
+				</button>
+			{/if}
 		</div>
-	</a>
-	<button
-		class="text-near-black hover:bg-accent-red-dark absolute right-5 bottom-5 flex h-7 w-7 items-center justify-center rounded-full group-hover:text-white"
-		on:click|stopPropagation={toggleStarred}
-	>
-		{starred ? '★' : '☆'}
-	</button>
+		<p
+			class="text-near-black mt-2 text-base group-hover:text-white"
+			style="
+			display: -webkit-box;
+			-webkit-line-clamp: 3;
+			-webkit-box-orient: vertical;
+			overflow: hidden;
+			text-overflow: ellipsis;"
+		>
+			{description}
+		</p>
+	</div>
+	{#if historyCard}
+		<div class="ml-auto">
+			<span class="text-near-black text-sm group-hover:text-white">{useDate}</span>
+		</div>
+	{:else}
+		<button
+			class="text-near-black hover:bg-accent-red-dark ml-auto flex h-7 w-7 items-center justify-center rounded-full group-hover:text-white"
+			onclick={toggleStarred}
+		>
+			{isStarred ? '★' : '☆'}
+		</button>
+	{/if}
 </div>

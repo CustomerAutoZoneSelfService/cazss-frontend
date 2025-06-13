@@ -1,18 +1,26 @@
 <script lang="ts">
-	let collapsed = false;
+	import PanelRightIcon from 'lucide-svelte/icons/panel-right';
+	import HomeIcon from 'lucide-svelte/icons/home';
+	import ClockIcon from 'lucide-svelte/icons/clock';
+	import PlusIcon from 'lucide-svelte/icons/plus';
+	import UsernameButton from '$lib/components/UsernameButton.svelte';
+	import { user } from '$lib/stores/user';
+
+	let collapsed = $state(false);
+
+	let role = $derived($user?.role ?? '');
 
 	function toggleCollapse() {
 		collapsed = !collapsed;
 	}
-	import Icon from './Icon.svelte';
 </script>
 
 <div
 	class="fixed top-4 z-50 transition-all duration-300"
 	style="left: {collapsed ? '4.5rem' : '13.5rem'}"
 >
-	<button on:click={toggleCollapse} aria-label="Expandir o colapsar menú">
-		<Icon name="PanelRight" size={24} color="black" />
+	<button onclick={toggleCollapse} aria-label="Expandir o colapsar menú">
+		<PanelRightIcon size={24} color="black" class="cursor-pointer text-inherit" />
 	</button>
 </div>
 
@@ -31,47 +39,56 @@
 						? 'justify-center'
 						: ''}"
 				>
-					<Icon name="Home" size={24} color="white" />
+					<HomeIcon size={24} color="white" class="shrink-0 text-inherit" />
 					{#if !collapsed}
-						<span class="text-white">Home</span>
+						<span class="inline text-white">Home</span>
 					{/if}
 				</div>
 			</a>
-
-			<a href="/history">
-				<div
-					class="nav-item flex cursor-pointer items-center space-x-3 rounded-lg p-3 {collapsed
-						? 'justify-center'
-						: ''}"
-				>
-					<Icon name="Clock" size={24} color="white" />
-					{#if !collapsed}
-						<span class="text-white">History</span>
-					{/if}
-				</div>
-			</a>
-
-			<a href="/create">
-				<div
-					class="nav-item flex cursor-pointer items-center space-x-3 rounded-lg p-3 {collapsed
-						? 'justify-center'
-						: ''}"
-				>
-					<Icon name="Plus" size={24} color="white" />
-					{#if !collapsed}
-						<span class="text-white">Create</span>
-					{/if}
-				</div>
-			</a>
-		</nav>
-		<!-- Usuario -->
-		<div class="flex items-center p-4 text-white">
-			<div class="flex h-8 w-8 items-center justify-center rounded-full bg-white/20">
-				<Icon name="User" size={24} color="white" />
-			</div>
-			{#if !collapsed}
-				<span class="ml-3">Username</span>
+			{#if role === 'ADMIN' || role === 'AUDITOR'}
+				<a href="/history/admin">
+					<div
+						class="nav-item flex cursor-pointer items-center space-x-3 rounded-lg p-3 {collapsed
+							? 'justify-center'
+							: ''}"
+					>
+						<ClockIcon size={24} color="white" class="shrink-0 text-inherit" />
+						{#if !collapsed}
+							<span class="text-white">HistoryAdmin</span>
+						{/if}
+					</div>
+				</a>
 			{/if}
+			<a href="/history/user">
+				<div
+					class="nav-item flex cursor-pointer items-center space-x-3 rounded-lg p-3 {collapsed
+						? 'justify-center'
+						: ''}"
+				>
+					<ClockIcon size={24} color="white" class="shrink-0 text-inherit" />
+					{#if !collapsed}
+						<span class="text-white">HistoryUser</span>
+					{/if}
+				</div>
+			</a>
+			{#if role === 'ADMIN' || role === 'CONFIG'}
+				<a href="/configure">
+					<div
+						class="nav-item flex cursor-pointer items-center space-x-3 rounded-lg p-3 {collapsed
+							? 'justify-center'
+							: ''}"
+					>
+						<PlusIcon name="Plus" size={24} color="white" class="shrink-0 text-inherit" />
+						{#if !collapsed}
+							<span class="text-white">Create</span>
+						{/if}
+					</div>
+				</a>
+			{/if}
+		</nav>
+		<!-- User Account Section -->
+		<div class="p-2">
+			<UsernameButton isSidebarCollapsed={collapsed} />
 		</div>
 	</div>
 </div>

@@ -1,16 +1,10 @@
 <script lang="ts">
 	import InputTable from '$lib/components/InputTable.svelte';
-	import { VariableType, type RequestVariable } from '$lib/types/RequestVariable';
-	import type { ResponsePattern } from '$lib/types/ResponsePattern';
+	import type { ResponsePattern, RequestVariable } from '$lib/types/ConfigureService';
 	import type { InputTablePrompt } from '$lib/types/InputTablePrompt';
-	let endpointId = 0;
-	let responseId = 0;
-	let variableType = VariableType.header;
 	let ExampleVariables: RequestVariable[] = [
 		{
-			requestVariableId: 0,
-			endpointId: endpointId,
-			type: variableType,
+			type: 'HEADER',
 			key: 'invoiceId',
 			defaultValue: '7248374827',
 			customizable: false,
@@ -20,7 +14,6 @@
 	let ExampleResponses: ResponsePattern[] = [
 		{
 			responsePatternId: 0,
-			responseId: 0,
 			parentId: null,
 			pattern: '',
 			name: 'response1',
@@ -30,12 +23,10 @@
 	];
 
 	let HeadersPrompt: InputTablePrompt = {
-		endpointId: endpointId,
-		variableType: variableType,
+		requestVariableType: 'HEADER',
 		requestVariables: ExampleVariables
 	};
 	let ResponsesPrompt: InputTablePrompt = {
-		responseId: responseId,
 		responsePatterns: ExampleResponses
 	};
 	let Headers: InputTable;

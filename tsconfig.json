@@ -11,10 +11,13 @@
 		"strict": true,
 		"moduleResolution": "bundler"
 	},
+	"types": ["@sveltejs/kit", "svelte", "vite/client"],
 	"include": [
 		"vite.config.ts",
 		"playwright.config.ts",
 		"vitest-setup-client.ts",
+		"app.d.ts",
+		"lucide.d.ts",
 		"ambient.d.ts",
 		"non-ambient.d.ts",
 		".svelte-kit/types/**/$types.d.ts",
@@ -23,8 +26,10 @@
 		"./src/**/*.svelte",
 		"./tests/**/*.js",
 		"./tests/**/*.ts",
-		"./tests/**/*.svelte"
+		"./tests/**/*.svelte",
+		"./.svelte-kit/ambient.d.ts"
 	]
+
 	// Path aliases are handled by https://svelte.dev/docs/kit/configuration#alias
 	// except $lib which is handled by https://svelte.dev/docs/kit/configuration#files
 	//
